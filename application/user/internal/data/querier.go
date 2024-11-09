@@ -11,10 +11,16 @@ import (
 type Querier interface {
 	//CreateUser
 	//
-	//  insert into users(email, password)
-	//  values ($1, $2)
-	//  returning id, email, password, create_at, update_at
+	//  INSERT INTO users(email, password)
+	//  VALUES ($1, $2)
+	//  RETURNING id, email, password, create_at, update_at
 	CreateUser(ctx context.Context, arg CreateUserParams) (Users, error)
+	//LoginUser
+	//
+	//  SELECT id, email, password, create_at, update_at
+	//  FROM users
+	//  WHERE email = $1
+	LoginUser(ctx context.Context, email string) (Users, error)
 }
 
 var _ Querier = (*Queries)(nil)

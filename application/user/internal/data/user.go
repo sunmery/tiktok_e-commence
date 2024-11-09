@@ -27,8 +27,11 @@ func (r *userRepo) CreateUser(ctx context.Context, req *biz.UserRequest) (*biz.U
 }
 
 func (r *userRepo) LoginUser(ctx context.Context, request *biz.LoginRequest) (*biz.UserReply, error) {
-	// TODO implement me
-	panic("implement me")
+	user, err := r.data.LoginUser(ctx, request.Email)
+	if err != nil {
+		return nil, err
+	}
+	return &biz.UserReply{UserId: int32(user.ID)}, nil
 }
 
 func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {

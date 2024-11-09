@@ -4,29 +4,27 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
+
+	// "github.com/go-redis/redis/v8"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"user/internal/conf"
 
 	"github.com/google/wire"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewUserRepo, NewDB)
+var ProviderSet = wire.NewSet(NewData, NewUserRepo, NewDB, NewCache)
 
 // Data .
 type Data struct {
-	// db *SQLStore
 	*Queries
-
 	rdb *redis.Client
 }
 
 // NewData .
 func NewData(
 	logger log.Logger,
-
 	db *pgxpool.Pool,
 	rdb *redis.Client,
 ) (*Data, func(), error) {

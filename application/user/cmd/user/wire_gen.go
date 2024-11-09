@@ -25,7 +25,8 @@ import (
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
 	pool := data.NewDB(confData)
-	dataData, cleanup, err := data.NewData(logger, pool)
+	client := data.NewCache(confData)
+	dataData, cleanup, err := data.NewData(logger, pool, client)
 	if err != nil {
 		return nil, nil, err
 	}
