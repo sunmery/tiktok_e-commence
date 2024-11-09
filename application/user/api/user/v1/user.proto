@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+// 用户rpc
+
+package api.user.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "user/api/user/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.user.v1";
+
+service UserService {
+	rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {
+
+		option (google.api.http) = {
+			put: "/v1/create_user",
+			body: "*"
+		};
+	};
+	rpc LoginUser (LoginRequest) returns (LoginResponse) {
+
+		option (google.api.http) = {
+			post: "/v1/login_user",
+			body: "*"
+		};
+	};
+}
+
+message CreateUserRequest {
+	string email = 1;
+	string password = 2;
+	string confirm_password = 3;
+}
+
+message CreateUserReply {
+	int32 user_id = 1;
+}
+
+message LoginRequest {
+	string email = 1;
+	string password = 2;
+}
+
+message LoginResponse {
+	int32 user_id = 1;
+}
+

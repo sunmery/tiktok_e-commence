@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-bank-swagger
+  labels:
+    app: simple-bank-swagger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-bank-swagger
+  template:
+    metadata:
+      name: simple-bank-swagger
+      labels:
+        app: simple-bank-swagger
+    spec:
+      containers:
+        - name: simple-bank-swagger
+          image: example
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always

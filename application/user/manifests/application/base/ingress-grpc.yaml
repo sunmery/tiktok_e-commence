@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-bank-grpc-ingress
+  annotations:
+    # cert-manager.io/cluster-issuer: letsencrypt
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+spec:
+  ingressClassName: higress
+  rules:
+    - host: "grpc.api-r.com"
+    - http:
+        paths:
+          - path: /v1/*
+            pathType: Prefix
+            backend:
+              service:
+                name: prod-api-simple-bank-service
+                port:
+                  number: 30002
+  # tls:
+  #   - hosts:
+  #       - grpc.api-r.com
+  #     secretName: api-r-com-grpc-secret

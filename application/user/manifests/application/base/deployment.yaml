@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-bank-api
+  labels:
+    app: simple-bank-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-bank-api
+  template:
+    metadata:
+      name: simple-bank-api
+      labels:
+        app: simple-bank-api
+    spec:
+      containers:
+        - name: simple-bank-api
+          image: example
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 30001
+              protocol: TCP
+              name: http-server
+            - containerPort: 30002
+              protocol: TCP
+              name: grpc-server
+          #livenessProbe:
+          #  httpGet:
+          #    path: /healthz
+          #    port: 8080
+          #  initialDelaySeconds: 10
+          #  periodSeconds: 10
+          #  timeoutSeconds: 5
+          #  failureThreshold: 3
+          #  successThreshold: 1
+          #readinessProbe:
+          #  httpGet:
+          #    path: /readyz
+          #    port: 8080
+          #  initialDelaySeconds: 5
+          #  periodSeconds: 5
+          #  timeoutSeconds: 3
+          #  failureThreshold: 3
+          #  successThreshold: 1
+      restartPolicy: Always
+

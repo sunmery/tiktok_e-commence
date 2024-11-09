@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: swagger-simple-bank-service
+spec:
+  selector:
+    app: simple-bank-swagger
+  ports:
+    - name: http
+      port: 8080
+      nodePort: 30006
+      protocol: TCP
+      targetPort: 8080
+  type: NodePort
+

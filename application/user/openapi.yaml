@@ -1,0 +1,76 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: UserService API
+    version: 0.0.1
+paths:
+    /v1/create_user:
+        put:
+            tags:
+                - UserService
+            operationId: UserService_CreateUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.v1.CreateUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.v1.CreateUserReply'
+    /v1/login_user:
+        post:
+            tags:
+                - UserService
+            operationId: UserService_LoginUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.v1.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.v1.LoginResponse'
+components:
+    schemas:
+        api.user.v1.CreateUserReply:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: int32
+        api.user.v1.CreateUserRequest:
+            type: object
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
+                confirmPassword:
+                    type: string
+        api.user.v1.LoginRequest:
+            type: object
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
+        api.user.v1.LoginResponse:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: int32
+tags:
+    - name: UserService
