@@ -2,8 +2,10 @@ package data
 
 import (
 	"context"
-
+	"database/sql"
+	"errors"
 	"user/internal/biz"
+	"user/internal/pkg"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -19,8 +21,9 @@ func (r *userRepo) CreateUser(ctx context.Context, req *biz.UserRequest) (*biz.U
 		Password: req.Password,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.New(pkg.PgErrorCode(err))
 	}
+
 	return &biz.UserReply{
 		UserId: int32(user.ID),
 	}, nil
@@ -29,8 +32,12 @@ func (r *userRepo) CreateUser(ctx context.Context, req *biz.UserRequest) (*biz.U
 func (r *userRepo) LoginUser(ctx context.Context, request *biz.LoginRequest) (*biz.UserReply, error) {
 	user, err := r.data.LoginUser(ctx, request.Email)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errors.New("该邮件在数据库中不存在")
+		}
+		return nil, errors.New(pkg.PgErrorCode(err))
 	}
+	// TODO: 添加密码校验
 	return &biz.UserReply{UserId: int32(user.ID)}, nil
 }
 

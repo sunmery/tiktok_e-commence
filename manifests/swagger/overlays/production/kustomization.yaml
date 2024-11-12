@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# 引用的资源清单
+resources:
+- ../../base
+
+# 文件前缀
+namePrefix: prod-
+# 文件后缀
+#nameSuffix: "-001"
+
+# 修改或添加的配置
+patches:
+- path: replica_count.yaml
+- path: limits.yaml
+
+# 密钥字段
+#secretGenerator:
+#  - name: database-creds
+#    literals:
+#      - DB_SOURCE=postgresql://postgres:postgres@159.75.231.54:5432/simple_bank?sslmode=disable
+
+#secretGenerator:
+#  - name: db-source
+#    files:
+#      - db-source
+
+# 所生成的 ConfigMap 和 Secret 都会包含内容哈希值后缀。
+# 这是为了确保内容发生变化时，所生成的是新的 ConfigMap 或 Secret。
+# 要禁止自动添加后缀的行为，用户可以使用 generatorOptions。
+# 除此以外，为生成的 ConfigMap 和 Secret 指定贯穿性选项也是可以的。
+#generatorOptions:
+#  disableNameSuffixHash: true
+#  labels:
+#    type: generated
+#  annotations:
+#    note: generated

@@ -38,6 +38,10 @@ func NewUserUsecase(repo UserRepo, logger log.Logger) *UserUsecase {
 }
 
 func (uc *UserUsecase) CreateUser(ctx context.Context, req *UserRequest) (*UserReply, error) {
-	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", req)
+	uc.log.WithContext(ctx).Infof("CreateUser: %v", req)
 	return uc.repo.CreateUser(ctx, req)
+}
+func (uc *UserUsecase) LoginUser(ctx context.Context, req *LoginRequest) (*UserReply, error) {
+	uc.log.WithContext(ctx).Infof("LoginUser: %v", req)
+	return uc.repo.LoginUser(ctx, req)
 }

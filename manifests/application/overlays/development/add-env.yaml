@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-bank-api
+spec:
+  template:
+    spec:
+      containers:
+        - name: simple-bank-api
+          env:
+            - name: DB_SOURCE
+              value: "DB_SOURCE=postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable"

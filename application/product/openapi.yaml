@@ -1,0 +1,129 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ProductCatalogService API
+    version: 0.0.1
+paths:
+    /v1/create_product:
+        put:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_CreateProduct
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.product.v1.Product'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.ListProductsResp'
+    /v1/get_product:
+        get:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_GetProduct
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.GetProductResp'
+    /v1/list_product:
+        get:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_ListProducts
+            parameters:
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: string
+                - name: categoryName
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.ListProductsResp'
+    /v1/search_product:
+        get:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_SearchProducts
+            parameters:
+                - name: query
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.SearchProductsResp'
+components:
+    schemas:
+        api.product.v1.GetProductResp:
+            type: object
+            properties:
+                product:
+                    $ref: '#/components/schemas/api.product.v1.Product'
+        api.product.v1.ListProductsResp:
+            type: object
+            properties:
+                products:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.product.v1.Product'
+        api.product.v1.Product:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                description:
+                    type: string
+                picture:
+                    type: string
+                price:
+                    type: number
+                    format: float
+                categories:
+                    type: array
+                    items:
+                        type: string
+        api.product.v1.SearchProductsResp:
+            type: object
+            properties:
+                results:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.product.v1.Product'
+tags:
+    - name: ProductCatalogService

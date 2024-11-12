@@ -32,5 +32,14 @@ func (s *UserServiceService) CreateUser(ctx context.Context, req *pb.CreateUserR
 	}, nil
 }
 func (s *UserServiceService) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	return &pb.LoginResponse{}, nil
+	user, err := s.uc.LoginUser(ctx, &biz.LoginRequest{
+		Email:    req.Email,
+		Password: req.Password,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.LoginResponse{
+		UserId: user.UserId,
+	}, nil
 }

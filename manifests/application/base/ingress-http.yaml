@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-bank-http-ingress
+  annotations:
+    # cert-manager.io/cluster-issuer: letsencrypt
+    higress.io/backend-protocol: "HTTPS"
+spec:
+  ingressClassName: higress
+  rules:
+    - host: "http.api-r.com"
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prod-api-simple-bank-service
+                port:
+                  number: 30001
+
+  # tls:
+  #   - hosts:
+  #       - http.api-r.com
+  #     secretName: api-r-com-http-secret

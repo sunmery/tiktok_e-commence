@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+// 创建商品
+
+package api.product.v1;
+
+option go_package = "product/api/product/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.product.v1";
+
+message CreateProductReply {
+	uint32 id = 1;
+	string name = 2;
+	string message = 3;
+}

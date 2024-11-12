@@ -1,0 +1,7 @@
+services:
+  redis7:
+    image: redis:7.4.1-alpine
+    container_name: redis7
+    restart: always
+    ports:
+      - "6379:6379"

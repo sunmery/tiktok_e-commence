@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# 引用的资源清单
+resources:
+- ../../base
+
+# 文件前缀
+namePrefix: prod-
+# 文件后缀
+#nameSuffix: "-001"
+
+# 修改或添加的配置
+patches:
+- path: replica_count.yaml
+- path: limits.yaml
+- path: add-env.yaml
+- path: ingress-http-cors-patch.yaml
+- path: ingress-grpc-cors-patch.yaml

@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+// 商品服务
+
+package api.product.v1;
+
+import "google/api/annotations.proto";
+import "product/v1/query_product.proto";
+import "product/v1/create_product.proto";
+
+option go_package = "product/api/product/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.product.v1";
+
+service ProductCatalogService {
+	rpc CreateProduct(Product) returns (ListProductsResp) {
+		option (google.api.http) = {
+			put: "/v1/create_product",
+			body: "*"
+		};
+	}
+	rpc ListProducts(ListProductsReq) returns (ListProductsResp) {
+		option (google.api.http) = {
+			get: "/v1/list_product"
+		};
+	}
+	rpc GetProduct(GetProductReq) returns (GetProductResp) {
+		option (google.api.http) = {
+			get: "/v1/get_product"
+		};
+	}
+	rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {
+		option (google.api.http) = {
+			get: "/v1/search_product"
+		};
+	}
+}
