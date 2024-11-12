@@ -2,10 +2,8 @@ package data
 
 import (
 	"context"
-
-	"product/internal/biz"
-
 	"github.com/go-kratos/kratos/v2/log"
+	"product/internal/biz"
 )
 
 type productRepo struct {
@@ -13,17 +11,41 @@ type productRepo struct {
 	log  *log.Helper
 }
 
-func (p productRepo) ListProducts(ctx context.Context, req *biz.ListProductsReq) (*biz.ListProductsResp, error) {
+func (p *productRepo) CreateProduct(ctx context.Context, req *biz.CreateProductRequest) (*biz.CreateProductReply, error) {
+	product, err := p.data.CreateProduct(ctx, CreateProductParams{
+		Name:        req.Name,
+		Description: req.Description,
+		Picture:     req.Picture,
+		Price:       req.Price,
+		Categories:  req.Categories,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &biz.CreateProductReply{
+		Product: biz.Product{
+			Id:          uint32(product.ID),
+			Name:        product.Name,
+			Description: product.Description,
+			Picture:     product.Picture,
+			Price:       product.Price,
+			Categories:  product.Categories,
+		},
+	}, nil
+}
+
+func (p *productRepo) ListProducts(ctx context.Context, req *biz.ListProductsReq) (*biz.ListProductsResp, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (p productRepo) GetProductReq(ctx context.Context, id uint32) (*biz.Product, error) {
+func (p *productRepo) GetProductReq(ctx context.Context, id uint32) (*biz.GetProductResp, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (p productRepo) SearchProducts(ctx context.Context, req *biz.SearchProductsReq) (*biz.SearchProductsResp, error) {
+func (p *productRepo) SearchProducts(ctx context.Context, req *biz.SearchProductsReq) (*biz.SearchProductsResp, error) {
 	// TODO implement me
 	panic("implement me")
 }

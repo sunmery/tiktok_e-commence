@@ -17,9 +17,27 @@ func (s *ProductService) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	panic("implement me")
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, product *pb.Product) (*pb.ListProductsResp, error) {
-	// TODO implement me
-	panic("implement me")
+func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductReply, error) {
+	p, err := s.ps.CreateProduct(ctx, &biz.CreateProductRequest{
+		Name:        req.Name,
+		Description: req.Description,
+		Picture:     req.Picture,
+		Price:       req.Price,
+		Categories:  req.Categories,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CreateProductReply{
+		Product: &pb.Product{
+			Id:          p.Product.Id,
+			Name:        p.Product.Name,
+			Description: p.Product.Description,
+			Picture:     p.Product.Picture,
+			Price:       p.Product.Price,
+			Categories:  p.Product.Categories,
+		},
+	}, nil
 }
 
 func (s *ProductService) ListProducts(ctx context.Context, req *pb.ListProductsReq) (*pb.ListProductsResp, error) {
@@ -34,7 +52,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *pb.ListProductsR
 	pbProduct := make([]*pb.Product, len(list.Product))
 	for i, product := range list.Product {
 		pbProduct[i] = &pb.Product{
-			Id:          product.ID,
+			Id:          product.Id,
 			Name:        product.Name,
 			Description: product.Description,
 			Picture:     product.Picture,

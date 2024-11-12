@@ -15,6 +15,13 @@ else
 	API_PROTO_FILES=$(shell find api -name *.proto)
 endif
 
+.PHONY: sqlc-init
+	mkdir -pinternal/data/db/migrate
+	mkdir -p internal/data/db/query
+
+.PHONY: sqlc
+	sqlc generate
+
 .PHONY: init
 # init env
 init:

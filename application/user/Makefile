@@ -122,15 +122,6 @@ test:
 mock:
 	#mockgen -package mockdb -destination db/mock/store.go simple_bank/db/sqlc Store
 
-# 生成proto的go代码
-proto:
-	rm -rf pb/*.go
-	protoc -I=proto \
-	--go_out=pb --go_opt=paths=source_relative \
-	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
-	--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
-	proto/*.proto
-
 # grpc的命令行测试工具
 evans:
 	evans -r repl --host localhost -p 30002

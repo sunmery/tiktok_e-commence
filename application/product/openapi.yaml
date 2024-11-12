@@ -3,28 +3,9 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: ProductCatalogService API
     version: 0.0.1
 paths:
-    /helloworld/{name}:
-        get:
-            tags:
-                - Greeter
-            description: Sends a greeting
-            operationId: Greeter_SayHello
-            parameters:
-                - name: name
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
     /v1/create_product:
         put:
             tags:
@@ -34,7 +15,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.product.v1.Product'
+                            $ref: '#/components/schemas/api.product.v1.CreateProductRequest'
                 required: true
             responses:
                 "200":
@@ -42,7 +23,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.product.v1.ListProductsResp'
+                                $ref: '#/components/schemas/api.product.v1.CreateProductReply'
     /v1/get_product:
         get:
             tags:
@@ -106,6 +87,27 @@ paths:
                                 $ref: '#/components/schemas/api.product.v1.SearchProductsResp'
 components:
     schemas:
+        api.product.v1.CreateProductReply:
+            type: object
+            properties:
+                product:
+                    $ref: '#/components/schemas/api.product.v1.Product'
+        api.product.v1.CreateProductRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                picture:
+                    type: string
+                price:
+                    type: number
+                    format: float
+                categories:
+                    type: array
+                    items:
+                        type: string
         api.product.v1.GetProductResp:
             type: object
             properties:
@@ -144,13 +146,5 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/api.product.v1.Product'
-        helloworld.v1.HelloReply:
-            type: object
-            properties:
-                message:
-                    type: string
-            description: The response message containing the greetings
 tags:
-    - name: Greeter
-      description: The greeting service definition.
     - name: ProductCatalogService
