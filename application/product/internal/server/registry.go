@@ -4,6 +4,7 @@ import (
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/hashicorp/consul/api"
+	"log"
 	"product/internal/conf"
 )
 
@@ -17,7 +18,7 @@ func NewRegistrar(c *conf.Registry) registry.Registrar {
 	// 创建consul客户端
 	consulClient, err := api.NewClient(configs)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	// 创建consul注册中心

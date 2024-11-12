@@ -1,7 +1,14 @@
 server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 5s
   grpc:
     addr: 0.0.0.0:9000
-    timeout: 1s
+    timeout: 5s
+consul:
+  address: node12.apikv.com:32080 # NodePort 外网可访问的Consul HTTP API地址
+  schema: http
+  healthCheck: false
 data:
   database:
     driver: mysql

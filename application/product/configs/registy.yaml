@@ -1,4 +1,5 @@
-consul:
-  address: node12.apikv.com:32080 # NodePort 外网可访问的Consul HTTP API地址
-  schema: http
-  healthCheck: false
+registry:
+  consul:
+    address: node12.apikv.com:32080 # NodePort 外网可访问的Consul HTTP API地址
+    schema: http
+    healthCheck: false

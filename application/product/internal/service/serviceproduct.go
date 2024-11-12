@@ -12,6 +12,16 @@ type ProductService struct {
 	ps *biz.ProductUsecase
 }
 
+func (s *ProductService) SearchProducts(ctx context.Context, req *pb.SearchProductsReq) (*pb.SearchProductsResp, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (s *ProductService) CreateProduct(ctx context.Context, product *pb.Product) (*pb.ListProductsResp, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
 func (s *ProductService) ListProducts(ctx context.Context, req *pb.ListProductsReq) (*pb.ListProductsResp, error) {
 	list, err := s.ps.ListProducts(ctx, &biz.ListProductsReq{
 		Page:         req.Page,
@@ -38,11 +48,6 @@ func (s *ProductService) ListProducts(ctx context.Context, req *pb.ListProductsR
 }
 
 func (s *ProductService) GetProduct(ctx context.Context, req *pb.GetProductReq) (*pb.GetProductResp, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (s *ProductService) SearchProducts(ctx context.Context, req *pb.SearchProductsReq) (*pb.SearchProductsResp, error) {
 	// TODO implement me
 	panic("implement me")
 }
