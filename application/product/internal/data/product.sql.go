@@ -16,11 +16,11 @@ RETURNING id, name, description, picture, price, categories
 `
 
 type CreateProductParams struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Picture     string   `json:"picture"`
-	Price       float32  `json:"price"`
-	Categories  []string `json:"categories"`
+	Name        string   `json:"Name"`
+	Description string   `json:"Description"`
+	Picture     string   `json:"Picture"`
+	Price       float32  `json:"Price"`
+	Categories  []string `json:"Categories"`
 }
 
 // CreateProduct
@@ -46,4 +46,54 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 		&i.Categories,
 	)
 	return i, err
+}
+
+const ListProducts = `-- name: ListProducts :many
+SELECT id, name, description, picture, price, categories
+FROM products
+WHERE $1 = ANY (categories)
+ORDER BY id
+OFFSET $2
+LIMIT $3
+`
+
+type ListProductsParams struct {
+	CategoryName *string `json:"CategoryName"`
+	Page         int64   `json:"Page"`
+	PageSize     int64   `json:"PageSize"`
+}
+
+// ListProducts
+//
+//	SELECT id, name, description, picture, price, categories
+//	FROM products
+//	WHERE $1 = ANY (categories)
+//	ORDER BY id
+//	OFFSET $2
+//	LIMIT $3
+func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]Products, error) {
+	rows, err := q.db.Query(ctx, ListProducts, arg.CategoryName, arg.Page, arg.PageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Products{}
+	for rows.Next() {
+		var i Products
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Picture,
+			&i.Price,
+			&i.Categories,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

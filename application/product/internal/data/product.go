@@ -36,8 +36,29 @@ func (p *productRepo) CreateProduct(ctx context.Context, req *biz.CreateProductR
 }
 
 func (p *productRepo) ListProducts(ctx context.Context, req *biz.ListProductsReq) (*biz.ListProductsResp, error) {
-	// TODO implement me
-	panic("implement me")
+	products, err := p.data.ListProducts(ctx, ListProductsParams{
+		CategoryName: &req.CategoryName,
+		Page:         int64((req.Page - 1) * req.PageSize),
+		PageSize:     int64(req.PageSize),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	productsResp := make([]*biz.Product, len(products))
+	for i, product := range products {
+		productsResp[i] = &biz.Product{
+			Id:          uint32(product.ID),
+			Name:        product.Name,
+			Description: product.Description,
+			Picture:     product.Picture,
+			Price:       product.Price,
+			Categories:  product.Categories,
+		}
+	}
+	return &biz.ListProductsResp{
+		Product: productsResp,
+	}, nil
 }
 
 func (p *productRepo) GetProductReq(ctx context.Context, id uint32) (*biz.GetProductResp, error) {

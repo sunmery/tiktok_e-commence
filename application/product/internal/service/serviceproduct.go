@@ -42,8 +42,8 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProduc
 
 func (s *ProductService) ListProducts(ctx context.Context, req *pb.ListProductsReq) (*pb.ListProductsResp, error) {
 	list, err := s.ps.ListProducts(ctx, &biz.ListProductsReq{
-		Page:         req.Page,
-		PageSize:     req.PageSize,
+		Page:         uint(req.Page),
+		PageSize:     uint(req.PageSize),
 		CategoryName: req.CategoryName,
 	})
 	if err != nil {

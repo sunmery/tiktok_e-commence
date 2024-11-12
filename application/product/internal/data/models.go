@@ -5,10 +5,10 @@
 package data
 
 type Products struct {
-	ID          int32    `json:"id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Picture     string   `json:"picture"`
-	Price       float32  `json:"price"`
-	Categories  []string `json:"categories"`
+	ID          int32    `json:"ID"`
+	Name        string   `json:"Name"`
+	Description string   `json:"Description"`
+	Picture     string   `json:"Picture"`
+	Price       float32  `json:"Price"`
+	Categories  []string `json:"Categories"`
 }

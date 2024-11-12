@@ -28,8 +28,8 @@ type CreateProductReply struct {
 }
 
 type ListProductsReq struct {
-	Page         int32  `json:"page"`
-	PageSize     int64  `json:"pageSize"`
+	Page         uint   `json:"page"`
+	PageSize     uint   `json:"pageSize"`
 	CategoryName string `json:"categoryName"`
 }
 
