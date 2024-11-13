@@ -13,23 +13,23 @@ option java_package = "api.product.v1";
 service ProductCatalogService {
 	rpc CreateProduct(CreateProductRequest) returns (CreateProductReply) {
 		option (google.api.http) = {
-			put: "/v1/create_product",
+			post: "/v1/products",
 			body: "*"
 		};
 	}
 	rpc ListProducts(ListProductsReq) returns (ListProductsResp) {
 		option (google.api.http) = {
-			get: "/v1/list_product"
+			get: "/v1/products"
 		};
 	}
 	rpc GetProduct(GetProductReq) returns (GetProductResp) {
 		option (google.api.http) = {
-			get: "/v1/get_product"
+			get: "/v1/product/{product_id}"
 		};
 	}
 	rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {
 		option (google.api.http) = {
-			get: "/v1/search_product"
+			get: "/v1/products/search"
 		};
 	}
 }

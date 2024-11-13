@@ -12,16 +12,14 @@ option java_package = "api.user.v1";
 
 service UserService {
 	rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {
-
 		option (google.api.http) = {
-			put: "/v1/create_user",
+			post: "/v1/user",
 			body: "*"
 		};
 	};
 	rpc LoginUser (LoginRequest) returns (LoginResponse) {
-
 		option (google.api.http) = {
-			post: "/v1/login_user",
+			post: "/v1/user/{email}",
 			body: "*"
 		};
 	};
