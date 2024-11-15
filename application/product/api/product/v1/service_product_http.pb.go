@@ -33,10 +33,10 @@ type ProductCatalogServiceHTTPServer interface {
 
 func RegisterProductCatalogServiceHTTPServer(s *http.Server, srv ProductCatalogServiceHTTPServer) {
 	r := s.Route("/")
-	r.PUT("/v1/create_product", _ProductCatalogService_CreateProduct0_HTTP_Handler(srv))
-	r.GET("/v1/list_product", _ProductCatalogService_ListProducts0_HTTP_Handler(srv))
-	r.GET("/v1/get_product", _ProductCatalogService_GetProduct0_HTTP_Handler(srv))
-	r.GET("/v1/search_product", _ProductCatalogService_SearchProducts0_HTTP_Handler(srv))
+	r.POST("/v1/products", _ProductCatalogService_CreateProduct0_HTTP_Handler(srv))
+	r.GET("/v1/products", _ProductCatalogService_ListProducts0_HTTP_Handler(srv))
+	r.GET("/v1/product/{id}", _ProductCatalogService_GetProduct0_HTTP_Handler(srv))
+	r.GET("/v1/products/search", _ProductCatalogService_SearchProducts0_HTTP_Handler(srv))
 }
 
 func _ProductCatalogService_CreateProduct0_HTTP_Handler(srv ProductCatalogServiceHTTPServer) func(ctx http.Context) error {
@@ -84,6 +84,9 @@ func _ProductCatalogService_GetProduct0_HTTP_Handler(srv ProductCatalogServiceHT
 	return func(ctx http.Context) error {
 		var in GetProductReq
 		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationProductCatalogServiceGetProduct)
@@ -135,11 +138,11 @@ func NewProductCatalogServiceHTTPClient(client *http.Client) ProductCatalogServi
 
 func (c *ProductCatalogServiceHTTPClientImpl) CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...http.CallOption) (*CreateProductReply, error) {
 	var out CreateProductReply
-	pattern := "/v1/create_product"
+	pattern := "/v1/products"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationProductCatalogServiceCreateProduct))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +151,7 @@ func (c *ProductCatalogServiceHTTPClientImpl) CreateProduct(ctx context.Context,
 
 func (c *ProductCatalogServiceHTTPClientImpl) GetProduct(ctx context.Context, in *GetProductReq, opts ...http.CallOption) (*GetProductResp, error) {
 	var out GetProductResp
-	pattern := "/v1/get_product"
+	pattern := "/v1/product/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductCatalogServiceGetProduct))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -161,7 +164,7 @@ func (c *ProductCatalogServiceHTTPClientImpl) GetProduct(ctx context.Context, in
 
 func (c *ProductCatalogServiceHTTPClientImpl) ListProducts(ctx context.Context, in *ListProductsReq, opts ...http.CallOption) (*ListProductsResp, error) {
 	var out ListProductsResp
-	pattern := "/v1/list_product"
+	pattern := "/v1/products"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductCatalogServiceListProducts))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -174,7 +177,7 @@ func (c *ProductCatalogServiceHTTPClientImpl) ListProducts(ctx context.Context, 
 
 func (c *ProductCatalogServiceHTTPClientImpl) SearchProducts(ctx context.Context, in *SearchProductsReq, opts ...http.CallOption) (*SearchProductsResp, error) {
 	var out SearchProductsResp
-	pattern := "/v1/search_product"
+	pattern := "/v1/products/search"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductCatalogServiceSearchProducts))
 	opts = append(opts, http.PathTemplate(pattern))

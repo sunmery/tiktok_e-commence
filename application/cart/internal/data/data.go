@@ -2,15 +2,18 @@ package data
 
 import (
 	"cart/internal/conf"
+	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewCartRepo)
+var ProviderSet = wire.NewSet(NewData, NewCartRepo, NewDB, NewCache)
 
 // Data .
 type Data struct {

@@ -9,18 +9,14 @@ import (
 )
 
 type Querier interface {
-	//CreateUser
+	//GetUser
 	//
-	//  INSERT INTO users(email, password)
-	//  VALUES ($1, $2)
-	//  RETURNING id, email, password, create_at, update_at
-	CreateUser(ctx context.Context, arg CreateUserParams) (Users, error)
-	//LoginUser
-	//
-	//  SELECT id, email, password, create_at, update_at
-	//  FROM users
-	//  WHERE email = $1
-	LoginUser(ctx context.Context, email string) (Users, error)
+	//  SELECT
+	//      owner, name, created_time, updated_time, deleted_time, id, external_id, type, password, password_salt, password_type, display_name, first_name, last_name, avatar, avatar_type, permanent_avatar, email, email_verified, phone, country_code, region, location, address, affiliation, title, id_card_type, id_card, homepage, bio, tag, language, gender, birthday, education, score, karma, ranking, balance, currency, is_default_avatar, is_online, is_admin, is_forbidden, is_deleted, signup_application, hash, pre_hash, access_key, access_secret, access_token, created_ip, last_signin_time, last_signin_ip, github, google, qq, wechat, facebook, dingtalk, weibo, gitee, linkedin, wecom, lark, gitlab, adfs, baidu, alipay, casdoor, infoflow, apple, azuread, azureadb2c, slack, steam, bilibili, okta, douyin, line, amazon, auth0, battlenet, bitbucket, box, cloudfoundry, dailymotion, deezer, digitalocean, discord, dropbox, eveonline, fitbit, gitea, heroku, influxcloud, instagram, intercom, kakao, lastfm, mailru, meetup, microsoftonline, naver, nextcloud, onedrive, oura, patreon, paypal, salesforce, shopify, soundcloud, spotify, strava, stripe, tiktok, tumblr, twitch, twitter, typetalk, uber, vk, wepay, xero, yahoo, yammer, yandex, zoom, metamask, web3onboard, custom, "webauthnCredentials", preferred_mfa_type, recovery_codes, totp_secret, mfa_phone_enabled, mfa_email_enabled, invitation, invitation_code, face_ids, ldap, properties, roles, permissions, groups, last_signin_wrong_time, signin_wrong_times, "managedAccounts", "mfaAccounts", need_update_password, ip_whitelist
+	//  FROM "user"
+	//  WHERE name = $1
+	//  LIMIT 1
+	GetUser(ctx context.Context, dollar_1 *string) (GetUserRow, error)
 }
 
 var _ Querier = (*Queries)(nil)

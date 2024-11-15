@@ -18,7 +18,8 @@ db_port="5432"
 driverName="postgres"
 dbname=tiktok
 sslmode=disable
-dataSourceName="user=$user password=$pass host=$host port=$db_port sslmode=$sslmode dbname=$dbname"
+schema=users
+dataSourceName="user=$user password=$pass host=$host port=$db_port sslmode=$sslmode dbname=$dbname search_path=$schema"
 
 # https://github.com/casdoor/casdoor/blob/master/conf/app.conf
 cat > app.conf <<EOF

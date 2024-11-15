@@ -1,7 +1,7 @@
 version: "2"
 sql:
-  - schema: "internal/data/db/migrate"
-    queries: "internal/data/db/query"
+  - schema: "internal/data/migrate"
+    queries: "internal/data/query"
     engine: "postgresql"
     database:
       uri: ${DB_SOURCE}
@@ -12,6 +12,7 @@ sql:
         package: "data"
         out: "internal/data"
         sql_package: "pgx/v5"
+        schema_name: "order"
         emit_db_tags: false # 如果为 true，则将 DB 标记添加到生成的结构中。默认值为 false
         emit_prepared_queries: true # 如果为 true，则包括对准备好的查询的支持。默认值为 false
         emit_interface: true # 如果为 true，则在生成的包中输出接口 Querier 。默认值为 false

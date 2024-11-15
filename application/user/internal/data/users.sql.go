@@ -9,55 +9,330 @@ import (
 	"context"
 )
 
-const CreateUser = `-- name: CreateUser :one
-INSERT INTO users(email, password)
-VALUES ($1, $2)
-RETURNING id, email, password, create_at, update_at
+const GetUser = `-- name: GetUser :one
+SELECT
+    owner, name, created_time, updated_time, deleted_time, id, external_id, type, password, password_salt, password_type, display_name, first_name, last_name, avatar, avatar_type, permanent_avatar, email, email_verified, phone, country_code, region, location, address, affiliation, title, id_card_type, id_card, homepage, bio, tag, language, gender, birthday, education, score, karma, ranking, balance, currency, is_default_avatar, is_online, is_admin, is_forbidden, is_deleted, signup_application, hash, pre_hash, access_key, access_secret, access_token, created_ip, last_signin_time, last_signin_ip, github, google, qq, wechat, facebook, dingtalk, weibo, gitee, linkedin, wecom, lark, gitlab, adfs, baidu, alipay, casdoor, infoflow, apple, azuread, azureadb2c, slack, steam, bilibili, okta, douyin, line, amazon, auth0, battlenet, bitbucket, box, cloudfoundry, dailymotion, deezer, digitalocean, discord, dropbox, eveonline, fitbit, gitea, heroku, influxcloud, instagram, intercom, kakao, lastfm, mailru, meetup, microsoftonline, naver, nextcloud, onedrive, oura, patreon, paypal, salesforce, shopify, soundcloud, spotify, strava, stripe, tiktok, tumblr, twitch, twitter, typetalk, uber, vk, wepay, xero, yahoo, yammer, yandex, zoom, metamask, web3onboard, custom, "webauthnCredentials", preferred_mfa_type, recovery_codes, totp_secret, mfa_phone_enabled, mfa_email_enabled, invitation, invitation_code, face_ids, ldap, properties, roles, permissions, groups, last_signin_wrong_time, signin_wrong_times, "managedAccounts", "mfaAccounts", need_update_password, ip_whitelist
+FROM "user"
+WHERE name = $1
+LIMIT 1
 `
 
-type CreateUserParams struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+type GetUserRow struct {
+	Owner               string   `json:"owner"`
+	Name                string   `json:"name"`
+	CreatedTime         *string  `json:"createdTime"`
+	UpdatedTime         *string  `json:"updatedTime"`
+	DeletedTime         *string  `json:"deletedTime"`
+	ID                  *string  `json:"id"`
+	ExternalID          *string  `json:"externalID"`
+	Type                *string  `json:"type"`
+	Password            *string  `json:"password"`
+	PasswordSalt        *string  `json:"passwordSalt"`
+	PasswordType        *string  `json:"passwordType"`
+	DisplayName         *string  `json:"displayName"`
+	FirstName           *string  `json:"firstName"`
+	LastName            *string  `json:"lastName"`
+	Avatar              *string  `json:"avatar"`
+	AvatarType          *string  `json:"avatarType"`
+	PermanentAvatar     *string  `json:"permanentAvatar"`
+	Email               *string  `json:"email"`
+	EmailVerified       *bool    `json:"emailVerified"`
+	Phone               *string  `json:"phone"`
+	CountryCode         *string  `json:"countryCode"`
+	Region              *string  `json:"region"`
+	Location            *string  `json:"location"`
+	Address             *string  `json:"address"`
+	Affiliation         *string  `json:"affiliation"`
+	Title               *string  `json:"title"`
+	IDCardType          *string  `json:"idCardType"`
+	IDCard              *string  `json:"idCard"`
+	Homepage            *string  `json:"homepage"`
+	Bio                 *string  `json:"bio"`
+	Tag                 *string  `json:"tag"`
+	Language            *string  `json:"language"`
+	Gender              *string  `json:"gender"`
+	Birthday            *string  `json:"birthday"`
+	Education           *string  `json:"education"`
+	Score               *int32   `json:"score"`
+	Karma               *int32   `json:"karma"`
+	Ranking             *int32   `json:"ranking"`
+	Balance             *float64 `json:"balance"`
+	Currency            *string  `json:"currency"`
+	IsDefaultAvatar     *bool    `json:"isDefaultAvatar"`
+	IsOnline            *bool    `json:"isOnline"`
+	IsAdmin             *bool    `json:"isAdmin"`
+	IsForbidden         *bool    `json:"isForbidden"`
+	IsDeleted           *bool    `json:"isDeleted"`
+	SignupApplication   *string  `json:"signupApplication"`
+	Hash                *string  `json:"hash"`
+	PreHash             *string  `json:"preHash"`
+	AccessKey           *string  `json:"accessKey"`
+	AccessSecret        *string  `json:"accessSecret"`
+	AccessToken         *string  `json:"accessToken"`
+	CreatedIp           *string  `json:"createdIp"`
+	LastSigninTime      *string  `json:"lastSigninTime"`
+	LastSigninIp        *string  `json:"lastSigninIp"`
+	Github              *string  `json:"github"`
+	Google              *string  `json:"google"`
+	Qq                  *string  `json:"qq"`
+	Wechat              *string  `json:"wechat"`
+	Facebook            *string  `json:"facebook"`
+	Dingtalk            *string  `json:"dingtalk"`
+	Weibo               *string  `json:"weibo"`
+	Gitee               *string  `json:"gitee"`
+	Linkedin            *string  `json:"linkedin"`
+	Wecom               *string  `json:"wecom"`
+	Lark                *string  `json:"lark"`
+	Gitlab              *string  `json:"gitlab"`
+	Adfs                *string  `json:"adfs"`
+	Baidu               *string  `json:"baidu"`
+	Alipay              *string  `json:"alipay"`
+	Casdoor             *string  `json:"casdoor"`
+	Infoflow            *string  `json:"infoflow"`
+	Apple               *string  `json:"apple"`
+	Azuread             *string  `json:"azuread"`
+	Azureadb2c          *string  `json:"azureadb2c"`
+	Slack               *string  `json:"slack"`
+	Steam               *string  `json:"steam"`
+	Bilibili            *string  `json:"bilibili"`
+	Okta                *string  `json:"okta"`
+	Douyin              *string  `json:"douyin"`
+	Line                *string  `json:"line"`
+	Amazon              *string  `json:"amazon"`
+	Auth0               *string  `json:"auth0"`
+	Battlenet           *string  `json:"battlenet"`
+	Bitbucket           *string  `json:"bitbucket"`
+	Box                 *string  `json:"box"`
+	Cloudfoundry        *string  `json:"cloudfoundry"`
+	Dailymotion         *string  `json:"dailymotion"`
+	Deezer              *string  `json:"deezer"`
+	Digitalocean        *string  `json:"digitalocean"`
+	Discord             *string  `json:"discord"`
+	Dropbox             *string  `json:"dropbox"`
+	Eveonline           *string  `json:"eveonline"`
+	Fitbit              *string  `json:"fitbit"`
+	Gitea               *string  `json:"gitea"`
+	Heroku              *string  `json:"heroku"`
+	Influxcloud         *string  `json:"influxcloud"`
+	Instagram           *string  `json:"instagram"`
+	Intercom            *string  `json:"intercom"`
+	Kakao               *string  `json:"kakao"`
+	Lastfm              *string  `json:"lastfm"`
+	Mailru              *string  `json:"mailru"`
+	Meetup              *string  `json:"meetup"`
+	Microsoftonline     *string  `json:"microsoftonline"`
+	Naver               *string  `json:"naver"`
+	Nextcloud           *string  `json:"nextcloud"`
+	Onedrive            *string  `json:"onedrive"`
+	Oura                *string  `json:"oura"`
+	Patreon             *string  `json:"patreon"`
+	Paypal              *string  `json:"paypal"`
+	Salesforce          *string  `json:"salesforce"`
+	Shopify             *string  `json:"shopify"`
+	Soundcloud          *string  `json:"soundcloud"`
+	Spotify             *string  `json:"spotify"`
+	Strava              *string  `json:"strava"`
+	Stripe              *string  `json:"stripe"`
+	Tiktok              *string  `json:"tiktok"`
+	Tumblr              *string  `json:"tumblr"`
+	Twitch              *string  `json:"twitch"`
+	Twitter             *string  `json:"twitter"`
+	Typetalk            *string  `json:"typetalk"`
+	Uber                *string  `json:"uber"`
+	Vk                  *string  `json:"vk"`
+	Wepay               *string  `json:"wepay"`
+	Xero                *string  `json:"xero"`
+	Yahoo               *string  `json:"yahoo"`
+	Yammer              *string  `json:"yammer"`
+	Yandex              *string  `json:"yandex"`
+	Zoom                *string  `json:"zoom"`
+	Metamask            *string  `json:"metamask"`
+	Web3onboard         *string  `json:"web3onboard"`
+	Custom              *string  `json:"custom"`
+	WebauthnCredentials []byte   `json:"webauthnCredentials"`
+	PreferredMfaType    *string  `json:"preferredMfaType"`
+	RecoveryCodes       *string  `json:"recoveryCodes"`
+	TotpSecret          *string  `json:"totpSecret"`
+	MfaPhoneEnabled     *bool    `json:"mfaPhoneEnabled"`
+	MfaEmailEnabled     *bool    `json:"mfaEmailEnabled"`
+	Invitation          *string  `json:"invitation"`
+	InvitationCode      *string  `json:"invitationCode"`
+	FaceIds             *string  `json:"faceIds"`
+	Ldap                *string  `json:"ldap"`
+	Properties          *string  `json:"properties"`
+	Roles               *string  `json:"roles"`
+	Permissions         *string  `json:"permissions"`
+	Groups              *string  `json:"groups"`
+	LastSigninWrongTime *string  `json:"lastSigninWrongTime"`
+	SigninWrongTimes    *int32   `json:"signinWrongTimes"`
+	ManagedAccounts     []byte   `json:"managedAccounts"`
+	MfaAccounts         []byte   `json:"mfaAccounts"`
+	NeedUpdatePassword  *bool    `json:"needUpdatePassword"`
+	IpWhitelist         *string  `json:"ipWhitelist"`
 }
 
-// CreateUser
+// GetUser
 //
-//	INSERT INTO users(email, password)
-//	VALUES ($1, $2)
-//	RETURNING id, email, password, create_at, update_at
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Users, error) {
-	row := q.db.QueryRow(ctx, CreateUser, arg.Email, arg.Password)
-	var i Users
+//	SELECT
+//	    owner, name, created_time, updated_time, deleted_time, id, external_id, type, password, password_salt, password_type, display_name, first_name, last_name, avatar, avatar_type, permanent_avatar, email, email_verified, phone, country_code, region, location, address, affiliation, title, id_card_type, id_card, homepage, bio, tag, language, gender, birthday, education, score, karma, ranking, balance, currency, is_default_avatar, is_online, is_admin, is_forbidden, is_deleted, signup_application, hash, pre_hash, access_key, access_secret, access_token, created_ip, last_signin_time, last_signin_ip, github, google, qq, wechat, facebook, dingtalk, weibo, gitee, linkedin, wecom, lark, gitlab, adfs, baidu, alipay, casdoor, infoflow, apple, azuread, azureadb2c, slack, steam, bilibili, okta, douyin, line, amazon, auth0, battlenet, bitbucket, box, cloudfoundry, dailymotion, deezer, digitalocean, discord, dropbox, eveonline, fitbit, gitea, heroku, influxcloud, instagram, intercom, kakao, lastfm, mailru, meetup, microsoftonline, naver, nextcloud, onedrive, oura, patreon, paypal, salesforce, shopify, soundcloud, spotify, strava, stripe, tiktok, tumblr, twitch, twitter, typetalk, uber, vk, wepay, xero, yahoo, yammer, yandex, zoom, metamask, web3onboard, custom, "webauthnCredentials", preferred_mfa_type, recovery_codes, totp_secret, mfa_phone_enabled, mfa_email_enabled, invitation, invitation_code, face_ids, ldap, properties, roles, permissions, groups, last_signin_wrong_time, signin_wrong_times, "managedAccounts", "mfaAccounts", need_update_password, ip_whitelist
+//	FROM "user"
+//	WHERE name = $1
+//	LIMIT 1
+func (q *Queries) GetUser(ctx context.Context, dollar_1 *string) (GetUserRow, error) {
+	row := q.db.QueryRow(ctx, GetUser, dollar_1)
+	var i GetUserRow
 	err := row.Scan(
+		&i.Owner,
+		&i.Name,
+		&i.CreatedTime,
+		&i.UpdatedTime,
+		&i.DeletedTime,
 		&i.ID,
-		&i.Email,
+		&i.ExternalID,
+		&i.Type,
 		&i.Password,
-		&i.CreateAt,
-		&i.UpdateAt,
-	)
-	return i, err
-}
-
-const LoginUser = `-- name: LoginUser :one
-SELECT id, email, password, create_at, update_at
-FROM users
-WHERE email = $1
-`
-
-// LoginUser
-//
-//	SELECT id, email, password, create_at, update_at
-//	FROM users
-//	WHERE email = $1
-func (q *Queries) LoginUser(ctx context.Context, email string) (Users, error) {
-	row := q.db.QueryRow(ctx, LoginUser, email)
-	var i Users
-	err := row.Scan(
-		&i.ID,
+		&i.PasswordSalt,
+		&i.PasswordType,
+		&i.DisplayName,
+		&i.FirstName,
+		&i.LastName,
+		&i.Avatar,
+		&i.AvatarType,
+		&i.PermanentAvatar,
 		&i.Email,
-		&i.Password,
-		&i.CreateAt,
-		&i.UpdateAt,
+		&i.EmailVerified,
+		&i.Phone,
+		&i.CountryCode,
+		&i.Region,
+		&i.Location,
+		&i.Address,
+		&i.Affiliation,
+		&i.Title,
+		&i.IDCardType,
+		&i.IDCard,
+		&i.Homepage,
+		&i.Bio,
+		&i.Tag,
+		&i.Language,
+		&i.Gender,
+		&i.Birthday,
+		&i.Education,
+		&i.Score,
+		&i.Karma,
+		&i.Ranking,
+		&i.Balance,
+		&i.Currency,
+		&i.IsDefaultAvatar,
+		&i.IsOnline,
+		&i.IsAdmin,
+		&i.IsForbidden,
+		&i.IsDeleted,
+		&i.SignupApplication,
+		&i.Hash,
+		&i.PreHash,
+		&i.AccessKey,
+		&i.AccessSecret,
+		&i.AccessToken,
+		&i.CreatedIp,
+		&i.LastSigninTime,
+		&i.LastSigninIp,
+		&i.Github,
+		&i.Google,
+		&i.Qq,
+		&i.Wechat,
+		&i.Facebook,
+		&i.Dingtalk,
+		&i.Weibo,
+		&i.Gitee,
+		&i.Linkedin,
+		&i.Wecom,
+		&i.Lark,
+		&i.Gitlab,
+		&i.Adfs,
+		&i.Baidu,
+		&i.Alipay,
+		&i.Casdoor,
+		&i.Infoflow,
+		&i.Apple,
+		&i.Azuread,
+		&i.Azureadb2c,
+		&i.Slack,
+		&i.Steam,
+		&i.Bilibili,
+		&i.Okta,
+		&i.Douyin,
+		&i.Line,
+		&i.Amazon,
+		&i.Auth0,
+		&i.Battlenet,
+		&i.Bitbucket,
+		&i.Box,
+		&i.Cloudfoundry,
+		&i.Dailymotion,
+		&i.Deezer,
+		&i.Digitalocean,
+		&i.Discord,
+		&i.Dropbox,
+		&i.Eveonline,
+		&i.Fitbit,
+		&i.Gitea,
+		&i.Heroku,
+		&i.Influxcloud,
+		&i.Instagram,
+		&i.Intercom,
+		&i.Kakao,
+		&i.Lastfm,
+		&i.Mailru,
+		&i.Meetup,
+		&i.Microsoftonline,
+		&i.Naver,
+		&i.Nextcloud,
+		&i.Onedrive,
+		&i.Oura,
+		&i.Patreon,
+		&i.Paypal,
+		&i.Salesforce,
+		&i.Shopify,
+		&i.Soundcloud,
+		&i.Spotify,
+		&i.Strava,
+		&i.Stripe,
+		&i.Tiktok,
+		&i.Tumblr,
+		&i.Twitch,
+		&i.Twitter,
+		&i.Typetalk,
+		&i.Uber,
+		&i.Vk,
+		&i.Wepay,
+		&i.Xero,
+		&i.Yahoo,
+		&i.Yammer,
+		&i.Yandex,
+		&i.Zoom,
+		&i.Metamask,
+		&i.Web3onboard,
+		&i.Custom,
+		&i.WebauthnCredentials,
+		&i.PreferredMfaType,
+		&i.RecoveryCodes,
+		&i.TotpSecret,
+		&i.MfaPhoneEnabled,
+		&i.MfaEmailEnabled,
+		&i.Invitation,
+		&i.InvitationCode,
+		&i.FaceIds,
+		&i.Ldap,
+		&i.Properties,
+		&i.Roles,
+		&i.Permissions,
+		&i.Groups,
+		&i.LastSigninWrongTime,
+		&i.SigninWrongTimes,
+		&i.ManagedAccounts,
+		&i.MfaAccounts,
+		&i.NeedUpdatePassword,
+		&i.IpWhitelist,
 	)
 	return i, err
 }

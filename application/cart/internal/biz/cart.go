@@ -12,40 +12,38 @@ type CartItem struct {
 }
 
 type Cart struct {
-	UserId uint32
-	Items  []*CartItem
+	UserId uint32      `json:"userId"`
+	Items  []*CartItem `json:"items"`
 }
 
-type AddItemReq struct {
+type CreateCartItemRequest struct {
 	UserId   uint32   `json:"user_id"`
 	CartItem CartItem `json:"cart_item"`
 }
 
-type AddItemResp struct {
-	UserId   uint32   `json:"user_id"`
-	CartItem CartItem `json:"cart_item"`
+type CreateCartItemReply struct {
 }
 
-type GetCartReq struct {
-	UserId uint32 `json:"user_id"`
+type GetCartRequest struct {
+	UserId int32 `json:"user_id"`
 }
 
-type GetCartResp struct {
+type GetCartReply struct {
 	Cart Cart `json:"cart"`
 }
 
-type EmptyCartReq struct {
+type EmptyCartRequest struct {
 	UserId uint32 `json:"user_id"`
 }
 
-type EmptyCartResp struct {
+type EmptyCartReply struct {
 }
 
 // CartRepo is a Greater repo.
 type CartRepo interface {
-	AddItem(ctx context.Context, req *AddItemReq) (*AddItemResp, error)
-	GetCart(ctx context.Context, req *GetCartReq) (*GetCartResp, error)
-	EmptyCart(ctx context.Context, req *EmptyCartReq) (*EmptyCartResp, error)
+	CreateCartItem(ctx context.Context, req *CreateCartItemRequest) (*CreateCartItemReply, error)
+	EmptyCart(ctx context.Context, req *EmptyCartRequest) (*EmptyCartReply, error)
+	GetCart(ctx context.Context, req *GetCartRequest) (*GetCartReply, error)
 }
 
 // CartUsecase is a Cart usecase.
@@ -59,8 +57,17 @@ func NewCartUsecase(repo CartRepo, logger log.Logger) *CartUsecase {
 	return &CartUsecase{repo: repo, log: log.NewHelper(logger)}
 }
 
-// AddItem 添加购物车
-func (uc *CartUsecase) AddItem(ctx context.Context, req *AddItemReq) (*AddItemResp, error) {
-	uc.log.WithContext(ctx).Infof("AddItem: %v", req)
-	return uc.repo.AddItem(ctx, req)
+// CreateCartItem 创建购物车商品
+func (uc *CartUsecase) CreateCartItem(ctx context.Context, req *CreateCartItemRequest) (*CreateCartItemReply, error) {
+	// uc.log.WithContext(ctx).Infof("CreateCart: %v", req)
+	return uc.repo.CreateCartItem(ctx, req)
+}
+
+func (uc *CartUsecase) GetCart(ctx context.Context, req *GetCartRequest) (*GetCartReply, error) {
+	// uc.log.WithContext(ctx).Infof("GetCart: %v", req)
+	return uc.repo.GetCart(ctx, req)
+}
+func (uc *CartUsecase) EmptyCart(ctx context.Context, req *EmptyCartRequest) (*EmptyCartReply, error) {
+	// uc.log.WithContext(ctx).Infof("EmptyCart: %v", req)
+	return uc.repo.EmptyCart(ctx, req)
 }

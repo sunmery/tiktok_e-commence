@@ -1,18 +1,16 @@
 server:
   http:
-    addr: 0.0.0.0:30001
-    timeout: 1s
+    addr: 0.0.0.0:30004
+    timeout: 15s
   grpc:
-    addr: 0.0.0.0:30002
-    timeout: 1s
+    addr: 0.0.0.0:3006
+    timeout: 15s
 
 data:
   database:
     source: postgresql://postgres:postgres@localhost:5432/tiktok?sslmode=disable
   redis:
     addr: 127.0.0.1:6379
-    username: default
-    password: redis
-    dial_timeout: 5s
-    read_timeout: 5s
-    write_timeout: 5s
+    read_timeout: 4.2s
+    write_timeout: 4.2s
+    dial_timeout: 4s

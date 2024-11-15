@@ -24,7 +24,7 @@ service ProductCatalogService {
 	}
 	rpc GetProduct(GetProductReq) returns (GetProductResp) {
 		option (google.api.http) = {
-			get: "/v1/product/{product_id}"
+			get: "/v1/product/{id}"
 		};
 	}
 	rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {

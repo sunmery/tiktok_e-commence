@@ -1,3 +1,8 @@
+-- 手动在数据库创建
+-- CREATE SCHEMA IF NOT EXISTS products;
+
+SET search_path TO products;
+
 CREATE TABLE IF NOT EXISTS products(
     id  SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

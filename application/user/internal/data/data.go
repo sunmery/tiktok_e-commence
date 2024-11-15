@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
 
-	// "github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"user/internal/conf"
 
@@ -66,7 +65,7 @@ func NewCache(c *conf.Data) *redis.Client {
 }
 
 func NewCasdoor(cc *conf.Casdoor) *casdoorsdk.Client {
-	fmt.Printf("Server:%v\n", cc.Casdoor.Server)
+	fmt.Printf("Server:%v\n", cc.Casdoor.Server.Endpoint)
 	fmt.Printf("certificate:%v\n", cc.Casdoor.Certificate)
 	client := casdoorsdk.NewClient(
 		cc.Casdoor.Server.Endpoint,

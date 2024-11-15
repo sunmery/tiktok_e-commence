@@ -68,24 +68,24 @@ dev-down:
 # 生成迁移文件
 # 使用: make new-migrate name=verify_emails
 new-migrate:
-	migrate create -dir internal/data/db/migrate -ext sql -seq $(name)
+	migrate create -dir internal/data/migrate -ext sql -seq $(name)
 
 # 升级全部的迁移文件, 先安装https://github.com/golang-migrate/migrate/tree/master
 migrate-up:
 	#export DB_SOURCE="postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable"
-	migrate -database "${DB_SOURCE}" -path internal/data/db/migrate -verbose up
+	migrate -database "${DB_SOURCE}" -path internal/data/migrate -verbose up
 
 # 向上迁移一个版本, 根据数据库的表schema_migrations的version来决定
 migrate-up1:
-	migrate -database "${DB_SOURCE}" -path internal/data/db/migrate -verbose up 1
+	migrate -database "${DB_SOURCE}" -path internal/data/migrate -verbose up 1
 
 # 向下全部降级迁移文件, 先安装https://github.com/golang-migrate/migrate/tree/master
 migrate-down:
-	migrate -database "${DB_SOURCE}" -path internal/data/db/migrate -verbose down
+	migrate -database "${DB_SOURCE}" -path internal/data/migrate -verbose down
 
 # 向下降级一个版本, 根据数据库的表schema_migrations的version来决定
 migrate-down1:
-	migrate -database "${DB_SOURCE}" -path internal/data/db/migrate -verbose down 1
+	migrate -database "${DB_SOURCE}" -path internal/data/migrate -verbose down 1
 
 # 启动redis
 redis-up:
@@ -109,7 +109,7 @@ test:
 # simple_bank/worker TaskDistributor
 # 最后参数: 包路径与要生成的interface接口的名称
 mock:
-	#mockgen -package mockdb -destination db/mock/store.go simple_bank/db/sqlc Store
+	#mockgen -package mockdb -destination mock/store.go simple_bank/sqlc Store
 
 # grpc的命令行测试工具
 evans:

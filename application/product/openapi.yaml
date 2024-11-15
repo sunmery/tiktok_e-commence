@@ -6,32 +6,15 @@ info:
     title: ProductCatalogService API
     version: 0.0.1
 paths:
-    /v1/create_product:
-        put:
-            tags:
-                - ProductCatalogService
-            operationId: ProductCatalogService_CreateProduct
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/api.product.v1.CreateProductRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/api.product.v1.CreateProductReply'
-    /v1/get_product:
+    /v1/product/{id}:
         get:
             tags:
                 - ProductCatalogService
             operationId: ProductCatalogService_GetProduct
             parameters:
                 - name: id
-                  in: query
+                  in: path
+                  required: true
                   schema:
                     type: integer
                     format: uint32
@@ -42,7 +25,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.product.v1.GetProductResp'
-    /v1/list_product:
+    /v1/products:
         get:
             tags:
                 - ProductCatalogService
@@ -68,7 +51,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.product.v1.ListProductsResp'
-    /v1/search_product:
+        post:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_CreateProduct
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.product.v1.CreateProductRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.CreateProductReply'
+    /v1/products/search:
         get:
             tags:
                 - ProductCatalogService

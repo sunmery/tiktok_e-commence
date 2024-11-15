@@ -14,6 +14,7 @@ type Store interface {
 
 type SQLStore struct {
 	*Queries
+	
 	db *pgxpool.Pool
 }
 

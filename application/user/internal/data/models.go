@@ -3,15 +3,3 @@
 //   sqlc v1.27.0
 
 package data
-
-import (
-	"github.com/jackc/pgx/v5/pgtype"
-)
-
-type Users struct {
-	ID       int64              `json:"id"`
-	Email    string             `json:"email"`
-	Password string             `json:"password"`
-	CreateAt pgtype.Timestamptz `json:"createAt"`
-	UpdateAt pgtype.Timestamptz `json:"updateAt"`
-}

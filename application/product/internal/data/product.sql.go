@@ -10,7 +10,7 @@ import (
 )
 
 const CreateProduct = `-- name: CreateProduct :one
-INSERT INTO products(name,description,picture,price,categories)
+INSERT INTO products(name, description, picture, price, categories)
 VALUES ($1, $2, $3, $4, $5)
 RETURNING id, name, description, picture, price, categories
 `
@@ -25,7 +25,7 @@ type CreateProductParams struct {
 
 // CreateProduct
 //
-//	INSERT INTO products(name,description,picture,price,categories)
+//	INSERT INTO products(name, description, picture, price, categories)
 //	VALUES ($1, $2, $3, $4, $5)
 //	RETURNING id, name, description, picture, price, categories
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Products, error) {
@@ -49,12 +49,16 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 }
 
 const ListProducts = `-- name: ListProducts :many
-SELECT id, name, description, picture, price, categories
+SELECT id,
+       name,
+       description,
+       picture,
+       price,
+       categories
 FROM products
 WHERE $1 = ANY (categories)
 ORDER BY id
-OFFSET $2
-LIMIT $3
+OFFSET $2 LIMIT $3
 `
 
 type ListProductsParams struct {
@@ -65,12 +69,16 @@ type ListProductsParams struct {
 
 // ListProducts
 //
-//	SELECT id, name, description, picture, price, categories
+//	SELECT id,
+//	       name,
+//	       description,
+//	       picture,
+//	       price,
+//	       categories
 //	FROM products
 //	WHERE $1 = ANY (categories)
 //	ORDER BY id
-//	OFFSET $2
-//	LIMIT $3
+//	OFFSET $2 LIMIT $3
 func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]Products, error) {
 	rows, err := q.db.Query(ctx, ListProducts, arg.CategoryName, arg.Page, arg.PageSize)
 	if err != nil {
