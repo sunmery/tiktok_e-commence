@@ -126,13 +126,16 @@ mock:
 evans:
 	evans -r repl --host localhost -p 30002
 
+casdoor:
+	docker-compose -f manifests/casdoor/dev/compose.yaml up -d
+
 server:
 	make proto
 	make mock
 	make swagger
 	go run .
 
-.PHONY: sqlc dev-up dev-down migrate-up migrate-up1 migrate-down migrate-down1 test server mock evans redis-up redis-down redis-ping new-migrate
+.PHONY: sqlc dev-up dev-down migrate-up migrate-up1 migrate-down migrate-down1 test server mock evans redis-up redis-down redis-ping new-migrate casdoor
 
 
 # show help
