@@ -19,67 +19,64 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationUserServiceCreateUser = "/api.user.v1.UserService/CreateUser"
-const OperationUserServiceLoginUser = "/api.user.v1.UserService/LoginUser"
+const OperationUserServiceGetUserInfo = "/api.user.v1.UserService/GetUserInfo"
+const OperationUserServiceSignin = "/api.user.v1.UserService/Signin"
 
 type UserServiceHTTPServer interface {
-	CreateUser(context.Context, *CreateUserRequest) (*CreateUserReply, error)
-	LoginUser(context.Context, *LoginRequest) (*LoginResponse, error)
+	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error)
+	Signin(context.Context, *SigninRequest) (*SigninReply, error)
 }
 
 func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r := s.Route("/")
-	r.PUT("/v1/create_user", _UserService_CreateUser0_HTTP_Handler(srv))
-	r.POST("/v1/login_user", _UserService_LoginUser0_HTTP_Handler(srv))
+	r.POST("/v1/user", _UserService_Signin0_HTTP_Handler(srv))
+	r.GET("/v1/user/profile", _UserService_GetUserInfo0_HTTP_Handler(srv))
 }
 
-func _UserService_CreateUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+func _UserService_Signin0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in CreateUserRequest
+		var in SigninRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationUserServiceCreateUser)
+		http.SetOperation(ctx, OperationUserServiceSignin)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.CreateUser(ctx, req.(*CreateUserRequest))
+			return srv.Signin(ctx, req.(*SigninRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*CreateUserReply)
+		reply := out.(*SigninReply)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _UserService_LoginUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+func _UserService_GetUserInfo0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in LoginRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
+		var in GetUserInfoRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationUserServiceLoginUser)
+		http.SetOperation(ctx, OperationUserServiceGetUserInfo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.LoginUser(ctx, req.(*LoginRequest))
+			return srv.GetUserInfo(ctx, req.(*GetUserInfoRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*LoginResponse)
+		reply := out.(*GetUserInfoResponse)
 		return ctx.Result(200, reply)
 	}
 }
 
 type UserServiceHTTPClient interface {
-	CreateUser(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *CreateUserReply, err error)
-	LoginUser(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginResponse, err error)
+	GetUserInfo(ctx context.Context, req *GetUserInfoRequest, opts ...http.CallOption) (rsp *GetUserInfoResponse, err error)
+	Signin(ctx context.Context, req *SigninRequest, opts ...http.CallOption) (rsp *SigninReply, err error)
 }
 
 type UserServiceHTTPClientImpl struct {
@@ -90,24 +87,24 @@ func NewUserServiceHTTPClient(client *http.Client) UserServiceHTTPClient {
 	return &UserServiceHTTPClientImpl{client}
 }
 
-func (c *UserServiceHTTPClientImpl) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...http.CallOption) (*CreateUserReply, error) {
-	var out CreateUserReply
-	pattern := "/v1/create_user"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationUserServiceCreateUser))
+func (c *UserServiceHTTPClientImpl) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...http.CallOption) (*GetUserInfoResponse, error) {
+	var out GetUserInfoResponse
+	pattern := "/v1/user/profile"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationUserServiceGetUserInfo))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return &out, nil
 }
 
-func (c *UserServiceHTTPClientImpl) LoginUser(ctx context.Context, in *LoginRequest, opts ...http.CallOption) (*LoginResponse, error) {
-	var out LoginResponse
-	pattern := "/v1/login_user"
+func (c *UserServiceHTTPClientImpl) Signin(ctx context.Context, in *SigninRequest, opts ...http.CallOption) (*SigninReply, error) {
+	var out SigninReply
+	pattern := "/v1/user"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationUserServiceLoginUser))
+	opts = append(opts, http.Operation(OperationUserServiceSignin))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

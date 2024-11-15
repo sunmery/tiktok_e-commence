@@ -6,34 +6,16 @@ info:
     title: UserService API
     version: 0.0.1
 paths:
-    /v1/create_user:
-        put:
-            tags:
-                - UserService
-            operationId: UserService_CreateUser
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/api.user.v1.CreateUserRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/api.user.v1.CreateUserReply'
-    /v1/login_user:
+    /v1/user:
         post:
             tags:
                 - UserService
-            operationId: UserService_LoginUser
+            operationId: UserService_Signin
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.user.v1.LoginRequest'
+                            $ref: '#/components/schemas/api.user.v1.SigninRequest'
                 required: true
             responses:
                 "200":
@@ -41,36 +23,377 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.user.v1.LoginResponse'
+                                $ref: '#/components/schemas/api.user.v1.SigninReply'
+    /v1/user/profile:
+        get:
+            tags:
+                - UserService
+            operationId: UserService_GetUserInfo
+            parameters:
+                - name: authorization
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.v1.GetUserInfoResponse'
 components:
     schemas:
-        api.user.v1.CreateUserReply:
+        api.user.v1.Data:
             type: object
             properties:
-                userId:
-                    type: integer
-                    format: int32
-        api.user.v1.CreateUserRequest:
-            type: object
-            properties:
-                email:
+                owner:
+                    type: string
+                name:
+                    type: string
+                createdTime:
+                    type: string
+                    format: date-time
+                updatedTime:
+                    type: string
+                    format: date-time
+                deletedTime:
+                    type: string
+                id:
+                    type: string
+                externalId:
+                    type: string
+                type:
                     type: string
                 password:
                     type: string
-                confirmPassword:
+                passwordSalt:
                     type: string
-        api.user.v1.LoginRequest:
-            type: object
-            properties:
+                passwordType:
+                    type: string
+                displayName:
+                    type: string
+                firstName:
+                    type: string
+                lastName:
+                    type: string
+                avatar:
+                    type: string
+                avatarType:
+                    type: string
+                permanentAvatar:
+                    type: string
                 email:
                     type: string
-                password:
+                emailVerified:
+                    type: boolean
+                phone:
                     type: string
-        api.user.v1.LoginResponse:
+                countryCode:
+                    type: string
+                region:
+                    type: string
+                location:
+                    type: string
+                address:
+                    type: array
+                    items:
+                        type: string
+                affiliation:
+                    type: string
+                title:
+                    type: string
+                idCardType:
+                    type: string
+                idCard:
+                    type: string
+                homepage:
+                    type: string
+                bio:
+                    type: string
+                tag:
+                    type: string
+                language:
+                    type: string
+                gender:
+                    type: string
+                birthday:
+                    type: string
+                education:
+                    type: string
+                score:
+                    type: integer
+                    format: uint32
+                karma:
+                    type: integer
+                    format: uint32
+                ranking:
+                    type: integer
+                    format: uint32
+                balance:
+                    type: integer
+                    format: uint32
+                currency:
+                    type: string
+                isDefaultAvatar:
+                    type: boolean
+                isOnline:
+                    type: boolean
+                isAdmin:
+                    type: boolean
+                isForbidden:
+                    type: boolean
+                isDeleted:
+                    type: boolean
+                signupApplication:
+                    type: string
+                hash:
+                    type: string
+                preHash:
+                    type: string
+                accessKey:
+                    type: string
+                accessSecret:
+                    type: string
+                accessToken:
+                    type: string
+                createdIp:
+                    type: string
+                lastSigninTime:
+                    type: string
+                lastSigninIp:
+                    type: string
+                github:
+                    type: string
+                google:
+                    type: string
+                qq:
+                    type: string
+                wechat:
+                    type: string
+                facebook:
+                    type: string
+                dingtalk:
+                    type: string
+                weibo:
+                    type: string
+                gitee:
+                    type: string
+                linkedin:
+                    type: string
+                wecom:
+                    type: string
+                lark:
+                    type: string
+                gitlab:
+                    type: string
+                adfs:
+                    type: string
+                baidu:
+                    type: string
+                alipay:
+                    type: string
+                casdoor:
+                    type: string
+                infoflow:
+                    type: string
+                apple:
+                    type: string
+                azuread:
+                    type: string
+                azureadb2c:
+                    type: string
+                slack:
+                    type: string
+                steam:
+                    type: string
+                bilibili:
+                    type: string
+                okta:
+                    type: string
+                douyin:
+                    type: string
+                line:
+                    type: string
+                amazon:
+                    type: string
+                auth0:
+                    type: string
+                battlenet:
+                    type: string
+                bitbucket:
+                    type: string
+                box:
+                    type: string
+                cloudfoundry:
+                    type: string
+                dailymotion:
+                    type: string
+                deezer:
+                    type: string
+                digitalocean:
+                    type: string
+                discord:
+                    type: string
+                dropbox:
+                    type: string
+                eveonline:
+                    type: string
+                fitbit:
+                    type: string
+                gitea:
+                    type: string
+                heroku:
+                    type: string
+                influxcloud:
+                    type: string
+                instagram:
+                    type: string
+                intercom:
+                    type: string
+                kakao:
+                    type: string
+                lastfm:
+                    type: string
+                mailru:
+                    type: string
+                meetup:
+                    type: string
+                microsoftonline:
+                    type: string
+                naver:
+                    type: string
+                nextcloud:
+                    type: string
+                onedrive:
+                    type: string
+                oura:
+                    type: string
+                patreon:
+                    type: string
+                paypal:
+                    type: string
+                salesforce:
+                    type: string
+                shopify:
+                    type: string
+                soundcloud:
+                    type: string
+                spotify:
+                    type: string
+                strava:
+                    type: string
+                stripe:
+                    type: string
+                tiktok:
+                    type: string
+                tumblr:
+                    type: string
+                twitch:
+                    type: string
+                twitter:
+                    type: string
+                typetalk:
+                    type: string
+                uber:
+                    type: string
+                vk:
+                    type: string
+                wepay:
+                    type: string
+                xero:
+                    type: string
+                yahoo:
+                    type: string
+                yammer:
+                    type: string
+                yandex:
+                    type: string
+                zoom:
+                    type: string
+                metamask:
+                    type: string
+                web3onboard:
+                    type: string
+                custom:
+                    type: string
+                webauthnCredentials:
+                    $ref: '#/components/schemas/google.protobuf.Any'
+                preferredMfaType:
+                    type: string
+                recoveryCodes:
+                    $ref: '#/components/schemas/google.protobuf.Any'
+                totpSecret:
+                    type: string
+                mfaPhoneEnabled:
+                    type: boolean
+                mfaEmailEnabled:
+                    type: boolean
+                invitation:
+                    type: string
+                invitationCode:
+                    type: string
+                faceIds:
+                    $ref: '#/components/schemas/google.protobuf.Any'
+                ldap:
+                    type: string
+                properties:
+                    $ref: '#/components/schemas/api.user.v1.Data_Properties'
+                roles:
+                    $ref: '#/components/schemas/google.protobuf.Any'
+                permissions:
+                    $ref: '#/components/schemas/google.protobuf.Any'
+                groups:
+                    $ref: '#/components/schemas/google.protobuf.Any'
+                lastSigninWrongTime:
+                    type: string
+                signinWrongTimes:
+                    type: integer
+                    format: uint32
+                managedAccounts:
+                    $ref: '#/components/schemas/google.protobuf.Any'
+        api.user.v1.Data_Properties:
             type: object
             properties:
-                userId:
-                    type: integer
-                    format: int32
+                no:
+                    type: string
+                oauthGoogleAvatarUrl:
+                    type: string
+                oauthGoogleDisplayName:
+                    type: string
+                oauthGoogleEmail:
+                    type: string
+                oauthGoogleId:
+                    type: string
+                oauthGoogleUsername:
+                    type: string
+        api.user.v1.GetUserInfoResponse:
+            type: object
+            properties:
+                state:
+                    type: string
+                data:
+                    $ref: '#/components/schemas/api.user.v1.Data'
+        api.user.v1.SigninReply:
+            type: object
+            properties:
+                state:
+                    type: string
+                data:
+                    type: string
+        api.user.v1.SigninRequest:
+            type: object
+            properties:
+                code:
+                    type: string
+                state:
+                    type: string
+        google.protobuf.Any:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
 tags:
     - name: UserService

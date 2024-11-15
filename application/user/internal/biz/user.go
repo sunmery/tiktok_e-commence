@@ -3,26 +3,30 @@ package biz
 import (
 	"context"
 
+	"github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-type UserRequest struct {
-	Email           string
-	Password        string
-	ConfirmPassword string
+type SigninRequest struct {
+	Code  string `json:"code,omitempty"`
+	State string `json:"state,omitempty"`
 }
-type LoginRequest struct {
-	Email    string
-	Password string
+type SigninReply struct {
+	State string `json:"state,omitempty"`
+	Data  string `json:"data,omitempty"`
+}
+type GetUserInfoRequest struct {
+	Authorization string
 }
 
-type UserReply struct {
-	UserId int32
+type GetUserInfoReply struct {
+	State string          `json:"state,omitempty"`
+	Data  casdoorsdk.User `json:"data"`
 }
 
 type UserRepo interface {
-	CreateUser(context.Context, *UserRequest) (*UserReply, error)
-	LoginUser(context.Context, *LoginRequest) (*UserReply, error)
+	Signin(ctx context.Context, req *SigninRequest) (*SigninReply, error)
+	GetUserInfo(ctx context.Context, req *GetUserInfoRequest) (*GetUserInfoReply, error)
 }
 
 type UserUsecase struct {
@@ -37,11 +41,12 @@ func NewUserUsecase(repo UserRepo, logger log.Logger) *UserUsecase {
 	}
 }
 
-func (uc *UserUsecase) CreateUser(ctx context.Context, req *UserRequest) (*UserReply, error) {
-	uc.log.WithContext(ctx).Infof("CreateUser: %v", req)
-	return uc.repo.CreateUser(ctx, req)
+func (cc *UserUsecase) Signin(ctx context.Context, req *SigninRequest) (*SigninReply, error) {
+	cc.log.WithContext(ctx).Infof("Signin request: %+v", req)
+	return cc.repo.Signin(ctx, req)
 }
-func (uc *UserUsecase) LoginUser(ctx context.Context, req *LoginRequest) (*UserReply, error) {
-	uc.log.WithContext(ctx).Infof("LoginUser: %v", req)
-	return uc.repo.LoginUser(ctx, req)
+
+func (cc *UserUsecase) GetUserInfo(ctx context.Context, req *GetUserInfoRequest) (*GetUserInfoReply, error) {
+	cc.log.WithContext(ctx).Infof("GetUserInfo request: %+v", req)
+	return cc.repo.GetUserInfo(ctx, req)
 }

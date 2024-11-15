@@ -40,3 +40,19 @@ message Data {
   Database database = 1;
   Redis redis = 2;
 }
+
+message Casdoor {
+  message Casdoor {
+    message Server {
+      string endpoint = 1;
+      string client_id = 2 [json_name = "client_id"];
+      string client_secret = 3 [json_name = "client_secret"];
+      string organization = 4;
+      string application = 5;
+      string frontend_url = 6 [json_name = "frontend_url"];
+    }
+    string certificate = 1;
+    Server server = 2;
+  }
+  Casdoor casdoor = 1;
+}
