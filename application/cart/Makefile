@@ -49,7 +49,6 @@ generate:
 # generate all
 all:
 	make sqlc
-	make api;
 	make config;
 	make generate;
 

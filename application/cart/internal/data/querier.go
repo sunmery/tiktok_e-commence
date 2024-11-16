@@ -9,25 +9,28 @@ import (
 )
 
 type Querier interface {
-	//CreateCartItem
+	//CreateOrUpdateCartItem
 	//
 	//  WITH cart AS (
 	//      INSERT INTO carts (user_id)
 	//          VALUES ($1)
-	//          ON CONFLICT (user_id) DO UPDATE SET user_id = carts.user_id
-	//          RETURNING id),
-	//       existing_cart AS (SELECT id
-	//                         FROM carts
-	//                         WHERE user_id = $1)
-	//  INSERT
-	//  INTO cart_items (user_id, cart_id, product_id, quantity)
-	//  VALUES ($1,
-	//          (SELECT id FROM cart UNION ALL SELECT id FROM existing_cart LIMIT 1),
-	//          $2,
-	//          $3)
+	//          ON CONFLICT (user_id) DO NOTHING
+	//          RETURNING id
+	//  ),
+	//       existing_cart AS (
+	//           SELECT id FROM carts WHERE user_id = $1
+	//       )
+	//  INSERT INTO cart_items (user_id, cart_id, product_id, quantity)
+	//  VALUES (
+	//             $1,
+	//             COALESCE((SELECT id FROM cart), (SELECT id FROM existing_cart)),
+	//             $2,
+	//             $3
+	//         )
 	//  ON CONFLICT (cart_id, product_id) DO UPDATE
 	//      SET quantity = cart_items.quantity + EXCLUDED.quantity
-	CreateCartItem(ctx context.Context, arg CreateCartItemParams) error
+	//  RETURNING id, user_id, cart_id, product_id, quantity, created_at, updated_at
+	CreateOrUpdateCartItem(ctx context.Context, arg CreateOrUpdateCartItemParams) (CartItems, error)
 	//DeleteCart
 	//
 	//  DELETE
@@ -56,9 +59,9 @@ type Querier interface {
 	//         ci.quantity
 	//  FROM carts c
 	//           INNER JOIN
-	//       carts.cart_items ci ON c.user_id = ci.user_id
+	//       cart_items ci ON c.user_id = ci.user_id
 	//           INNER JOIN
-	//       products.products p ON ci.id = p.id
+	//       products.products p ON ci.product_id = p.id
 	//  WHERE c.user_id = $1
 	//  ORDER BY ci.created_at
 	GetCart(ctx context.Context, userID *string) ([]GetCartRow, error)

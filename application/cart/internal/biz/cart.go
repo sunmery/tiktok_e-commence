@@ -59,7 +59,7 @@ func NewCartUsecase(repo CartRepo, logger log.Logger) *CartUsecase {
 
 // CreateCartItem 创建购物车商品
 func (uc *CartUsecase) CreateCartItem(ctx context.Context, req *CreateCartItemRequest) (*CreateCartItemReply, error) {
-	// uc.log.WithContext(ctx).Infof("CreateCart: %v", req)
+	uc.log.WithContext(ctx).Infof("CreateCart: %v", req)
 	return uc.repo.CreateCartItem(ctx, req)
 }
 

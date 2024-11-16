@@ -9,52 +9,68 @@ import (
 	"context"
 )
 
-const CreateCartItem = `-- name: CreateCartItem :exec
+const CreateOrUpdateCartItem = `-- name: CreateOrUpdateCartItem :one
 WITH cart AS (
     INSERT INTO carts (user_id)
         VALUES ($1)
-        ON CONFLICT (user_id) DO UPDATE SET user_id = carts.user_id
-        RETURNING id),
-     existing_cart AS (SELECT id
-                       FROM carts
-                       WHERE user_id = $1)
-INSERT
-INTO cart_items (user_id, cart_id, product_id, quantity)
-VALUES ($1,
-        (SELECT id FROM cart UNION ALL SELECT id FROM existing_cart LIMIT 1),
-        $2,
-        $3)
+        ON CONFLICT (user_id) DO NOTHING
+        RETURNING id
+),
+     existing_cart AS (
+         SELECT id FROM carts WHERE user_id = $1
+     )
+INSERT INTO cart_items (user_id, cart_id, product_id, quantity)
+VALUES (
+           $1,
+           COALESCE((SELECT id FROM cart), (SELECT id FROM existing_cart)),
+           $2,
+           $3
+       )
 ON CONFLICT (cart_id, product_id) DO UPDATE
     SET quantity = cart_items.quantity + EXCLUDED.quantity
+RETURNING id, user_id, cart_id, product_id, quantity, created_at, updated_at
 `
 
-type CreateCartItemParams struct {
+type CreateOrUpdateCartItemParams struct {
 	UserID    string `json:"UserID"`
 	ProductID int32  `json:"ProductID"`
 	Quantity  int32  `json:"Quantity"`
 }
 
-// CreateCartItem
+// CreateOrUpdateCartItem
 //
 //	WITH cart AS (
 //	    INSERT INTO carts (user_id)
 //	        VALUES ($1)
-//	        ON CONFLICT (user_id) DO UPDATE SET user_id = carts.user_id
-//	        RETURNING id),
-//	     existing_cart AS (SELECT id
-//	                       FROM carts
-//	                       WHERE user_id = $1)
-//	INSERT
-//	INTO cart_items (user_id, cart_id, product_id, quantity)
-//	VALUES ($1,
-//	        (SELECT id FROM cart UNION ALL SELECT id FROM existing_cart LIMIT 1),
-//	        $2,
-//	        $3)
+//	        ON CONFLICT (user_id) DO NOTHING
+//	        RETURNING id
+//	),
+//	     existing_cart AS (
+//	         SELECT id FROM carts WHERE user_id = $1
+//	     )
+//	INSERT INTO cart_items (user_id, cart_id, product_id, quantity)
+//	VALUES (
+//	           $1,
+//	           COALESCE((SELECT id FROM cart), (SELECT id FROM existing_cart)),
+//	           $2,
+//	           $3
+//	       )
 //	ON CONFLICT (cart_id, product_id) DO UPDATE
 //	    SET quantity = cart_items.quantity + EXCLUDED.quantity
-func (q *Queries) CreateCartItem(ctx context.Context, arg CreateCartItemParams) error {
-	_, err := q.db.Exec(ctx, CreateCartItem, arg.UserID, arg.ProductID, arg.Quantity)
-	return err
+//	RETURNING id, user_id, cart_id, product_id, quantity, created_at, updated_at
+func (q *Queries) CreateOrUpdateCartItem(ctx context.Context, arg CreateOrUpdateCartItemParams) (CartItems, error) {
+	row := q.db.QueryRow(ctx, CreateOrUpdateCartItem, arg.UserID, arg.ProductID, arg.Quantity)
+	var i CartItems
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.CartID,
+		&i.ProductID,
+		&i.Quantity,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const DeleteCart = `-- name: DeleteCart :one
@@ -131,9 +147,9 @@ SELECT c.user_id,
        ci.quantity
 FROM carts c
          INNER JOIN
-     carts.cart_items ci ON c.user_id = ci.user_id
+     cart_items ci ON c.user_id = ci.user_id
          INNER JOIN
-     products.products p ON ci.id = p.id
+     products.products p ON ci.product_id = p.id
 WHERE c.user_id = $1
 ORDER BY ci.created_at
 `
@@ -161,9 +177,9 @@ type GetCartRow struct {
 //	       ci.quantity
 //	FROM carts c
 //	         INNER JOIN
-//	     carts.cart_items ci ON c.user_id = ci.user_id
+//	     cart_items ci ON c.user_id = ci.user_id
 //	         INNER JOIN
-//	     products.products p ON ci.id = p.id
+//	     products.products p ON ci.product_id = p.id
 //	WHERE c.user_id = $1
 //	ORDER BY ci.created_at
 func (q *Queries) GetCart(ctx context.Context, userID *string) ([]GetCartRow, error) {

@@ -28,25 +28,25 @@ service CartService {
 }
 
 message CartItem {
-	uint32 product_id = 1;
+	uint32 product_id = 1 [json_name = "product_id" ];
 	int32  quantity = 2;
 }
 
 message AddItemReq {
-	string user_id = 1;
+	string user_id = 1 [json_name = "user_id" ];
 	CartItem item = 2;
 }
 
 message AddItemResp {}
 
 message EmptyCartReq {
-	string user_id = 1;
+	string user_id = 1 [json_name = "user_id" ];
 }
 
 message EmptyCartResp {}
 
 message GetCartReq {
-	string user_id = 1;
+	string user_id = 1 [json_name = "user_id" ];
 }
 
 message GetCartResp {
@@ -54,6 +54,6 @@ message GetCartResp {
 }
 
 message Cart {
-	string user_id = 1;
+	string user_id = 1 [json_name = "user_id" ];
 	repeated CartItem items = 2;
 }

@@ -13,7 +13,7 @@ CREATE TABLE carts
 CREATE TABLE cart_items
 (
     id         SERIAL PRIMARY KEY,
-    user_id    VARCHAR(100) UNIQUE         NOT NULL,
+    user_id    VARCHAR(100)                NOT NULL,
     cart_id    INT                         NOT NULL, -- 添加 cart_id 外键关联到购物车
     product_id INT                         NOT NULL,
     quantity   INT                         NOT NULL,
@@ -28,7 +28,8 @@ CREATE INDEX idx_carts_id ON carts (id);
 CREATE INDEX idx_carts_user_id ON carts (user_id);
 
 ALTER TABLE public.user
-    ADD CONSTRAINT idx_user_id UNIQUE (id);
+    ADD
+        CONSTRAINT idx_user_id UNIQUE (id);
 
 -- 关联用户表的id
 ALTER TABLE carts

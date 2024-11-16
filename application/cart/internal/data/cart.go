@@ -12,7 +12,7 @@ type cartRepo struct {
 }
 
 func (c *cartRepo) CreateCartItem(ctx context.Context, req *biz.CreateCartItemRequest) (*biz.CreateCartItemReply, error) {
-	err := c.data.CreateCartItem(ctx, CreateCartItemParams{
+	result, err := c.data.CreateOrUpdateCartItem(ctx, CreateOrUpdateCartItemParams{
 		UserID:    req.UserId,
 		ProductID: int32(req.CartItem.ProductId),
 		Quantity:  int32(req.CartItem.Quantity),
@@ -20,6 +20,7 @@ func (c *cartRepo) CreateCartItem(ctx context.Context, req *biz.CreateCartItemRe
 	if err != nil {
 		return nil, err
 	}
+	log.Infof("result: '%+v'", result)
 	return &biz.CreateCartItemReply{}, nil
 }
 
