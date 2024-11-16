@@ -1,16 +1,54 @@
 server:
   http:
-    addr: 0.0.0.0:30004
-    timeout: 15s
+    addr: 0.0.0.0:30001
+    timeout: 1s
   grpc:
-    addr: 0.0.0.0:3006
-    timeout: 15s
-
+    addr: 0.0.0.0:30002
+    timeout: 1s
 data:
   database:
-    source: postgresql://postgres:postgres@localhost:5432/tiktok?sslmode=disable
+    source: postgresql://postgres:postgres@localhost:5432/tiktok?sslmode=disable&search_path=users
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 4.2s
     write_timeout: 4.2s
     dial_timeout: 4s
+
+casdoor:
+  certificate: |
+    -----BEGIN CERTIFICATE-----
+    MIIE2TCCAsGgAwIBAgIDAeJAMA0GCSqGSIb3DQEBCwUAMCYxDjAMBgNVBAoTBWFk
+    bWluMRQwEgYDVQQDDAtjZXJ0X2ljMHdkbzAeFw0yNDExMTYwNDA4MTNaFw00NDEx
+    MTYwNDA4MTNaMCYxDjAMBgNVBAoTBWFkbWluMRQwEgYDVQQDDAtjZXJ0X2ljMHdk
+    bzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAMMxACjaPRHdezxEbaeu
+    9t2egoUtzpVVHjXsMxc1l64QectaAqC4uosM2saeTJtV2ABB8zEwbzn8WdlzW8YT
+    7c6KqulqMro0z1x+tACGzrTkADLCgi86xQtnWwocSEIEnmesKVaS3qv9fcBXuBZv
+    dbALLxNuEoC7/RvguGs/3A2zbG/41Q8aGk8UXFbP6GASO/aAaopxwyyxeap3kTsN
+    y1blc7GroLq11nFyV2cLt88Atii20eVVyFrrtEGDjvjHgLM8wTGQIJc6Ysfq4qEJ
+    rrtkUjGgMsPJ4CRspO0VXgD7yljRYvjr5VWUVa2h6GlX+j8N47D0K9f7KKh3Fpbx
+    oWh7X8o2Jm0AYvkq/Bj/SgEA9TVh7Olvxzf9moqBGf5Pr4ARYuqQkFBAabnkxCGe
+    kwZk2DKAB0f9iN1KLfEtZAp5kWkC32XTzYwAlIZwNxJIQU1YctPVqB2uAtI/fTPF
+    z83D4CRjMIrkTARtPceky35cnnGKp4imIjrQsdXc1klWEtvb5fmWjd/C2by6FigA
+    5tbDpGxxzYoe+9srZCD2V50Ri3mHXMZ2t4pEyo/EjaOqHDs/71m/7UlhHLjWudw+
+    QQna7a3VL843IBnCoZR1i8ruCHBh61043fI9Bj5Htx1/dHAmc9TsMHIITMgXYg7i
+    QwV2IDJsKSRVqjFr5rzlD9PHAgMBAAGjEDAOMAwGA1UdEwEB/wQCMAAwDQYJKoZI
+    hvcNAQELBQADggIBALvjLqK5GS+pnWw1hKOmj8Pis4F5UOlxEgqH8MXQkPpDRVe4
+    k7dtMolfT6LQCIntQp52nw7L0drItyyfRjnRe4FAaTzDG1rA6wLerG9idulVOwJE
+    5fwCaReqasMiZJGMcaLNkcs//byspsAQv6NypFLw/lJ/KfLelxhSt71il1eCDRPE
+    TXRvnTc3Ip0c8Q/Wt4pIvzoeTuKCNXskMJTuug5YbJO8Rc2Kixiid9bbl/UgeMDC
+    mhBwYqNk8b5D10R1fy+VFxSRMSsBcx5Lj2XEuc+TJNuZ3SkDJV4wmVLnIM87X1Sp
+    Q0te6GAq1ECQAwE35pi5aIPWfQdwxEp9SJpsyzRhr5HKUkJjXLbUtP0wPDneBAU7
+    wG9/FbWIUDaJbPhBl3srX8tu4wm2AFMqpAwdTD4HNc3vfpvkNGjzizG7af7E9Q+w
+    luolpu9tXoc2uN9aGFP2Mo6k3wlJVAma2UEcGgBx0yIjG3vyakAJGQInx+9BEaWe
+    St5v377XgqYWScCdUo1PXsQAfJ8/r7oQ8SrWk5BBOjXVwdEDNoJkLKhzqsQPB/u/
+    F/Blh8zz//nenuAt4dXxoS1/NM0+0C6yMBnO0g09czkOirTojuDrbKhqBA0w08Fw
+    ZA0OD+7IUBDyXMGhDYS1hil31rLTnNWa+si2xvO3DGEcL4Iw5li+/0J29lSg
+    -----END CERTIFICATE-----
+  server:
+    # casdoor url
+    endpoint: "http://localhost:8000"
+    client_id: "58ae47eed5903ca1c3ce"
+    client_secret: "d092bd2b51a075fe7a790e01e8a2b1a8176a2d40"
+    organization: "tiktok"
+    application: "e-commence"
+    frontend_url: "http://localhost:3000"

@@ -42,9 +42,8 @@ func (u *userRepo) GetUserInfo(ctx context.Context, req *biz.GetUserInfoRequest)
 		return nil, fmt.Errorf("token is not valid Bearer token : %s", authHeader)
 	}
 
-	fmt.Printf("token:%v", token)
 	claims, err := u.data.cs.ParseJwtToken(token[1])
-	fmt.Printf("claims%v", claims)
+	fmt.Printf("claims%+v", claims)
 	if err != nil {
 		return nil, fmt.Errorf("ParseJwtToken() error")
 	}

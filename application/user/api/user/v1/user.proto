@@ -27,13 +27,13 @@ service UserService {
 }
 
 message SigninRequest {
-	string code = 1;
-	string state = 2;
+	string code = 1 [json_name = "code"];
+	string state = 2 [json_name = "state"];
 }
 
 message SigninReply {
-	string state = 1;
-	string data = 2;
+	string state = 1 [json_name = "state"];
+	string data = 2 [json_name = "data"];
 }
 
 message GetUserInfoRequest {
