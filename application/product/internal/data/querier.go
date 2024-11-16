@@ -15,6 +15,13 @@ type Querier interface {
 	//  VALUES ($1, $2, $3, $4, $5)
 	//  RETURNING id, name, description, picture, price, categories
 	CreateProduct(ctx context.Context, arg CreateProductParams) (Products, error)
+	//GetProduct
+	//
+	//  SELECT id, name, description, picture, price, categories
+	//  FROM products
+	//  WHERE id = $1
+	//  LIMIT 1
+	GetProduct(ctx context.Context, id int32) (Products, error)
 	//ListProducts
 	//
 	//  SELECT id,
@@ -28,6 +35,12 @@ type Querier interface {
 	//  ORDER BY id
 	//  OFFSET $2 LIMIT $3
 	ListProducts(ctx context.Context, arg ListProductsParams) ([]Products, error)
+	//SearchProducts
+	//
+	//  SELECT id, name, description, picture, price, categories
+	//  FROM products
+	//  WHERE name = $1
+	SearchProducts(ctx context.Context, name string) ([]Products, error)
 }
 
 var _ Querier = (*Queries)(nil)

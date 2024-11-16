@@ -24,12 +24,12 @@ service ProductCatalogService {
 	}
 	rpc GetProduct(GetProductReq) returns (GetProductResp) {
 		option (google.api.http) = {
-			get: "/v1/product/{id}"
+			get: "/v1/products/{id}"
 		};
 	}
 	rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {
 		option (google.api.http) = {
-			get: "/v1/products/search"
+			get: "/v1/products/search/{query}"
 		};
 	}
 }
@@ -58,9 +58,9 @@ message CreateProductReply {
 
 message ListProductsReq{
 	int32 page = 1;
-	int64 pageSize = 2;
+	int64 pageSize = 2 [json_name = "page_size"];
 
-	string categoryName = 3;
+	string categoryName = 3 [json_name = "category_name"];
 }
 
 message ListProductsResp {

@@ -48,6 +48,33 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 	return i, err
 }
 
+const GetProduct = `-- name: GetProduct :one
+SELECT id, name, description, picture, price, categories
+FROM products
+WHERE id = $1
+LIMIT 1
+`
+
+// GetProduct
+//
+//	SELECT id, name, description, picture, price, categories
+//	FROM products
+//	WHERE id = $1
+//	LIMIT 1
+func (q *Queries) GetProduct(ctx context.Context, id int32) (Products, error) {
+	row := q.db.QueryRow(ctx, GetProduct, id)
+	var i Products
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.Picture,
+		&i.Price,
+		&i.Categories,
+	)
+	return i, err
+}
+
 const ListProducts = `-- name: ListProducts :many
 SELECT id,
        name,
@@ -81,6 +108,44 @@ type ListProductsParams struct {
 //	OFFSET $2 LIMIT $3
 func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]Products, error) {
 	rows, err := q.db.Query(ctx, ListProducts, arg.CategoryName, arg.Page, arg.PageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Products{}
+	for rows.Next() {
+		var i Products
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Picture,
+			&i.Price,
+			&i.Categories,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const SearchProducts = `-- name: SearchProducts :many
+SELECT id, name, description, picture, price, categories
+FROM products
+WHERE name = $1
+`
+
+// SearchProducts
+//
+//	SELECT id, name, description, picture, price, categories
+//	FROM products
+//	WHERE name = $1
+func (q *Queries) SearchProducts(ctx context.Context, name string) ([]Products, error) {
+	rows, err := q.db.Query(ctx, SearchProducts, name)
 	if err != nil {
 		return nil, err
 	}

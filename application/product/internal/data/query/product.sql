@@ -14,3 +14,14 @@ FROM products
 WHERE sqlc.arg(category_name) = ANY (categories)
 ORDER BY id
 OFFSET sqlc.arg(page) LIMIT sqlc.arg(page_size);
+
+-- name: GetProduct :one
+SELECT *
+FROM products
+WHERE id = sqlc.arg(id)
+LIMIT 1;
+
+-- name: SearchProducts :many
+SELECT *
+FROM products
+WHERE name = sqlc.arg(name);

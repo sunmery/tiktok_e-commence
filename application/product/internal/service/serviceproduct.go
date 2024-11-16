@@ -13,8 +13,24 @@ type ProductService struct {
 }
 
 func (s *ProductService) SearchProducts(ctx context.Context, req *pb.SearchProductsReq) (*pb.SearchProductsResp, error) {
-	// TODO implement me
-	panic("implement me")
+	products, err := s.ps.SearchProducts(ctx, &biz.SearchProductsReq{Query: req.GetQuery()})
+	if err != nil {
+		return nil, err
+	}
+	pbProduct := make([]*pb.Product, len(products.Result))
+	for i, product := range products.Result {
+		pbProduct[i] = &pb.Product{
+			Id:          product.Id,
+			Name:        product.Name,
+			Description: product.Description,
+			Picture:     product.Picture,
+			Price:       product.Price,
+			Categories:  product.Categories,
+		}
+	}
+	return &pb.SearchProductsResp{
+		Results: pbProduct,
+	}, nil
 }
 
 func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductReply, error) {
@@ -66,8 +82,18 @@ func (s *ProductService) ListProducts(ctx context.Context, req *pb.ListProductsR
 }
 
 func (s *ProductService) GetProduct(ctx context.Context, req *pb.GetProductReq) (*pb.GetProductResp, error) {
-	// TODO implement me
-	panic("implement me")
+	product, err := s.ps.GetProduct(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetProductResp{Product: &pb.Product{
+		Id:          product.Product.Id,
+		Name:        product.Product.Name,
+		Description: product.Product.Description,
+		Picture:     product.Product.Picture,
+		Price:       product.Product.Price,
+		Categories:  product.Product.Categories,
+	}}, nil
 }
 
 func NewServiceProductService(ps *biz.ProductUsecase) *ProductService {

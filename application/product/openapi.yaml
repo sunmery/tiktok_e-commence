@@ -6,25 +6,6 @@ info:
     title: ProductCatalogService API
     version: 0.0.1
 paths:
-    /v1/product/{id}:
-        get:
-            tags:
-                - ProductCatalogService
-            operationId: ProductCatalogService_GetProduct
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: uint32
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/api.product.v1.GetProductResp'
     /v1/products:
         get:
             tags:
@@ -36,11 +17,11 @@ paths:
                   schema:
                     type: integer
                     format: int32
-                - name: pageSize
+                - name: page_size
                   in: query
                   schema:
                     type: string
-                - name: categoryName
+                - name: category_name
                   in: query
                   schema:
                     type: string
@@ -68,14 +49,15 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.product.v1.CreateProductReply'
-    /v1/products/search:
+    /v1/products/search/{query}:
         get:
             tags:
                 - ProductCatalogService
             operationId: ProductCatalogService_SearchProducts
             parameters:
                 - name: query
-                  in: query
+                  in: path
+                  required: true
                   schema:
                     type: string
             responses:
@@ -85,6 +67,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.product.v1.SearchProductsResp'
+    /v1/products/{id}:
+        get:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_GetProduct
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.GetProductResp'
 components:
     schemas:
         api.product.v1.CreateProductReply:

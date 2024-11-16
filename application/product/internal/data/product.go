@@ -61,14 +61,40 @@ func (p *productRepo) ListProducts(ctx context.Context, req *biz.ListProductsReq
 	}, nil
 }
 
-func (p *productRepo) GetProductReq(ctx context.Context, id uint32) (*biz.GetProductResp, error) {
-	// TODO implement me
-	panic("implement me")
+func (p *productRepo) GetProduct(ctx context.Context, id uint32) (*biz.GetProductResp, error) {
+	product, err := p.data.GetProduct(ctx, int32(id))
+	if err != nil {
+		return nil, err
+	}
+	return &biz.GetProductResp{Product: &biz.Product{
+		Id:          uint32(product.ID),
+		Name:        product.Name,
+		Description: product.Description,
+		Picture:     product.Picture,
+		Price:       product.Price,
+		Categories:  product.Categories,
+	}}, nil
 }
 
 func (p *productRepo) SearchProducts(ctx context.Context, req *biz.SearchProductsReq) (*biz.SearchProductsResp, error) {
-	// TODO implement me
-	panic("implement me")
+	products, err := p.data.SearchProducts(ctx, req.Query)
+	if err != nil {
+		return nil, err
+	}
+	productsResp := make([]*biz.Product, len(products))
+	for i, product := range products {
+		productsResp[i] = &biz.Product{
+			Id:          uint32(product.ID),
+			Name:        product.Name,
+			Description: product.Description,
+			Picture:     product.Picture,
+			Price:       product.Price,
+			Categories:  product.Categories,
+		}
+	}
+	return &biz.SearchProductsResp{
+		Result: productsResp,
+	}, nil
 }
 
 // NewProductRepo .

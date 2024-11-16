@@ -45,14 +45,14 @@ type SearchProductsReq struct {
 	Query string `json:"query"`
 }
 type SearchProductsResp struct {
-	Result Product `json:"result"`
+	Result []*Product `json:"result"`
 }
 
 // ProductRepo is a Greater repo.
 type ProductRepo interface {
 	CreateProduct(ctx context.Context, req *CreateProductRequest) (*CreateProductReply, error)
 	ListProducts(ctx context.Context, req *ListProductsReq) (*ListProductsResp, error)
-	GetProductReq(ctx context.Context, id uint32) (*GetProductResp, error)
+	GetProduct(ctx context.Context, id uint32) (*GetProductResp, error)
 	SearchProducts(ctx context.Context, req *SearchProductsReq) (*SearchProductsResp, error)
 }
 
@@ -77,9 +77,9 @@ func (uc *ProductUsecase) ListProducts(ctx context.Context, req *ListProductsReq
 	return uc.repo.ListProducts(ctx, req)
 }
 
-func (uc *ProductUsecase) GetProductReq(ctx context.Context, id uint32) (*GetProductResp, error) {
+func (uc *ProductUsecase) GetProduct(ctx context.Context, id uint32) (*GetProductResp, error) {
 	uc.log.WithContext(ctx).Infof("GetProductReq: %v", id)
-	return uc.repo.GetProductReq(ctx, id)
+	return uc.repo.GetProduct(ctx, id)
 }
 
 func (uc *ProductUsecase) SearchProducts(ctx context.Context, req *SearchProductsReq) (*SearchProductsResp, error) {

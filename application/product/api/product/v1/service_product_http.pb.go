@@ -35,8 +35,8 @@ func RegisterProductCatalogServiceHTTPServer(s *http.Server, srv ProductCatalogS
 	r := s.Route("/")
 	r.POST("/v1/products", _ProductCatalogService_CreateProduct0_HTTP_Handler(srv))
 	r.GET("/v1/products", _ProductCatalogService_ListProducts0_HTTP_Handler(srv))
-	r.GET("/v1/product/{id}", _ProductCatalogService_GetProduct0_HTTP_Handler(srv))
-	r.GET("/v1/products/search", _ProductCatalogService_SearchProducts0_HTTP_Handler(srv))
+	r.GET("/v1/products/{id}", _ProductCatalogService_GetProduct0_HTTP_Handler(srv))
+	r.GET("/v1/products/search/{query}", _ProductCatalogService_SearchProducts0_HTTP_Handler(srv))
 }
 
 func _ProductCatalogService_CreateProduct0_HTTP_Handler(srv ProductCatalogServiceHTTPServer) func(ctx http.Context) error {
@@ -108,6 +108,9 @@ func _ProductCatalogService_SearchProducts0_HTTP_Handler(srv ProductCatalogServi
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
 		http.SetOperation(ctx, OperationProductCatalogServiceSearchProducts)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.SearchProducts(ctx, req.(*SearchProductsReq))
@@ -151,7 +154,7 @@ func (c *ProductCatalogServiceHTTPClientImpl) CreateProduct(ctx context.Context,
 
 func (c *ProductCatalogServiceHTTPClientImpl) GetProduct(ctx context.Context, in *GetProductReq, opts ...http.CallOption) (*GetProductResp, error) {
 	var out GetProductResp
-	pattern := "/v1/product/{id}"
+	pattern := "/v1/products/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductCatalogServiceGetProduct))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -177,7 +180,7 @@ func (c *ProductCatalogServiceHTTPClientImpl) ListProducts(ctx context.Context, 
 
 func (c *ProductCatalogServiceHTTPClientImpl) SearchProducts(ctx context.Context, in *SearchProductsReq, opts ...http.CallOption) (*SearchProductsResp, error) {
 	var out SearchProductsResp
-	pattern := "/v1/products/search"
+	pattern := "/v1/products/search/{query}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductCatalogServiceSearchProducts))
 	opts = append(opts, http.PathTemplate(pattern))
