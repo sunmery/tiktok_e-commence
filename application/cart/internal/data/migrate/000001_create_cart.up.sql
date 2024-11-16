@@ -5,7 +5,7 @@ SET search_path TO carts;
 CREATE TABLE carts
 (
     id         SERIAL PRIMARY KEY,
-    user_id    INT UNIQUE                  NOT NULL,
+    user_id    VARCHAR(100) UNIQUE         NOT NULL,
     created_at timestamptz DEFAULT (now()) NOT NULL,
     updated_at timestamptz DEFAULT (now()) NOT NULL
 );
@@ -13,7 +13,7 @@ CREATE TABLE carts
 CREATE TABLE cart_items
 (
     id         SERIAL PRIMARY KEY,
-    user_id    INT                  NOT NULL,
+    user_id    VARCHAR(100) UNIQUE         NOT NULL,
     cart_id    INT                         NOT NULL, -- 添加 cart_id 外键关联到购物车
     product_id INT                         NOT NULL,
     quantity   INT                         NOT NULL,
@@ -25,17 +25,20 @@ CREATE TABLE cart_items
 CREATE INDEX idx_carts_id ON carts (id);
 
 -- 加速通过用户查询购物车的操作
-CREATE INDEX idx_user_id ON carts (user_id);
+CREATE INDEX idx_carts_user_id ON carts (user_id);
+
+ALTER TABLE public.user
+    ADD CONSTRAINT idx_user_id UNIQUE (id);
 
 -- 关联用户表的id
--- ALTER TABLE carts
---     ADD
---         FOREIGN KEY (user_id) REFERENCES users.user (id);
---
--- -- 关联用户表的id
--- ALTER TABLE cart_items
---     ADD
---         FOREIGN KEY (user_id) REFERENCES users.user (id);
+ALTER TABLE carts
+    ADD
+        FOREIGN KEY (user_id) REFERENCES public.user (id);
+
+-- 关联用户表的id
+ALTER TABLE cart_items
+    ADD
+        FOREIGN KEY (user_id) REFERENCES public.user (id);
 
 -- 每个购物车中只能有一个特定的商品（即一个 cart_id 对应多个商品，但每个商品只能出现一次
 ALTER TABLE cart_items

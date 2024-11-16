@@ -13,7 +13,7 @@ type cartRepo struct {
 
 func (c *cartRepo) CreateCartItem(ctx context.Context, req *biz.CreateCartItemRequest) (*biz.CreateCartItemReply, error) {
 	err := c.data.CreateCartItem(ctx, CreateCartItemParams{
-		UserID:    int32(req.UserId),
+		UserID:    req.UserId,
 		ProductID: int32(req.CartItem.ProductId),
 		Quantity:  int32(req.CartItem.Quantity),
 	})
@@ -38,14 +38,14 @@ func (c *cartRepo) GetCart(ctx context.Context, req *biz.GetCartRequest) (*biz.G
 	}
 	return &biz.GetCartReply{
 		Cart: biz.Cart{
-			UserId: 0,
+			UserId: "",
 			Items:  carts,
 		},
 	}, nil
 }
 
 func (c *cartRepo) EmptyCart(ctx context.Context, req *biz.EmptyCartRequest) (*biz.EmptyCartReply, error) {
-	_, err := c.data.DeleteCart(ctx, int32(req.UserId))
+	_, err := c.data.DeleteCart(ctx, req.UserId)
 	if err != nil {
 		return nil, err
 	}

@@ -38,7 +38,7 @@ func (s *CartService) EmptyCart(ctx context.Context, req *pb.EmptyCartReq) (*pb.
 	return &pb.EmptyCartResp{}, nil
 }
 func (s *CartService) GetCart(ctx context.Context, req *pb.GetCartReq) (*pb.GetCartResp, error) {
-	cart, err := s.cs.GetCart(ctx, &biz.GetCartRequest{UserId: int32(req.UserId)})
+	cart, err := s.cs.GetCart(ctx, &biz.GetCartRequest{UserId: req.UserId})
 	if err != nil {
 		return nil, err
 	}

@@ -10,7 +10,7 @@ import (
 
 type CartItems struct {
 	ID        int32     `json:"ID"`
-	UserID    int32     `json:"UserID"`
+	UserID    string    `json:"UserID"`
 	CartID    int32     `json:"CartID"`
 	ProductID int32     `json:"ProductID"`
 	Quantity  int32     `json:"Quantity"`
@@ -20,7 +20,7 @@ type CartItems struct {
 
 type Carts struct {
 	ID        int32     `json:"ID"`
-	UserID    int32     `json:"UserID"`
+	UserID    string    `json:"UserID"`
 	CreatedAt time.Time `json:"CreatedAt"`
 	UpdatedAt time.Time `json:"UpdatedAt"`
 }

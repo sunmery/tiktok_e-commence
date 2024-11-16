@@ -29,9 +29,9 @@ ON CONFLICT (cart_id, product_id) DO UPDATE
 `
 
 type CreateCartItemParams struct {
-	UserID    int32 `json:"UserID"`
-	ProductID int32 `json:"ProductID"`
-	Quantity  int32 `json:"Quantity"`
+	UserID    string `json:"UserID"`
+	ProductID int32  `json:"ProductID"`
+	Quantity  int32  `json:"Quantity"`
 }
 
 // CreateCartItem
@@ -70,7 +70,7 @@ RETURNING id, user_id, created_at, updated_at
 //	FROM carts
 //	WHERE user_id = $1
 //	RETURNING id, user_id, created_at, updated_at
-func (q *Queries) DeleteCart(ctx context.Context, userID int32) (Carts, error) {
+func (q *Queries) DeleteCart(ctx context.Context, userID string) (Carts, error) {
 	row := q.db.QueryRow(ctx, DeleteCart, userID)
 	var i Carts
 	err := row.Scan(
@@ -92,9 +92,9 @@ RETURNING id, user_id, cart_id, product_id, quantity, created_at, updated_at
 `
 
 type DeleteCartItemParams struct {
-	UserID    int32 `json:"UserID"`
-	CartID    int32 `json:"CartID"`
-	ProductID int32 `json:"ProductID"`
+	UserID    string `json:"UserID"`
+	CartID    int32  `json:"CartID"`
+	ProductID int32  `json:"ProductID"`
 }
 
 // DeleteCartItem
@@ -131,7 +131,7 @@ SELECT c.user_id,
        ci.quantity
 FROM carts c
          INNER JOIN
-     cart_items ci ON c.user_id = ci.user_id
+     carts.cart_items ci ON c.user_id = ci.user_id
          INNER JOIN
      products.products p ON ci.id = p.id
 WHERE c.user_id = $1
@@ -139,7 +139,7 @@ ORDER BY ci.created_at
 `
 
 type GetCartRow struct {
-	UserID      int32    `json:"UserID"`
+	UserID      string   `json:"UserID"`
 	Name        string   `json:"Name"`
 	Description string   `json:"Description"`
 	Price       float32  `json:"Price"`
@@ -161,12 +161,12 @@ type GetCartRow struct {
 //	       ci.quantity
 //	FROM carts c
 //	         INNER JOIN
-//	     cart_items ci ON c.user_id = ci.user_id
+//	     carts.cart_items ci ON c.user_id = ci.user_id
 //	         INNER JOIN
 //	     products.products p ON ci.id = p.id
 //	WHERE c.user_id = $1
 //	ORDER BY ci.created_at
-func (q *Queries) GetCart(ctx context.Context, userID *int32) ([]GetCartRow, error) {
+func (q *Queries) GetCart(ctx context.Context, userID *string) ([]GetCartRow, error) {
 	rows, err := q.db.Query(ctx, GetCart, userID)
 	if err != nil {
 		return nil, err

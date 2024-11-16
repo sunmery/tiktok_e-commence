@@ -33,20 +33,20 @@ message CartItem {
 }
 
 message AddItemReq {
-	uint32 user_id = 1;
+	string user_id = 1;
 	CartItem item = 2;
 }
 
 message AddItemResp {}
 
 message EmptyCartReq {
-	uint32 user_id = 1;
+	string user_id = 1;
 }
 
 message EmptyCartResp {}
 
 message GetCartReq {
-	uint32 user_id = 1;
+	string user_id = 1;
 }
 
 message GetCartResp {
@@ -54,6 +54,6 @@ message GetCartResp {
 }
 
 message Cart {
-	uint32 user_id = 1;
+	string user_id = 1;
 	repeated CartItem items = 2;
 }

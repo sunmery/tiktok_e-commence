@@ -34,8 +34,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -52,8 +51,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -67,8 +65,7 @@ components:
             type: object
             properties:
                 userId:
-                    type: integer
-                    format: uint32
+                    type: string
                 item:
                     $ref: '#/components/schemas/api.cart.v1.CartItem'
         api.cart.v1.AddItemResp:
@@ -78,8 +75,7 @@ components:
             type: object
             properties:
                 userId:
-                    type: integer
-                    format: uint32
+                    type: string
                 items:
                     type: array
                     items:

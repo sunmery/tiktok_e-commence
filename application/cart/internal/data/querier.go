@@ -34,7 +34,7 @@ type Querier interface {
 	//  FROM carts
 	//  WHERE user_id = $1
 	//  RETURNING id, user_id, created_at, updated_at
-	DeleteCart(ctx context.Context, userID int32) (Carts, error)
+	DeleteCart(ctx context.Context, userID string) (Carts, error)
 	//DeleteCartItem
 	//
 	//  DELETE
@@ -56,12 +56,12 @@ type Querier interface {
 	//         ci.quantity
 	//  FROM carts c
 	//           INNER JOIN
-	//       cart_items ci ON c.user_id = ci.user_id
+	//       carts.cart_items ci ON c.user_id = ci.user_id
 	//           INNER JOIN
 	//       products.products p ON ci.id = p.id
 	//  WHERE c.user_id = $1
 	//  ORDER BY ci.created_at
-	GetCart(ctx context.Context, userID *int32) ([]GetCartRow, error)
+	GetCart(ctx context.Context, userID *string) ([]GetCartRow, error)
 }
 
 var _ Querier = (*Queries)(nil)

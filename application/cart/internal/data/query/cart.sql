@@ -39,11 +39,11 @@ SELECT c.user_id,
        p.categories,
        ci.product_id,
        ci.quantity
-FROM carts. c
+FROM carts c
          INNER JOIN
-     cart_items ci ON c.user_id = ci.user_id
+     carts.cart_items ci ON c.user_id = ci.user_id
          INNER JOIN
-     products p ON ci.id = p.id
+     products.products p ON ci.id = p.id
 WHERE c.user_id = sqlc.arg(user_id)
 ORDER BY ci.created_at;
 

@@ -12,12 +12,12 @@ type CartItem struct {
 }
 
 type Cart struct {
-	UserId uint32      `json:"userId"`
+	UserId string      `json:"userId"`
 	Items  []*CartItem `json:"items"`
 }
 
 type CreateCartItemRequest struct {
-	UserId   uint32   `json:"user_id"`
+	UserId   string   `json:"user_id"`
 	CartItem CartItem `json:"cart_item"`
 }
 
@@ -25,7 +25,7 @@ type CreateCartItemReply struct {
 }
 
 type GetCartRequest struct {
-	UserId int32 `json:"user_id"`
+	UserId string `json:"user_id"`
 }
 
 type GetCartReply struct {
@@ -33,7 +33,7 @@ type GetCartReply struct {
 }
 
 type EmptyCartRequest struct {
-	UserId uint32 `json:"user_id"`
+	UserId string `json:"user_id"`
 }
 
 type EmptyCartReply struct {
