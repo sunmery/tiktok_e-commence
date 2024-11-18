@@ -2,13 +2,13 @@
 // versions:
 //   sqlc v1.27.0
 
-package data
+package modules
 
 import (
 	"time"
 )
 
-type CartItems struct {
+type CartsCartItems struct {
 	ID        int32     `json:"ID"`
 	UserID    string    `json:"UserID"`
 	CartID    int32     `json:"CartID"`
@@ -18,7 +18,7 @@ type CartItems struct {
 	UpdatedAt time.Time `json:"UpdatedAt"`
 }
 
-type Carts struct {
+type CartsCarts struct {
 	ID        int32     `json:"ID"`
 	UserID    string    `json:"UserID"`
 	CreatedAt time.Time `json:"CreatedAt"`

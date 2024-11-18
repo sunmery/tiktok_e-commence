@@ -2,6 +2,7 @@ package data
 
 import (
 	"cart/internal/conf"
+	modules "cart/internal/data/models"
 	"context"
 	"fmt"
 
@@ -17,22 +18,22 @@ var ProviderSet = wire.NewSet(NewData, NewCartRepo, NewDB, NewCache)
 
 // Data .
 type Data struct {
-	*Queries
+	db  *modules.Queries
 	rdb *redis.Client
 }
 
 // NewData .
 func NewData(
 	logger log.Logger,
-	db *pgxpool.Pool,
+	pgx *pgxpool.Pool,
 	rdb *redis.Client,
 ) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
-		Queries: New(db),
-		rdb:     rdb,
+		db:  modules.New(pgx),
+		rdb: rdb,
 	}, cleanup, nil
 }
 

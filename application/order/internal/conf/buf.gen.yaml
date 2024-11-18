@@ -12,18 +12,13 @@ managed:
     - file_option: go_package_prefix
       value: order/api
 plugins:
-  - remote: buf.build/grpc/go
-    out: api
-    opt: paths=source_relative
   - remote: buf.build/protocolbuffers/go
-    out: api
-    opt: paths=source_relative
-  - local: protoc-gen-go-http
-    out: api
+    out: .
     opt: paths=source_relative
 
 inputs:
-  - directory: api
+  - directory: .
+
   # - module: buf.build/mandala/tiktok-e-commence-cart
   #   types:
   #     - api.cart.v1

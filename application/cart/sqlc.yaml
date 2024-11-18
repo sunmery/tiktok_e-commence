@@ -1,16 +1,14 @@
 version: "2"
 sql:
-  - schema: "internal/data/migrate"
-    queries: "internal/data/query"
+  - schema: "internal/data/schema"
+    queries: "internal/data/queries"
     engine: "postgresql"
     database:
       uri: ${DB_SOURCE}
-      # uri: postgresql://postgres:${PG_PASSWORD}@${PG_HOST}:${PG_PORT}/simple_bank?sslmode=disable
-      # uri: postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable
     gen:
       go:
-        package: "data"
-        out: "internal/data"
+        package: "modules"
+        out: "internal/data/models"
         sql_package: "pgx/v5"
         emit_db_tags: false # 如果为 true，则将 DB 标记添加到生成的结构中。默认值为 false
         emit_prepared_queries: true # 如果为 true，则包括对准备好的查询的支持。默认值为 false

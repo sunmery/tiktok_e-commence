@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.27.0
 
-package data
+package modules
 
 import (
 	"context"
@@ -12,41 +12,39 @@ type Querier interface {
 	//CreateOrUpdateCartItem
 	//
 	//  WITH cart AS (
-	//      INSERT INTO carts (user_id)
+	//      INSERT INTO carts.carts (user_id)
 	//          VALUES ($1)
 	//          ON CONFLICT (user_id) DO NOTHING
-	//          RETURNING id
-	//  ),
-	//       existing_cart AS (
-	//           SELECT id FROM carts WHERE user_id = $1
-	//       )
-	//  INSERT INTO cart_items (user_id, cart_id, product_id, quantity)
-	//  VALUES (
-	//             $1,
-	//             COALESCE((SELECT id FROM cart), (SELECT id FROM existing_cart)),
-	//             $2,
-	//             $3
-	//         )
+	//          RETURNING id),
+	//       existing_cart AS (SELECT id
+	//                         FROM carts.carts
+	//                         WHERE user_id = $1)
+	//  INSERT
+	//  INTO carts.cart_items (user_id, cart_id, product_id, quantity)
+	//  VALUES ($1,
+	//          COALESCE((SELECT id FROM cart), (SELECT id FROM existing_cart)),
+	//          $2,
+	//          $3)
 	//  ON CONFLICT (cart_id, product_id) DO UPDATE
-	//      SET quantity = cart_items.quantity + EXCLUDED.quantity
+	//      SET quantity = carts.cart_items.quantity + EXCLUDED.quantity
 	//  RETURNING id, user_id, cart_id, product_id, quantity, created_at, updated_at
-	CreateOrUpdateCartItem(ctx context.Context, arg CreateOrUpdateCartItemParams) (CartItems, error)
+	CreateOrUpdateCartItem(ctx context.Context, arg CreateOrUpdateCartItemParams) (CartsCartItems, error)
 	//DeleteCart
 	//
 	//  DELETE
-	//  FROM carts
+	//  FROM carts.carts
 	//  WHERE user_id = $1
 	//  RETURNING id, user_id, created_at, updated_at
-	DeleteCart(ctx context.Context, userID string) (Carts, error)
+	DeleteCart(ctx context.Context, userID string) (CartsCarts, error)
 	//DeleteCartItem
 	//
 	//  DELETE
-	//  FROM cart_items
+	//  FROM carts.cart_items
 	//  WHERE user_id = $1
 	//    AND cart_id = $2
 	//    AND product_id = $3
 	//  RETURNING id, user_id, cart_id, product_id, quantity, created_at, updated_at
-	DeleteCartItem(ctx context.Context, arg DeleteCartItemParams) (CartItems, error)
+	DeleteCartItem(ctx context.Context, arg DeleteCartItemParams) (CartsCartItems, error)
 	//GetCart
 	//
 	//  SELECT c.user_id,
@@ -57,9 +55,9 @@ type Querier interface {
 	//         p.categories,
 	//         ci.product_id,
 	//         ci.quantity
-	//  FROM carts c
+	//  FROM carts.carts c
 	//           INNER JOIN
-	//       cart_items ci ON c.user_id = ci.user_id
+	//       carts.cart_items ci ON c.user_id = ci.user_id
 	//           INNER JOIN
 	//       products.products p ON ci.product_id = p.id
 	//  WHERE c.user_id = $1

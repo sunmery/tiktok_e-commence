@@ -16,7 +16,7 @@ type Address struct {
 	ZipCode       int32  `json:"zipCode"`
 }
 type PlaceOrderReq struct {
-	UserId      uint32       `json:"user_id"`
+	UserId      string       `json:"user_id"`
 	UserCurrent string       `json:"user_current"`
 	Address     Address      `json:"address"`
 	Email       string       `json:"email"`
@@ -38,14 +38,14 @@ type Order struct {
 	OrderItems []*OrderItem
 }
 type ListOrderReq struct {
-	UserId uint32 `json:"user_id"`
+	UserId string `json:"user_id"`
 }
 type ListOrderResp struct {
 	Orders []*Order `json:"orders"`
 }
 
 type MarkOrderPaidReq struct {
-	UserId  uint32 `json:"user_id"`
+	UserId  string `json:"user_id"`
 	OrderId string `json:"order_id"`
 }
 
@@ -70,6 +70,7 @@ func NewOrderUsecase(repo OrderRepo, logger log.Logger) *OrderUsecase {
 }
 
 func (o *OrderUsecase) PlaceOrder(ctx context.Context, req *PlaceOrderReq) (*PlaceOrderResp, error) {
+	o.log.WithContext(ctx).Debugf("PlaceOrderReq: %+v", req)
 	return o.repo.PlaceOrder(ctx, req)
 }
 func (o *OrderUsecase) ListOrder(ctx context.Context, req *ListOrderReq) (*ListOrderResp, error) {

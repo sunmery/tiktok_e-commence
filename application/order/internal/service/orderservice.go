@@ -13,8 +13,10 @@ type OrderServiceService struct {
 	os *biz.OrderUsecase
 }
 
-func NewOrderServiceService() *OrderServiceService {
-	return &OrderServiceService{}
+func NewOrderServiceService(os *biz.OrderUsecase) *OrderServiceService {
+	return &OrderServiceService{
+		os: os,
+	}
 }
 
 func (s *OrderServiceService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq) (*pb.PlaceOrderResp, error) {

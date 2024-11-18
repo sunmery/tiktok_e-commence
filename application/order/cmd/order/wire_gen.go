@@ -7,13 +7,13 @@
 package main
 
 import (
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"order/internal/biz"
 	"order/internal/conf"
 	"order/internal/data"
 	"order/internal/server"
 	"order/internal/service"
-	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 import (
@@ -24,15 +24,17 @@ import (
 
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
+	pool := data.NewDB(confData)
+	client := data.NewCache(confData)
+	dataData, cleanup, err := data.NewData(logger, pool, client)
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
+	orderRepo := data.NewOrderRepo(dataData, logger)
+	orderUsecase := biz.NewOrderUsecase(orderRepo, logger)
+	orderServiceService := service.NewOrderServiceService(orderUsecase)
+	grpcServer := server.NewGRPCServer(confServer, orderServiceService, logger)
+	httpServer := server.NewHTTPServer(confServer, orderServiceService, logger)
 	app := newApp(logger, grpcServer, httpServer)
 	return app, func() {
 		cleanup()

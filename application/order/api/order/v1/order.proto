@@ -4,86 +4,85 @@ syntax = "proto3";
 
 package api.order.v1;
 
-import "google/api/annotations.proto";
 import "cart/v1/cart.proto";
+import "google/api/annotations.proto";
 
 option go_package = "order/api/order/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.order.v1";
 
 service OrderService {
-	// 创建订单
-	rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp) {
-		option (google.api.http) = {
-			post: "/v1/order"
-		};
-	}
-	// 列出订单
-	rpc ListOrder(ListOrderReq) returns (ListOrderResp) {
-		option (google.api.http) = {
-			get: "/v1/order"
-		};
-	}
-	// 支付订单
-	rpc MarkOrderPaid(MarkOrderPaidReq) returns (MarkOrderPaidResp) {
-		option (google.api.http) = {
-			post: "/v1/order/mark",
-			body: "*"
-		};
-	}
+  // 创建订单
+  rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp) {
+    option (google.api.http) = {
+      post: "/v1/order"
+      body: "*"
+    };
+  }
+  // 列出订单
+  rpc ListOrder(ListOrderReq) returns (ListOrderResp) {
+    option (google.api.http) = {get: "/v1/order"};
+  }
+  // 支付订单
+  rpc MarkOrderPaid(MarkOrderPaidReq) returns (MarkOrderPaidResp) {
+    option (google.api.http) = {
+      post: "/v1/order/mark"
+      body: "*"
+    };
+  }
 }
 
 message Address {
-	string street_address = 1;
-	string city = 2;
-	string state = 3;
-	string country = 4;
-	int32 zip_code = 5;
+  string street_address = 1;
+  string city = 2;
+  string state = 3;
+  string country = 4;
+  int32 zip_code = 5;
 }
 
 message PlaceOrderReq {
-	uint32 user_id = 1;
-	string user_currency = 2;
+  string user_id = 1 [json_name = "user_id"];
+  string user_currency = 2 [json_name = "user_currency"];
 
-	Address address = 3;
-	string email = 4;
-	repeated OrderItem order_items = 5;
+  Address address = 3;
+  string email = 4;
+  repeated OrderItem order_items = 5 [json_name = "order_items"];
 }
 
 message OrderItem {
-	cart.v1.CartItem item = 1;
-	float cost = 2;
+  cart.v1.CartItem item = 1;
+  float cost = 2;
 }
 
 message OrderResult {
-	string order_id = 1;
+  string order_id = 1 [json_name = "order_id"];
 }
 
 message PlaceOrderResp {
-	OrderResult order = 1;
+  OrderResult order = 1;
 }
 
 message ListOrderReq {
-	uint32 user_id = 1;
+  string user_id = 1 [json_name = "user_id"];
 }
 
 message Order {
-	repeated OrderItem order_items = 1;
-	string order_id = 2;
-	uint32 user_id = 3;
-	string user_currency = 4;
-	Address address = 5;
-	string email = 6;
-	int32 created_at = 7;
+  repeated OrderItem order_items = 1 [json_name = "order_items"];
+  string order_id = 2 [json_name = "order_id"];
+  string user_id = 3 [json_name = "user_id"];
+  string user_currency = 4 [json_name = "user_currency"];
+  Address address = 5;
+  string email = 6;
+  int32 created_at = 7 [json_name = "created_at"];
 }
 
 message ListOrderResp {
-	repeated Order orders = 1;
+  repeated Order orders = 1;
 }
 
 message MarkOrderPaidReq {
-	uint32 user_id = 1;
-	string order_id = 2;
+  string user_id = 1 [json_name = "user_id"];
+  string order_id = 2 [json_name = "order_id"];
 }
 
 message MarkOrderPaidResp {}

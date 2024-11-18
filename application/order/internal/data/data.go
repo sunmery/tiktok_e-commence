@@ -6,32 +6,33 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"order/internal/conf"
+	models "order/internal/data/models"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewCache)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewOrderRepo)
 
 // Data .
 type Data struct {
-	*Queries
+	db  *models.Queries
 	rdb *redis.Client
 }
 
 // NewData .
 func NewData(
 	logger log.Logger,
-	db *pgxpool.Pool,
+	pgx *pgxpool.Pool,
 	rdb *redis.Client,
 ) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
-		Queries: New(db),
-		rdb:     rdb,
+		db:  models.New(pgx),
+		rdb: rdb,
 	}, cleanup, nil
 }
 

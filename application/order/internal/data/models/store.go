@@ -1,4 +1,4 @@
-package data
+package modules
 
 import (
 	"context"
@@ -14,7 +14,6 @@ type Store interface {
 
 type SQLStore struct {
 	*Queries
-	
 	db *pgxpool.Pool
 }
 

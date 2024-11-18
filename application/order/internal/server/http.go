@@ -27,6 +27,6 @@ func NewHTTPServer(c *conf.Server, order *service.OrderServiceService, logger lo
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	v1.RegisterOrderServiceServer(srv, order)
+	v1.RegisterOrderServiceHTTPServer(srv, order)
 	return srv
 }

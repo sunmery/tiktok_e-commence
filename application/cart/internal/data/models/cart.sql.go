@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: cart.sql
 
-package data
+package modules
 
 import (
 	"context"
@@ -11,23 +11,21 @@ import (
 
 const CreateOrUpdateCartItem = `-- name: CreateOrUpdateCartItem :one
 WITH cart AS (
-    INSERT INTO carts (user_id)
+    INSERT INTO carts.carts (user_id)
         VALUES ($1)
         ON CONFLICT (user_id) DO NOTHING
-        RETURNING id
-),
-     existing_cart AS (
-         SELECT id FROM carts WHERE user_id = $1
-     )
-INSERT INTO cart_items (user_id, cart_id, product_id, quantity)
-VALUES (
-           $1,
-           COALESCE((SELECT id FROM cart), (SELECT id FROM existing_cart)),
-           $2,
-           $3
-       )
+        RETURNING id),
+     existing_cart AS (SELECT id
+                       FROM carts.carts
+                       WHERE user_id = $1)
+INSERT
+INTO carts.cart_items (user_id, cart_id, product_id, quantity)
+VALUES ($1,
+        COALESCE((SELECT id FROM cart), (SELECT id FROM existing_cart)),
+        $2,
+        $3)
 ON CONFLICT (cart_id, product_id) DO UPDATE
-    SET quantity = cart_items.quantity + EXCLUDED.quantity
+    SET quantity = carts.cart_items.quantity + EXCLUDED.quantity
 RETURNING id, user_id, cart_id, product_id, quantity, created_at, updated_at
 `
 
@@ -40,27 +38,25 @@ type CreateOrUpdateCartItemParams struct {
 // CreateOrUpdateCartItem
 //
 //	WITH cart AS (
-//	    INSERT INTO carts (user_id)
+//	    INSERT INTO carts.carts (user_id)
 //	        VALUES ($1)
 //	        ON CONFLICT (user_id) DO NOTHING
-//	        RETURNING id
-//	),
-//	     existing_cart AS (
-//	         SELECT id FROM carts WHERE user_id = $1
-//	     )
-//	INSERT INTO cart_items (user_id, cart_id, product_id, quantity)
-//	VALUES (
-//	           $1,
-//	           COALESCE((SELECT id FROM cart), (SELECT id FROM existing_cart)),
-//	           $2,
-//	           $3
-//	       )
+//	        RETURNING id),
+//	     existing_cart AS (SELECT id
+//	                       FROM carts.carts
+//	                       WHERE user_id = $1)
+//	INSERT
+//	INTO carts.cart_items (user_id, cart_id, product_id, quantity)
+//	VALUES ($1,
+//	        COALESCE((SELECT id FROM cart), (SELECT id FROM existing_cart)),
+//	        $2,
+//	        $3)
 //	ON CONFLICT (cart_id, product_id) DO UPDATE
-//	    SET quantity = cart_items.quantity + EXCLUDED.quantity
+//	    SET quantity = carts.cart_items.quantity + EXCLUDED.quantity
 //	RETURNING id, user_id, cart_id, product_id, quantity, created_at, updated_at
-func (q *Queries) CreateOrUpdateCartItem(ctx context.Context, arg CreateOrUpdateCartItemParams) (CartItems, error) {
+func (q *Queries) CreateOrUpdateCartItem(ctx context.Context, arg CreateOrUpdateCartItemParams) (CartsCartItems, error) {
 	row := q.db.QueryRow(ctx, CreateOrUpdateCartItem, arg.UserID, arg.ProductID, arg.Quantity)
-	var i CartItems
+	var i CartsCartItems
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
@@ -75,7 +71,7 @@ func (q *Queries) CreateOrUpdateCartItem(ctx context.Context, arg CreateOrUpdate
 
 const DeleteCart = `-- name: DeleteCart :one
 DELETE
-FROM carts
+FROM carts.carts
 WHERE user_id = $1
 RETURNING id, user_id, created_at, updated_at
 `
@@ -83,12 +79,12 @@ RETURNING id, user_id, created_at, updated_at
 // DeleteCart
 //
 //	DELETE
-//	FROM carts
+//	FROM carts.carts
 //	WHERE user_id = $1
 //	RETURNING id, user_id, created_at, updated_at
-func (q *Queries) DeleteCart(ctx context.Context, userID string) (Carts, error) {
+func (q *Queries) DeleteCart(ctx context.Context, userID string) (CartsCarts, error) {
 	row := q.db.QueryRow(ctx, DeleteCart, userID)
-	var i Carts
+	var i CartsCarts
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
@@ -100,7 +96,7 @@ func (q *Queries) DeleteCart(ctx context.Context, userID string) (Carts, error) 
 
 const DeleteCartItem = `-- name: DeleteCartItem :one
 DELETE
-FROM cart_items
+FROM carts.cart_items
 WHERE user_id = $1
   AND cart_id = $2
   AND product_id = $3
@@ -116,14 +112,14 @@ type DeleteCartItemParams struct {
 // DeleteCartItem
 //
 //	DELETE
-//	FROM cart_items
+//	FROM carts.cart_items
 //	WHERE user_id = $1
 //	  AND cart_id = $2
 //	  AND product_id = $3
 //	RETURNING id, user_id, cart_id, product_id, quantity, created_at, updated_at
-func (q *Queries) DeleteCartItem(ctx context.Context, arg DeleteCartItemParams) (CartItems, error) {
+func (q *Queries) DeleteCartItem(ctx context.Context, arg DeleteCartItemParams) (CartsCartItems, error) {
 	row := q.db.QueryRow(ctx, DeleteCartItem, arg.UserID, arg.CartID, arg.ProductID)
-	var i CartItems
+	var i CartsCartItems
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
@@ -145,9 +141,9 @@ SELECT c.user_id,
        p.categories,
        ci.product_id,
        ci.quantity
-FROM carts c
+FROM carts.carts c
          INNER JOIN
-     cart_items ci ON c.user_id = ci.user_id
+     carts.cart_items ci ON c.user_id = ci.user_id
          INNER JOIN
      products.products p ON ci.product_id = p.id
 WHERE c.user_id = $1
@@ -175,9 +171,9 @@ type GetCartRow struct {
 //	       p.categories,
 //	       ci.product_id,
 //	       ci.quantity
-//	FROM carts c
+//	FROM carts.carts c
 //	         INNER JOIN
-//	     cart_items ci ON c.user_id = ci.user_id
+//	     carts.cart_items ci ON c.user_id = ci.user_id
 //	         INNER JOIN
 //	     products.products p ON ci.product_id = p.id
 //	WHERE c.user_id = $1

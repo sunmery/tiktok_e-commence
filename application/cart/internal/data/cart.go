@@ -2,7 +2,9 @@ package data
 
 import (
 	"cart/internal/biz"
+	modules "cart/internal/data/models"
 	"context"
+	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -12,10 +14,19 @@ type cartRepo struct {
 }
 
 func (c *cartRepo) CreateCartItem(ctx context.Context, req *biz.CreateCartItemRequest) (*biz.CreateCartItemReply, error) {
-	result, err := c.data.CreateOrUpdateCartItem(ctx, CreateOrUpdateCartItemParams{
+	quantity := int32(req.CartItem.Quantity)
+	// 最大上限
+	if quantity > 9999 {
+		return &biz.CreateCartItemReply{}, errors.New("quantity too big")
+	}
+	// 最小上限
+	if quantity < 0 {
+		return nil, errors.New("quantity must be greater than zero")
+	}
+	result, err := c.data.db.CreateOrUpdateCartItem(ctx, modules.CreateOrUpdateCartItemParams{
 		UserID:    req.UserId,
 		ProductID: int32(req.CartItem.ProductId),
-		Quantity:  int32(req.CartItem.Quantity),
+		Quantity:  quantity,
 	})
 	if err != nil {
 		return nil, err
@@ -25,7 +36,7 @@ func (c *cartRepo) CreateCartItem(ctx context.Context, req *biz.CreateCartItemRe
 }
 
 func (c *cartRepo) GetCart(ctx context.Context, req *biz.GetCartRequest) (*biz.GetCartReply, error) {
-	cartInfo, err := c.data.GetCart(ctx, &req.UserId)
+	cartInfo, err := c.data.db.GetCart(ctx, &req.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +57,7 @@ func (c *cartRepo) GetCart(ctx context.Context, req *biz.GetCartRequest) (*biz.G
 }
 
 func (c *cartRepo) EmptyCart(ctx context.Context, req *biz.EmptyCartRequest) (*biz.EmptyCartReply, error) {
-	_, err := c.data.DeleteCart(ctx, req.UserId)
+	_, err := c.data.db.DeleteCart(ctx, req.UserId)
 	if err != nil {
 		return nil, err
 	}
