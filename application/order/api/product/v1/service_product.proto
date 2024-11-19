@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+// 商品服务
+
+package api.product.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "product/api/product/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.product.v1";
+
+service ProductCatalogService {
+	rpc CreateProduct(CreateProductRequest) returns (CreateProductReply) {
+		option (google.api.http) = {
+			post: "/v1/products",
+			body: "*"
+		};
+	}
+	rpc ListProducts(ListProductsReq) returns (ListProductsResp) {
+		option (google.api.http) = {
+			get: "/v1/products"
+		};
+	}
+	rpc GetProduct(GetProductReq) returns (GetProductResp) {
+		option (google.api.http) = {
+			get: "/v1/products/{id}"
+		};
+	}
+	rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {
+		option (google.api.http) = {
+			get: "/v1/products/search/{query}"
+		};
+	}
+}
+
+message Product {
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	string picture = 4;
+	float price = 5;
+
+	repeated string categories = 6;
+}
+
+message CreateProductRequest {
+	string name = 1;
+	string description = 2;
+	string picture = 3;
+	float price = 4;
+	repeated string categories = 5;
+}
+
+message CreateProductReply {
+	Product product = 1 ;
+}
+
+message ListProductsReq{
+	int32 page = 1;
+	int64 pageSize = 2 [json_name = "page_size"];
+
+	string categoryName = 3 [json_name = "category_name"];
+}
+
+message ListProductsResp {
+	repeated Product products = 1;
+}
+
+message GetProductReq {
+	string id = 1;
+}
+
+message GetProductResp {
+	Product product = 1;
+}
+
+message SearchProductsReq {
+	string query = 1;
+}
+
+message SearchProductsResp {
+	repeated Product results = 1;
+}

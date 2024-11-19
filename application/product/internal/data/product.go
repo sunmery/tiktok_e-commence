@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"product/internal/biz"
+	"product/internal/data/modules"
 )
 
 type productRepo struct {
@@ -12,7 +13,7 @@ type productRepo struct {
 }
 
 func (p *productRepo) CreateProduct(ctx context.Context, req *biz.CreateProductRequest) (*biz.CreateProductReply, error) {
-	product, err := p.data.CreateProduct(ctx, CreateProductParams{
+	product, err := p.data.db.CreateProduct(ctx, modules.CreateProductParams{
 		Name:        req.Name,
 		Description: req.Description,
 		Picture:     req.Picture,
@@ -36,8 +37,8 @@ func (p *productRepo) CreateProduct(ctx context.Context, req *biz.CreateProductR
 }
 
 func (p *productRepo) ListProducts(ctx context.Context, req *biz.ListProductsReq) (*biz.ListProductsResp, error) {
-	products, err := p.data.ListProducts(ctx, ListProductsParams{
-		CategoryName: &req.CategoryName,
+	products, err := p.data.db.ListProducts(ctx, modules.ListProductsParams{
+		CategoryName: req.CategoryName,
 		Page:         int64((req.Page - 1) * req.PageSize),
 		PageSize:     int64(req.PageSize),
 	})
@@ -62,7 +63,7 @@ func (p *productRepo) ListProducts(ctx context.Context, req *biz.ListProductsReq
 }
 
 func (p *productRepo) GetProduct(ctx context.Context, id uint32) (*biz.GetProductResp, error) {
-	product, err := p.data.GetProduct(ctx, int32(id))
+	product, err := p.data.db.GetProduct(ctx, int32(id))
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +78,7 @@ func (p *productRepo) GetProduct(ctx context.Context, id uint32) (*biz.GetProduc
 }
 
 func (p *productRepo) SearchProducts(ctx context.Context, req *biz.SearchProductsReq) (*biz.SearchProductsResp, error) {
-	products, err := p.data.SearchProducts(ctx, req.Query)
+	products, err := p.data.db.SearchProducts(ctx, req.Query)
 	if err != nil {
 		return nil, err
 	}

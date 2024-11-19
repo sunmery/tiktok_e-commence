@@ -18,14 +18,21 @@ endif
 .PHONY: config
 # generate internal proto
 config:
-	cd internal/conf
-	buf generate
-
+	protoc --proto_path=./internal \
+	  --proto_path=./third_party \
+ 	  --go_out=paths=source_relative:./internal \
+	  $(INTERNAL_PROTO_FILES)
 
 .PHONY: api
 # generate api proto
 api:
-	buf generate
+	protoc --proto_path=./api \
+	   --proto_path=./third_party \
+ 	   --go_out=paths=source_relative:./api \
+ 	   --go-http_out=paths=source_relative:./api \
+ 	   --go-grpc_out=paths=source_relative:./api \
+	   --openapi_out=fq_schema_naming=true,default_response=false:. \
+	   $(API_PROTO_FILES)
 
 .PHONY: build
 # build
@@ -65,7 +72,6 @@ new-migrate:
 
 # 升级全部的迁移文件, 先安装https://github.com/golang-migrate/migrate/tree/master
 migrate-up:
-	#export DB_SOURCE="postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable"
 	migrate -database "${DB_SOURCE}" -path internal/data/migrate -verbose up
 
 # 向上迁移一个版本, 根据数据库的表schema_migrations的version来决定

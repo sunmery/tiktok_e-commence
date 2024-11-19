@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.27.0
 
-package data
+package modules
 
 import (
 	"context"
@@ -11,36 +11,31 @@ import (
 type Querier interface {
 	//CreateProduct
 	//
-	//  INSERT INTO products(name, description, picture, price, categories)
+	//  INSERT INTO products.products(name, description, picture, price, categories)
 	//  VALUES ($1, $2, $3, $4, $5)
 	//  RETURNING id, name, description, picture, price, categories
-	CreateProduct(ctx context.Context, arg CreateProductParams) (Products, error)
+	CreateProduct(ctx context.Context, arg CreateProductParams) (ProductsProducts, error)
 	//GetProduct
 	//
 	//  SELECT id, name, description, picture, price, categories
-	//  FROM products
+	//  FROM products.products
 	//  WHERE id = $1
 	//  LIMIT 1
-	GetProduct(ctx context.Context, id int32) (Products, error)
+	GetProduct(ctx context.Context, id int32) (ProductsProducts, error)
 	//ListProducts
 	//
-	//  SELECT id,
-	//         name,
-	//         description,
-	//         picture,
-	//         price,
-	//         categories
-	//  FROM products
+	//  SELECT id, name, description, picture, price, categories
+	//  FROM products.products
 	//  WHERE $1 = ANY (categories)
 	//  ORDER BY id
 	//  OFFSET $2 LIMIT $3
-	ListProducts(ctx context.Context, arg ListProductsParams) ([]Products, error)
+	ListProducts(ctx context.Context, arg ListProductsParams) ([]ProductsProducts, error)
 	//SearchProducts
 	//
 	//  SELECT id, name, description, picture, price, categories
-	//  FROM products
+	//  FROM products.products
 	//  WHERE name = $1
-	SearchProducts(ctx context.Context, name string) ([]Products, error)
+	SearchProducts(ctx context.Context, name string) ([]ProductsProducts, error)
 }
 
 var _ Querier = (*Queries)(nil)

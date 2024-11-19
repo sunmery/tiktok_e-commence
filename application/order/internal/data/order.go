@@ -17,11 +17,9 @@ type orderRepo struct {
 	log  *log.Helper
 }
 
-// PlaceOrder TODO
+// PlaceOrder TODO db trans
 func (o *orderRepo) PlaceOrder(ctx context.Context, req *biz.PlaceOrderReq) (*biz.PlaceOrderResp, error) {
-	var userAddress modules.AddressesAddresses
-	var err error
-	userAddress, err = o.data.db.CreatUserAddress(ctx, modules.CreatUserAddressParams{
+	userAddress, err := o.data.db.CreatUserAddress(ctx, modules.CreatUserAddressParams{
 		UserID:        req.UserId,
 		StreetAddress: req.Address.StreetAddress,
 		City:          req.Address.City,
@@ -46,19 +44,24 @@ func (o *orderRepo) PlaceOrder(ctx context.Context, req *biz.PlaceOrderReq) (*bi
 		}
 		return nil, err
 	}
-	fmt.Printf("userAddress: %+v", userAddress)
 
-	order, err := o.data.db.CreateOrder(ctx, modules.CreateOrderParams{
-		Email:        &req.Email,
-		UserID:       &req.UserId,
-		UserCurrency: &req.UserCurrent,
-		AddressID:    &userAddress.ID,
+	order, orderErr := o.data.db.CreateOrder(ctx, modules.CreateOrderParams{
+		Email:        req.Email,
+		UserID:       req.UserId,
+		UserCurrency: req.UserCurrent,
+		AddressID:    userAddress.ID,
 	})
-	fmt.Printf("orders: '%+v'", order)
-	if err != nil {
-		return nil, err
+	if orderErr != nil {
+		return nil, orderErr
 	}
-	return nil, err
+
+	fmt.Printf("orders: '%+v'", order)
+
+	return &biz.PlaceOrderResp{
+		Order: biz.OrderResult{
+			OrderId: order.ID,
+		},
+	}, nil
 }
 
 func (o *orderRepo) ListOrder(ctx context.Context, req *biz.ListOrderReq) (*biz.ListOrderResp, error) {

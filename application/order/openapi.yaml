@@ -3,7 +3,7 @@
 
 openapi: 3.0.3
 info:
-    title: CartService API
+    title: ""
     version: 0.0.1
 paths:
     /v1/cart:
@@ -24,18 +24,17 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.cart.v1.AddItemResp'
-    /v1/cart/{userId}:
+    /v1/cart/{user_id}:
         get:
             tags:
                 - CartService
             operationId: CartService_GetCart
             parameters:
-                - name: userId
+                - name: user_id
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -48,12 +47,11 @@ paths:
                 - CartService
             operationId: CartService_EmptyCart
             parameters:
-                - name: userId
+                - name: user_id
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -61,14 +59,147 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.cart.v1.EmptyCartResp'
+    /v1/order:
+        get:
+            tags:
+                - OrderService
+            description: 列出订单
+            operationId: OrderService_ListOrder
+            parameters:
+                - name: user_id
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.order.v1.ListOrderResp'
+        post:
+            tags:
+                - OrderService
+            description: 创建订单
+            operationId: OrderService_PlaceOrder
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.order.v1.PlaceOrderReq'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.order.v1.PlaceOrderResp'
+    /v1/order/mark:
+        post:
+            tags:
+                - OrderService
+            description: 支付订单
+            operationId: OrderService_MarkOrderPaid
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.order.v1.MarkOrderPaidReq'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.order.v1.MarkOrderPaidResp'
+    /v1/products:
+        get:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_ListProducts
+            parameters:
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page_size
+                  in: query
+                  schema:
+                    type: string
+                - name: category_name
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.ListProductsResp'
+        post:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_CreateProduct
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.product.v1.CreateProductRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.CreateProductReply'
+    /v1/products/search/{query}:
+        get:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_SearchProducts
+            parameters:
+                - name: query
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.SearchProductsResp'
+    /v1/products/{id}:
+        get:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_GetProduct
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.GetProductResp'
 components:
     schemas:
         api.cart.v1.AddItemReq:
             type: object
             properties:
-                userId:
-                    type: integer
-                    format: uint32
+                user_id:
+                    type: string
                 item:
                     $ref: '#/components/schemas/api.cart.v1.CartItem'
         api.cart.v1.AddItemResp:
@@ -77,9 +208,8 @@ components:
         api.cart.v1.Cart:
             type: object
             properties:
-                userId:
-                    type: integer
-                    format: uint32
+                user_id:
+                    type: string
                 items:
                     type: array
                     items:
@@ -87,7 +217,7 @@ components:
         api.cart.v1.CartItem:
             type: object
             properties:
-                productId:
+                product_id:
                     type: integer
                     format: uint32
                 quantity:
@@ -101,5 +231,149 @@ components:
             properties:
                 cart:
                     $ref: '#/components/schemas/api.cart.v1.Cart'
+        api.order.v1.Address:
+            type: object
+            properties:
+                streetAddress:
+                    type: string
+                city:
+                    type: string
+                state:
+                    type: string
+                country:
+                    type: string
+                zipCode:
+                    type: integer
+                    format: int32
+        api.order.v1.ListOrderResp:
+            type: object
+            properties:
+                orders:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.order.v1.Order'
+        api.order.v1.MarkOrderPaidReq:
+            type: object
+            properties:
+                user_id:
+                    type: string
+                order_id:
+                    type: string
+        api.order.v1.MarkOrderPaidResp:
+            type: object
+            properties: {}
+        api.order.v1.Order:
+            type: object
+            properties:
+                order_items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.order.v1.OrderItem'
+                order_id:
+                    type: string
+                user_id:
+                    type: string
+                user_currency:
+                    type: string
+                address:
+                    $ref: '#/components/schemas/api.order.v1.Address'
+                email:
+                    type: string
+                created_at:
+                    type: integer
+                    format: int32
+        api.order.v1.OrderItem:
+            type: object
+            properties:
+                item:
+                    $ref: '#/components/schemas/api.cart.v1.CartItem'
+                cost:
+                    type: number
+                    format: float
+        api.order.v1.OrderResult:
+            type: object
+            properties:
+                order_id:
+                    type: string
+        api.order.v1.PlaceOrderReq:
+            type: object
+            properties:
+                user_id:
+                    type: string
+                user_currency:
+                    type: string
+                address:
+                    $ref: '#/components/schemas/api.order.v1.Address'
+                email:
+                    type: string
+                order_items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.order.v1.OrderItem'
+        api.order.v1.PlaceOrderResp:
+            type: object
+            properties:
+                order:
+                    $ref: '#/components/schemas/api.order.v1.OrderResult'
+        api.product.v1.CreateProductReply:
+            type: object
+            properties:
+                product:
+                    $ref: '#/components/schemas/api.product.v1.Product'
+        api.product.v1.CreateProductRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                picture:
+                    type: string
+                price:
+                    type: number
+                    format: float
+                categories:
+                    type: array
+                    items:
+                        type: string
+        api.product.v1.GetProductResp:
+            type: object
+            properties:
+                product:
+                    $ref: '#/components/schemas/api.product.v1.Product'
+        api.product.v1.ListProductsResp:
+            type: object
+            properties:
+                products:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.product.v1.Product'
+        api.product.v1.Product:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                description:
+                    type: string
+                picture:
+                    type: string
+                price:
+                    type: number
+                    format: float
+                categories:
+                    type: array
+                    items:
+                        type: string
+        api.product.v1.SearchProductsResp:
+            type: object
+            properties:
+                results:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.product.v1.Product'
 tags:
     - name: CartService
+    - name: OrderService
+    - name: ProductCatalogService

@@ -3,12 +3,12 @@ package data
 import (
 	"context"
 	"fmt"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/wire"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"product/internal/conf"
-
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/google/wire"
+	"product/internal/data/modules"
 )
 
 // ProviderSet is data providers.
@@ -16,22 +16,22 @@ var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewProductRepo)
 
 // Data .
 type Data struct {
-	*Queries
+	db  *modules.Queries
 	rdb *redis.Client
 }
 
 // NewData .
 func NewData(
 	logger log.Logger,
-	db *pgxpool.Pool,
+	pgx *pgxpool.Pool,
 	rdb *redis.Client,
 ) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
-		Queries: New(db),
-		rdb:     rdb,
+		db:  modules.New(pgx),
+		rdb: rdb,
 	}, cleanup, nil
 }
 

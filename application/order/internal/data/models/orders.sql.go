@@ -12,21 +12,21 @@ import (
 const CreateOrder = `-- name: CreateOrder :one
 INSERT INTO orders.orders (email, user_id, address_id, user_currency)
 VALUES ($1, $2, $3, $4)
-RETURNING id, email, user_id, user_currency, created_at, updated_at
+RETURNING id, email, user_id, address_id, user_currency, paid, created_at, updated_at
 `
 
 type CreateOrderParams struct {
-	Email        *string `json:"Email"`
-	UserID       *string `json:"UserID"`
-	AddressID    *int32  `json:"AddressID"`
-	UserCurrency *string `json:"UserCurrency"`
+	Email        string `json:"Email"`
+	UserID       string `json:"UserID"`
+	AddressID    int32  `json:"AddressID"`
+	UserCurrency string `json:"UserCurrency"`
 }
 
 // CreateOrder
 //
 //	INSERT INTO orders.orders (email, user_id, address_id, user_currency)
 //	VALUES ($1, $2, $3, $4)
-//	RETURNING id, email, user_id, user_currency, created_at, updated_at
+//	RETURNING id, email, user_id, address_id, user_currency, paid, created_at, updated_at
 func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (OrdersOrders, error) {
 	row := q.db.QueryRow(ctx, CreateOrder,
 		arg.Email,
@@ -39,9 +39,97 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Order
 		&i.ID,
 		&i.Email,
 		&i.UserID,
+		&i.AddressID,
 		&i.UserCurrency,
+		&i.Paid,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const ListOrders = `-- name: ListOrders :many
+SELECT id, email, user_id, address_id, user_currency, paid, created_at, updated_at
+FROM orders.orders
+WHERE user_id = $1
+ORDER BY created_at
+`
+
+// ListOrders
+//
+//	SELECT id, email, user_id, address_id, user_currency, paid, created_at, updated_at
+//	FROM orders.orders
+//	WHERE user_id = $1
+//	ORDER BY created_at
+func (q *Queries) ListOrders(ctx context.Context, userID string) ([]OrdersOrders, error) {
+	rows, err := q.db.Query(ctx, ListOrders, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []OrdersOrders{}
+	for rows.Next() {
+		var i OrdersOrders
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.UserID,
+			&i.AddressID,
+			&i.UserCurrency,
+			&i.Paid,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const MarkOrderPaid = `-- name: MarkOrderPaid :many
+SELECT id, email, user_id, address_id, user_currency, paid, created_at, updated_at
+FROM orders.orders
+WHERE user_id = $1
+  AND paid = true
+ORDER BY created_at
+`
+
+// MarkOrderPaid
+//
+//	SELECT id, email, user_id, address_id, user_currency, paid, created_at, updated_at
+//	FROM orders.orders
+//	WHERE user_id = $1
+//	  AND paid = true
+//	ORDER BY created_at
+func (q *Queries) MarkOrderPaid(ctx context.Context, userID string) ([]OrdersOrders, error) {
+	rows, err := q.db.Query(ctx, MarkOrderPaid, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []OrdersOrders{}
+	for rows.Next() {
+		var i OrdersOrders
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.UserID,
+			&i.AddressID,
+			&i.UserCurrency,
+			&i.Paid,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

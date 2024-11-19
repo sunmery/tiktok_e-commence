@@ -22,7 +22,9 @@ type OrdersOrders struct {
 	ID           int32     `json:"ID"`
 	Email        string    `json:"Email"`
 	UserID       string    `json:"UserID"`
+	AddressID    int32     `json:"AddressID"`
 	UserCurrency string    `json:"UserCurrency"`
+	Paid         bool      `json:"Paid"`
 	CreatedAt    time.Time `json:"CreatedAt"`
 	UpdatedAt    time.Time `json:"UpdatedAt"`
 }

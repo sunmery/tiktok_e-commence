@@ -3,32 +3,32 @@
 //   sqlc v1.27.0
 // source: product.sql
 
-package data
+package modules
 
 import (
 	"context"
 )
 
 const CreateProduct = `-- name: CreateProduct :one
-INSERT INTO products(name, description, picture, price, categories)
+INSERT INTO products.products(name, description, picture, price, categories)
 VALUES ($1, $2, $3, $4, $5)
 RETURNING id, name, description, picture, price, categories
 `
 
 type CreateProductParams struct {
-	Name        string   `json:"Name"`
-	Description string   `json:"Description"`
-	Picture     string   `json:"Picture"`
-	Price       float32  `json:"Price"`
-	Categories  []string `json:"Categories"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Picture     string   `json:"picture"`
+	Price       float32  `json:"price"`
+	Categories  []string `json:"categories"`
 }
 
 // CreateProduct
 //
-//	INSERT INTO products(name, description, picture, price, categories)
+//	INSERT INTO products.products(name, description, picture, price, categories)
 //	VALUES ($1, $2, $3, $4, $5)
 //	RETURNING id, name, description, picture, price, categories
-func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Products, error) {
+func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (ProductsProducts, error) {
 	row := q.db.QueryRow(ctx, CreateProduct,
 		arg.Name,
 		arg.Description,
@@ -36,7 +36,7 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 		arg.Price,
 		arg.Categories,
 	)
-	var i Products
+	var i ProductsProducts
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -50,7 +50,7 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 
 const GetProduct = `-- name: GetProduct :one
 SELECT id, name, description, picture, price, categories
-FROM products
+FROM products.products
 WHERE id = $1
 LIMIT 1
 `
@@ -58,12 +58,12 @@ LIMIT 1
 // GetProduct
 //
 //	SELECT id, name, description, picture, price, categories
-//	FROM products
+//	FROM products.products
 //	WHERE id = $1
 //	LIMIT 1
-func (q *Queries) GetProduct(ctx context.Context, id int32) (Products, error) {
+func (q *Queries) GetProduct(ctx context.Context, id int32) (ProductsProducts, error) {
 	row := q.db.QueryRow(ctx, GetProduct, id)
-	var i Products
+	var i ProductsProducts
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -76,45 +76,35 @@ func (q *Queries) GetProduct(ctx context.Context, id int32) (Products, error) {
 }
 
 const ListProducts = `-- name: ListProducts :many
-SELECT id,
-       name,
-       description,
-       picture,
-       price,
-       categories
-FROM products
+SELECT id, name, description, picture, price, categories
+FROM products.products
 WHERE $1 = ANY (categories)
 ORDER BY id
 OFFSET $2 LIMIT $3
 `
 
 type ListProductsParams struct {
-	CategoryName *string `json:"CategoryName"`
-	Page         int64   `json:"Page"`
-	PageSize     int64   `json:"PageSize"`
+	CategoryName string `json:"categoryName"`
+	Page         int64  `json:"page"`
+	PageSize     int64  `json:"pageSize"`
 }
 
 // ListProducts
 //
-//	SELECT id,
-//	       name,
-//	       description,
-//	       picture,
-//	       price,
-//	       categories
-//	FROM products
+//	SELECT id, name, description, picture, price, categories
+//	FROM products.products
 //	WHERE $1 = ANY (categories)
 //	ORDER BY id
 //	OFFSET $2 LIMIT $3
-func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]Products, error) {
+func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]ProductsProducts, error) {
 	rows, err := q.db.Query(ctx, ListProducts, arg.CategoryName, arg.Page, arg.PageSize)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Products{}
+	items := []ProductsProducts{}
 	for rows.Next() {
-		var i Products
+		var i ProductsProducts
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -135,24 +125,24 @@ func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]P
 
 const SearchProducts = `-- name: SearchProducts :many
 SELECT id, name, description, picture, price, categories
-FROM products
+FROM products.products
 WHERE name = $1
 `
 
 // SearchProducts
 //
 //	SELECT id, name, description, picture, price, categories
-//	FROM products
+//	FROM products.products
 //	WHERE name = $1
-func (q *Queries) SearchProducts(ctx context.Context, name string) ([]Products, error) {
+func (q *Queries) SearchProducts(ctx context.Context, name string) ([]ProductsProducts, error) {
 	rows, err := q.db.Query(ctx, SearchProducts, name)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Products{}
+	items := []ProductsProducts{}
 	for rows.Next() {
-		var i Products
+		var i ProductsProducts
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,

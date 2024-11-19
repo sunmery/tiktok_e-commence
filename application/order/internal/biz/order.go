@@ -23,7 +23,7 @@ type PlaceOrderReq struct {
 	OrderItems  []*OrderItem `json:"order_items"`
 }
 type OrderResult struct {
-	OrderId string `json:"order_id"`
+	OrderId int32 `json:"order_id"`
 }
 
 type PlaceOrderResp struct {

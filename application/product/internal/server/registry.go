@@ -14,7 +14,7 @@ func NewRegistrar(c *conf.Registry) registry.Registrar {
 	configs := api.DefaultConfig()
 	// 从conf/conf.proto定义Consul配置与configs/config.yml配置文件中读取consul的配置
 	configs.Address = c.Consul.Address
-	configs.Scheme = c.Consul.Schema
+	configs.Scheme = c.Consul.Scheme
 	// 创建consul客户端
 	consulClient, err := api.NewClient(configs)
 	if err != nil {

@@ -19,7 +19,7 @@ type Querier interface {
 	//
 	//  INSERT INTO orders.orders (email, user_id, address_id, user_currency)
 	//  VALUES ($1, $2, $3, $4)
-	//  RETURNING id, email, user_id, user_currency, created_at, updated_at
+	//  RETURNING id, email, user_id, address_id, user_currency, paid, created_at, updated_at
 	CreateOrder(ctx context.Context, arg CreateOrderParams) (OrdersOrders, error)
 	//DeleteUserAddress
 	//
@@ -43,12 +43,27 @@ type Querier interface {
 	//  WHERE user_id = $1
 	//  LIMIT 1
 	GetUserAddress(ctx context.Context, userID string) (AddressesAddresses, error)
+	//ListOrders
+	//
+	//  SELECT id, email, user_id, address_id, user_currency, paid, created_at, updated_at
+	//  FROM orders.orders
+	//  WHERE user_id = $1
+	//  ORDER BY created_at
+	ListOrders(ctx context.Context, userID string) ([]OrdersOrders, error)
 	//ListUserAddresses
 	//
 	//  SELECT id, user_id, street_address, city, state, country, zip_code
 	//  FROM addresses.addresses
 	//  WHERE user_id = $1
 	ListUserAddresses(ctx context.Context, userID string) ([]AddressesAddresses, error)
+	//MarkOrderPaid
+	//
+	//  SELECT id, email, user_id, address_id, user_currency, paid, created_at, updated_at
+	//  FROM orders.orders
+	//  WHERE user_id = $1
+	//    AND paid = true
+	//  ORDER BY created_at
+	MarkOrderPaid(ctx context.Context, userID string) ([]OrdersOrders, error)
 	//UpdateUserAddress
 	//
 	//  UPDATE addresses.addresses

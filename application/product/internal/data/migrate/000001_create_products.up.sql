@@ -1,15 +1,16 @@
--- 手动在数据库创建
+-- 手动在数据库中创建
 -- CREATE SCHEMA IF NOT EXISTS products;
 
 SET search_path TO products;
 
-CREATE TABLE IF NOT EXISTS products(
-    id  SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL ,
-    picture TEXT NOT NULL,
-    price REAL NOT NULL,
-    categories TEXT[]
+CREATE TABLE products
+(
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(255) NOT NULL,
+    description TEXT         NOT NULL,
+    picture     TEXT         NOT NULL,
+    price       REAL         NOT NULL,
+    categories  TEXT[]
 );
 
 -- 加快通过名称查询的商品

@@ -18,20 +18,22 @@ endif
 .PHONY: config
 # generate internal proto
 config:
-	cd internal/conf
-	buf generate
+	protoc --proto_path=./internal \
+	       --proto_path=./third_party \
+ 	       --go_out=paths=source_relative:./internal \
+	       $(INTERNAL_PROTO_FILES)
+#	cd internal/conf
+#	buf generate
 .PHONY: api
 # generate api proto
-#api:
-#	protoc --proto_path=./api \
-#	       --proto_path=./third_party \
-# 	       --go_out=paths=source_relative:./api \
-# 	       --go-http_out=paths=source_relative:./api \
-# 	       --go-grpc_out=paths=source_relative:./api \
-#	       --openapi_out=fq_schema_naming=true,default_response=false:. \
-#	       $(API_PROTO_FILES)
 api:
-	buf generate
+	protoc --proto_path=./api \
+	   --proto_path=./third_party \
+ 	   --go_out=paths=source_relative:./api \
+ 	   --go-http_out=paths=source_relative:./api \
+ 	   --go-grpc_out=paths=source_relative:./api \
+	   --openapi_out=fq_schema_naming=true,default_response=false:. \
+	   $(API_PROTO_FILES)
 
 .PHONY: build
 # build
