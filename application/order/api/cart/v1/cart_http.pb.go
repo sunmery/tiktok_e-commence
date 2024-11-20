@@ -19,9 +19,9 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationCartServiceAddItem = "/api.cart.v1.CartService/AddItem"
-const OperationCartServiceEmptyCart = "/api.cart.v1.CartService/EmptyCart"
-const OperationCartServiceGetCart = "/api.cart.v1.CartService/GetCart"
+const OperationCartServiceAddItem = "/api.order.v1.CartService/AddItem"
+const OperationCartServiceEmptyCart = "/api.order.v1.CartService/EmptyCart"
+const OperationCartServiceGetCart = "/api.order.v1.CartService/GetCart"
 
 type CartServiceHTTPServer interface {
 	AddItem(context.Context, *AddItemReq) (*AddItemResp, error)

@@ -50,7 +50,7 @@ message PlaceOrderReq {
 }
 
 message OrderItem {
-  cart.v1.CartItem item = 1;
+  CartItem item = 1;
   float cost = 2;
 }
 

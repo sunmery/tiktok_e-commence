@@ -1,4 +1,5 @@
 consul:
-  address: node8.apikv.com:32080 # NodePort 外网可访问的Consul HTTP API地址
+  # address: node8.apikv.com:32080 # NodePort 外网可访问的Consul HTTP API地址
+  address: http://localhost:8500 # NodePort 外网可访问的Consul HTTP API地址
   scheme: http
   healthCheck: false

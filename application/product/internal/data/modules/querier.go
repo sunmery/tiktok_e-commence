@@ -26,9 +26,8 @@ type Querier interface {
 	//
 	//  SELECT id, name, description, picture, price, categories
 	//  FROM products.products
-	//  WHERE $1 = ANY (categories)
 	//  ORDER BY id
-	//  OFFSET $2 LIMIT $3
+	//  OFFSET $1 LIMIT $2
 	ListProducts(ctx context.Context, arg ListProductsParams) ([]ProductsProducts, error)
 	//SearchProducts
 	//

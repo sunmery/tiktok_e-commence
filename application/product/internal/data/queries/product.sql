@@ -6,7 +6,6 @@ RETURNING *;
 -- name: ListProducts :many
 SELECT *
 FROM products.products
-WHERE sqlc.arg(category_name) = ANY (categories)
 ORDER BY id
 OFFSET sqlc.arg(page) LIMIT sqlc.arg(page_size);
 

@@ -38,9 +38,8 @@ func (p *productRepo) CreateProduct(ctx context.Context, req *biz.CreateProductR
 
 func (p *productRepo) ListProducts(ctx context.Context, req *biz.ListProductsReq) (*biz.ListProductsResp, error) {
 	products, err := p.data.db.ListProducts(ctx, modules.ListProductsParams{
-		CategoryName: req.CategoryName,
-		Page:         int64((req.Page - 1) * req.PageSize),
-		PageSize:     int64(req.PageSize),
+		Page:     int64((req.Page - 1) * req.PageSize),
+		PageSize: int64(req.PageSize),
 	})
 	if err != nil {
 		return nil, err

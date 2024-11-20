@@ -27,7 +27,7 @@ var (
 	// flagconf is the config flag.
 	flagconf = "configs"
 
-	id, _ = os.Hostname()
+	id = "tiktok-e_commence-products"
 )
 
 func init() {

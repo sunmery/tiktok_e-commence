@@ -24,9 +24,22 @@ import (
 
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
+	registrar := server.NewRegistrar(registry)
 	pool := data.NewDB(confData)
 	client := data.NewCache(confData)
-	dataData, cleanup, err := data.NewData(logger, pool, client)
+	discovery, err := data.NewDiscovery(registry)
+	if err != nil {
+		return nil, nil, err
+	}
+	productCatalogServiceClient, err := data.NewProductServiceClient(discovery, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	cartServiceClient, err := data.NewCartServiceClient(discovery, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	dataData, cleanup, err := data.NewData(logger, pool, client, productCatalogServiceClient, cartServiceClient)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -35,7 +48,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	orderServiceService := service.NewOrderServiceService(orderUsecase)
 	grpcServer := server.NewGRPCServer(confServer, orderServiceService, logger)
 	httpServer := server.NewHTTPServer(confServer, orderServiceService, logger)
-	app := newApp(logger, grpcServer, httpServer)
+	app := newApp(logger, registrar, grpcServer, httpServer)
 	return app, func() {
 		cleanup()
 	}, nil

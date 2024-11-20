@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/jackc/pgx/v5"
+	productV1 "order/api/product/v1"
 	"order/internal/data/models"
 
 	"fmt"
@@ -56,6 +57,13 @@ func (o *orderRepo) PlaceOrder(ctx context.Context, req *biz.PlaceOrderReq) (*bi
 	}
 
 	fmt.Printf("orders: '%+v'", order)
+	product, err := o.data.productClient.GetProduct(ctx, &productV1.GetProductReq{
+		Id: req.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("product: '%+v'", product)
 
 	return &biz.PlaceOrderResp{
 		Order: biz.OrderResult{

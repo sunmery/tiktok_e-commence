@@ -15,7 +15,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.cart.v1.AddItemReq'
+                            $ref: '#/components/schemas/api.order.v1.AddItemReq'
                 required: true
             responses:
                 "200":
@@ -23,7 +23,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.cart.v1.AddItemResp'
+                                $ref: '#/components/schemas/api.order.v1.AddItemResp'
     /v1/cart/{user_id}:
         get:
             tags:
@@ -41,7 +41,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.cart.v1.GetCartResp'
+                                $ref: '#/components/schemas/api.order.v1.GetCartResp'
         delete:
             tags:
                 - CartService
@@ -58,7 +58,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.cart.v1.EmptyCartResp'
+                                $ref: '#/components/schemas/api.order.v1.EmptyCartResp'
     /v1/order:
         get:
             tags:
@@ -195,42 +195,16 @@ paths:
                                 $ref: '#/components/schemas/api.product.v1.GetProductResp'
 components:
     schemas:
-        api.cart.v1.AddItemReq:
+        api.order.v1.AddItemReq:
             type: object
             properties:
                 user_id:
                     type: string
                 item:
-                    $ref: '#/components/schemas/api.cart.v1.CartItem'
-        api.cart.v1.AddItemResp:
+                    $ref: '#/components/schemas/api.order.v1.CartItem'
+        api.order.v1.AddItemResp:
             type: object
             properties: {}
-        api.cart.v1.Cart:
-            type: object
-            properties:
-                user_id:
-                    type: string
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/api.cart.v1.CartItem'
-        api.cart.v1.CartItem:
-            type: object
-            properties:
-                product_id:
-                    type: integer
-                    format: uint32
-                quantity:
-                    type: integer
-                    format: int32
-        api.cart.v1.EmptyCartResp:
-            type: object
-            properties: {}
-        api.cart.v1.GetCartResp:
-            type: object
-            properties:
-                cart:
-                    $ref: '#/components/schemas/api.cart.v1.Cart'
         api.order.v1.Address:
             type: object
             properties:
@@ -245,6 +219,32 @@ components:
                 zipCode:
                     type: integer
                     format: int32
+        api.order.v1.Cart:
+            type: object
+            properties:
+                user_id:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.order.v1.CartItem'
+        api.order.v1.CartItem:
+            type: object
+            properties:
+                product_id:
+                    type: integer
+                    format: uint32
+                quantity:
+                    type: integer
+                    format: int32
+        api.order.v1.EmptyCartResp:
+            type: object
+            properties: {}
+        api.order.v1.GetCartResp:
+            type: object
+            properties:
+                cart:
+                    $ref: '#/components/schemas/api.order.v1.Cart'
         api.order.v1.ListOrderResp:
             type: object
             properties:
@@ -286,7 +286,7 @@ components:
             type: object
             properties:
                 item:
-                    $ref: '#/components/schemas/api.cart.v1.CartItem'
+                    $ref: '#/components/schemas/api.order.v1.CartItem'
                 cost:
                     type: number
                     format: float

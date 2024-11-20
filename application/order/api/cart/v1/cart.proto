@@ -1,12 +1,11 @@
 syntax = "proto3";
 
-package api.cart.v1;
+package api.order.v1;
 
 import "google/api/annotations.proto";
 
-option go_package = "cart/api/cart/v1;v1";
-option java_multiple_files = true;
-option java_package = "api.cart.v1";
+option go_package = "order/api/cart/v1;v1";
+
 
 service CartService {
 	rpc AddItem(AddItemReq) returns (AddItemResp) {

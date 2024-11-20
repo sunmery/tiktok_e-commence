@@ -78,26 +78,23 @@ func (q *Queries) GetProduct(ctx context.Context, id int32) (ProductsProducts, e
 const ListProducts = `-- name: ListProducts :many
 SELECT id, name, description, picture, price, categories
 FROM products.products
-WHERE $1 = ANY (categories)
 ORDER BY id
-OFFSET $2 LIMIT $3
+OFFSET $1 LIMIT $2
 `
 
 type ListProductsParams struct {
-	CategoryName string `json:"categoryName"`
-	Page         int64  `json:"page"`
-	PageSize     int64  `json:"pageSize"`
+	Page     int64 `json:"page"`
+	PageSize int64 `json:"pageSize"`
 }
 
 // ListProducts
 //
 //	SELECT id, name, description, picture, price, categories
 //	FROM products.products
-//	WHERE $1 = ANY (categories)
 //	ORDER BY id
-//	OFFSET $2 LIMIT $3
+//	OFFSET $1 LIMIT $2
 func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]ProductsProducts, error) {
-	rows, err := q.db.Query(ctx, ListProducts, arg.CategoryName, arg.Page, arg.PageSize)
+	rows, err := q.db.Query(ctx, ListProducts, arg.Page, arg.PageSize)
 	if err != nil {
 		return nil, err
 	}

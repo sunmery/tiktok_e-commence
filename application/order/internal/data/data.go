@@ -21,7 +21,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewOrderRepo, NewDiscovery, NewCartServiceClient)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewOrderRepo, NewDiscovery, NewCartServiceClient, NewProductServiceClient)
 
 // Data .
 type Data struct {
@@ -91,7 +91,7 @@ func NewDiscovery(conf *conf.Registry) (registry.Discovery, error) {
 func NewCartServiceClient(d registry.Discovery, logger log.Logger) (cartV1.CartServiceClient, error) {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		grpc.WithEndpoint("discovery:///tiktok-e_commence-products"),
+		grpc.WithEndpoint("discovery:///tiktok-e_commence-orders"),
 		grpc.WithDiscovery(d),
 		grpc.WithMiddleware(
 			recovery.Recovery(),
@@ -102,4 +102,21 @@ func NewCartServiceClient(d registry.Discovery, logger log.Logger) (cartV1.CartS
 		return nil, err
 	}
 	return cartV1.NewCartServiceClient(conn), nil
+}
+
+// NewProductServiceClient 购物车
+func NewProductServiceClient(d registry.Discovery, logger log.Logger) (protuctsV1.ProductCatalogServiceClient, error) {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint("discovery:///tiktok-e_commence-products"),
+		grpc.WithDiscovery(d),
+		grpc.WithMiddleware(
+			recovery.Recovery(),
+			logging.Client(logger),
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return protuctsV1.NewProductCatalogServiceClient(conn), nil
 }

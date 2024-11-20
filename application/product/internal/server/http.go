@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/gorilla/handlers"
 	v1 "product/api/product/v1"
 	"product/internal/conf"
 	"product/internal/service"
@@ -15,6 +16,14 @@ func NewHTTPServer(c *conf.Server, product *service.ProductService, logger log.L
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+		),
+		// CORS
+		http.Filter(
+			handlers.CORS(
+				handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+				handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
+				handlers.AllowedOrigins([]string{"http://localhost:3000", "localhost:80", "localhost:443"}),
+			),
 		),
 	}
 	if c.Http.Network != "" {
