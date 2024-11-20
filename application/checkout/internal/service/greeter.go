@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	v1 "checkout/api/helloworld/v1"
+	v1 "checkout/api/checkout/v1"
 	"checkout/internal/biz"
 )
 
@@ -11,7 +11,7 @@ import (
 type GreeterService struct {
 	v1.UnimplementedGreeterServer
 
-	uc *biz.GreeterUsecase
+	cc *biz.CheckoutUsecase
 }
 
 // NewGreeterService new a greeter service.
@@ -19,11 +19,6 @@ func NewGreeterService(uc *biz.GreeterUsecase) *GreeterService {
 	return &GreeterService{uc: uc}
 }
 
-// SayHello implements helloworld.GreeterServer.
-func (s *GreeterService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
-	g, err := s.uc.CreateGreeter(ctx, &biz.Greeter{Hello: in.Name})
-	if err != nil {
-		return nil, err
-	}
-	return &v1.HelloReply{Message: "Hello " + g.Hello}, nil
+func (s *GreeterService) CreateService(ctx context.Context, req *v1.CreateServiceRequest) (*v1.CreateServiceReply, error) {
+	s.cc.CreateService(ctx, &biz.CreateServiceRequest)
 }

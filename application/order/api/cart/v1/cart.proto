@@ -6,7 +6,6 @@ import "google/api/annotations.proto";
 
 option go_package = "order/api/cart/v1;v1";
 
-
 service CartService {
 	rpc AddItem(AddItemReq) returns (AddItemResp) {
 		option (google.api.http) = {
