@@ -1,6 +1,12 @@
 package server
 
 import (
+	"context"
+	"crypto/rsa"
+	"fmt"
+	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
+	"github.com/go-kratos/kratos/v2/middleware/selector"
+	jwtV5 "github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/handlers"
 	v1 "user/api/user/v1"
 	"user/internal/conf"
@@ -11,16 +17,55 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
+// NewWhiteListMatcher 创建jwt白名单
+func NewWhiteListMatcher() selector.MatchFunc {
+	whiteList := make(map[string]struct{})
+	// whiteList["/admin.v1.AdminService/Login"] = struct{}{}
+	whiteList["/api.user.v1.UserService/Signin"] = struct{}{}
+	return func(ctx context.Context, operation string) bool {
+		if _, ok := whiteList[operation]; ok {
+			return false
+		}
+		return true
+	}
+}
+
+// parseRSAPublicKeyFromPEM 解析 RSA 公钥
+func parseRSAPublicKeyFromPEM(pemBytes []byte) (*rsa.PublicKey, error) {
+	publicKey, err := jwtV5.ParseRSAPublicKeyFromPEM(pemBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse RSA public key: %w", err)
+	}
+	return publicKey, nil
+}
+
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(
 	c *conf.Server,
-	cc *conf.Casdoor,
+	ac *conf.Auth,
 	user *service.UserServiceService,
 	logger log.Logger,
 ) *http.Server {
+	publicKey, err := parseRSAPublicKeyFromPEM([]byte(ac.Jwt.ApiKey))
+	if err != nil {
+		panic("failed to parse public key")
+	}
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			selector.Server(
+				jwt.Server(
+					func(token *jwtV5.Token) (interface{}, error) {
+						// 检查是否使用了正确的签名方法
+						if _, ok := token.Method.(*jwtV5.SigningMethodRSA); !ok {
+							return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+						}
+						return publicKey, nil
+					},
+					jwt.WithSigningMethod(jwtV5.SigningMethodRS256),
+				),
+			).
+				Match(NewWhiteListMatcher()).Build(),
 		),
 		http.Filter(handlers.CORS( // 浏览器跨域
 			handlers.AllowedOrigins([]string{"http://localhost:3000", "http://127.0.0.1:3000"}),

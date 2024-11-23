@@ -12,8 +12,8 @@ CREATE TABLE credit_cards.credit_cards
 );
 
 -- 关联银行卡到特定组织的用户
-ALTER TABLE credit_cards.credit_cards
-    ADD
-        FOREIGN KEY (owner, username) REFERENCES public."user" (owner, name);
+-- ALTER TABLE credit_cards.credit_cards
+--     ADD
+--         FOREIGN KEY (owner, username) REFERENCES public."user" (owner, name);
 
 CREATE INDEX idx_credit_cards_id ON credit_cards.credit_cards (id);

@@ -5,6 +5,7 @@ import (
 	"credit_cards/internal/data/modules"
 	"credit_cards/internal/pkg/token"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"credit_cards/internal/biz"
@@ -18,13 +19,15 @@ type creditCardsRepo struct {
 }
 
 func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditCardsRequest) ([]*biz.CreditCards, error) {
-	payload, err := token.ParseJWTFromContext(ctx)
+	payload, err := token.ExtractPayload(ctx)
 	if err != nil {
-		return nil, err
-	}
-	if req.Owner != payload.Owner && req.Username != payload.Name {
 		return nil, errors.New("invalid token")
 	}
+
+	if req.Owner != payload.Owner || req.Username != payload.Name {
+		return nil, errors.New("invalid token")
+	}
+
 	cards, err := c.data.db.GetCreditCards(ctx, modules.GetCreditCardsParams{
 		Owner:            payload.Owner,
 		Username:         payload.Name,
@@ -48,13 +51,17 @@ func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditC
 }
 
 func (c *creditCardsRepo) CreateCreditCard(ctx context.Context, req *biz.CreditCards) (*biz.CreditCardsReply, error) {
-	payload, err := token.ParseJWTFromContext(ctx)
+	payload, err := token.ExtractPayload(ctx)
 	if err != nil {
-		return nil, err
-	}
-	if req.Owner != payload.Owner && req.Username != payload.Name {
 		return nil, errors.New("invalid token")
 	}
+	fmt.Printf("req: %+v \n", req)
+	fmt.Printf("payload %+v \n", payload)
+	if req.Owner != payload.Owner || req.Username != payload.Name {
+		fmt.Println("OK")
+		return nil, errors.New("invalid token")
+	}
+
 	_, err = c.data.db.CreateCreditCard(ctx, modules.CreateCreditCardParams{
 		Owner:                     payload.Owner,
 		Username:                  payload.Name,
@@ -73,7 +80,7 @@ func (c *creditCardsRepo) CreateCreditCard(ctx context.Context, req *biz.CreditC
 }
 
 func (c *creditCardsRepo) UpdateCreditCard(ctx context.Context, req *biz.CreditCards) (*biz.CreditCardsReply, error) {
-	payload, err := token.ParseJWTFromContext(ctx)
+	payload, err := token.ExtractPayload(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +104,7 @@ func (c *creditCardsRepo) UpdateCreditCard(ctx context.Context, req *biz.CreditC
 }
 
 func (c *creditCardsRepo) DeleteCreditCard(ctx context.Context, id int32) (*biz.CreditCardsReply, error) {
-	payload, err := token.ParseJWTFromContext(ctx)
+	payload, err := token.ExtractPayload(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +121,7 @@ func (c *creditCardsRepo) DeleteCreditCard(ctx context.Context, id int32) (*biz.
 }
 
 func (c *creditCardsRepo) ListCreditCards(ctx context.Context, req *biz.ListCreditCardsRequest) ([]*biz.CreditCards, error) {
-	payload, err := token.ParseJWTFromContext(ctx)
+	payload, err := token.ExtractPayload(ctx)
 	if err != nil {
 		return nil, err
 	}

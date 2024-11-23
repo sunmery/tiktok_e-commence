@@ -56,3 +56,11 @@ message Casdoor {
   }
   Casdoor casdoor = 1;
 }
+
+message Auth {
+  message JWT {
+    string service_key = 1;
+    string api_key = 2;
+  }
+  JWT jwt = 1;
+}

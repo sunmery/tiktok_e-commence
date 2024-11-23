@@ -7,6 +7,7 @@ toolchain go1.22.6
 require (
 	github.com/casdoor/casdoor-go-sdk v1.3.0
 	github.com/go-kratos/kratos/v2 v2.8.0
+	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/wire v0.6.0
 	github.com/gorilla/handlers v1.5.2
 	github.com/jackc/pgx/v5 v5.7.1

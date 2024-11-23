@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 
 	"errors"
 	"fmt"
@@ -51,10 +52,21 @@ func (u *userRepo) GetUserInfo(ctx context.Context, req *biz.GetUserInfoRequest)
 	fmt.Printf("Name: %+v\n", claims.Name)
 	fmt.Printf("Id: %+v\n", claims.Id)
 	fmt.Printf("Avatar: %+v\n", claims.Avatar)
+	fmt.Printf("Email: %+v\n", claims.Email)
+
+	resp := casdoorsdk.User{
+		Owner:  claims.Owner,
+		Type:   claims.Type,
+		Name:   claims.Name,
+		Id:     claims.Id,
+		Avatar: claims.Avatar,
+		Email:  claims.Email,
+	}
 
 	return &biz.GetUserInfoReply{
 		State: "ok",
-		Data:  claims.User,
+		// Data:  claims.User,
+		Data: resp,
 	}, nil
 }
 
