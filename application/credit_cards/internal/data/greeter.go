@@ -16,8 +16,12 @@ type creditCardsRepo struct {
 	log  *log.Helper
 }
 
-func (c *creditCardsRepo) GetCreditCard(ctx context.Context, creditCardNumber string) ([]*biz.CreditCards, error) {
-	cards, err := c.data.db.GetCreditCards(ctx, &creditCardNumber)
+func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditCardsRequest) ([]*biz.CreditCards, error) {
+	cards, err := c.data.db.GetCreditCards(ctx, modules.GetCreditCardsParams{
+		Owner:            req.Owner,
+		Username:         req.Username,
+		CreditCardNumber: &req.CreditCardNumber,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -63,9 +67,26 @@ func (c *creditCardsRepo) DeleteCreditCard(ctx context.Context, id int32) (*biz.
 	panic("implement me")
 }
 
-func (c *creditCardsRepo) ListCreditCards(ctx context.Context, userId string) ([]*biz.CreditCards, error) {
-	// TODO implement me
-	panic("implement me")
+func (c *creditCardsRepo) ListCreditCards(ctx context.Context, req *biz.ListCreditCardsRequest) ([]*biz.CreditCards, error) {
+	cards, err := c.data.db.ListCreditCards(ctx, modules.ListCreditCardsParams{
+		Owner:    req.Owner,
+		Username: req.Username,
+	})
+	if err != nil {
+		return nil, err
+	}
+	cardList := make([]*biz.CreditCards, len(cards))
+	for i, card := range cards {
+		cardList[i] = &biz.CreditCards{
+			Owner:                     card.Owner,
+			Username:                  card.Username,
+			CreditCardNumber:          card.CreditCardNumber,
+			CreditCardCvv:             card.CreditCardCvv,
+			CreditCardExpirationYear:  card.CreditCardExpirationYear,
+			CreditCardExpirationMonth: card.CreditCardExpirationMonth,
+		}
+	}
+	return cardList, nil
 }
 
 func NewCreditCardsRepo(data *Data, logger log.Logger) biz.CreditCardsRepo {

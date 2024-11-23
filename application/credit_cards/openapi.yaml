@@ -41,12 +41,16 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.credit_cards.v1.CardsReply'
-    /v1/credit_cards/all:
+    /v1/credit_cards/list:
         get:
             tags:
                 - CreditCardsService
             operationId: CreditCardsService_ListCreditCards
             parameters:
+                - name: owner
+                  in: query
+                  schema:
+                    type: string
                 - name: username
                   in: query
                   schema:
@@ -58,15 +62,22 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.credit_cards.v1.ListCreditCardsReply'
-    /v1/credit_cards/{credit_card_number}:
+    /v1/credit_cards/search:
         get:
             tags:
                 - CreditCardsService
             operationId: CreditCardsService_GetCreditCards
             parameters:
+                - name: owner
+                  in: query
+                  schema:
+                    type: string
+                - name: username
+                  in: query
+                  schema:
+                    type: string
                 - name: credit_card_number
-                  in: path
-                  required: true
+                  in: query
                   schema:
                     type: string
             responses:

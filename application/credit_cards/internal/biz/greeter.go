@@ -16,6 +16,16 @@ type CreditCards struct {
 	CreditCardExpirationMonth int32  `json:"credit_card_expiration_month"`
 }
 
+type GetCreditCardsRequest struct {
+	Owner            string `json:"owner"`
+	Username         string `json:"username"`
+	CreditCardNumber string `json:"credit_card_number"`
+}
+type ListCreditCardsRequest struct {
+	Owner    string `json:"owner"`
+	Username string `json:"username"`
+}
+
 type CreditCardsReply struct {
 	Message string `json:"message"`
 	Code    int32  `json:"code"`
@@ -26,8 +36,8 @@ type CreditCardsRepo interface {
 	CreateCreditCard(ctx context.Context, req *CreditCards) (*CreditCardsReply, error)
 	UpdateCreditCard(ctx context.Context, req *CreditCards) (*CreditCardsReply, error)
 	DeleteCreditCard(ctx context.Context, id int32) (*CreditCardsReply, error)
-	GetCreditCard(ctx context.Context, creditCardNumber string) ([]*CreditCards, error)
-	ListCreditCards(ctx context.Context, username string) ([]*CreditCards, error)
+	GetCreditCard(ctx context.Context, req *GetCreditCardsRequest) ([]*CreditCards, error)
+	ListCreditCards(ctx context.Context, req *ListCreditCardsRequest) ([]*CreditCards, error)
 }
 
 // CreditCardsUsecase is a CreditCards usecase.
@@ -53,11 +63,11 @@ func (uc *CreditCardsUsecase) DeleteCreditCards(ctx context.Context, id int32) (
 	uc.log.WithContext(ctx).Infof("DeleteCreditCards: %+v\n", id)
 	return uc.repo.DeleteCreditCard(ctx, id)
 }
-func (uc *CreditCardsUsecase) GetCreditCards(ctx context.Context, creditCardNumber string) ([]*CreditCards, error) {
-	uc.log.WithContext(ctx).Infof("GetCreditCards: %+v\n", creditCardNumber)
-	return uc.repo.GetCreditCard(ctx, creditCardNumber)
+func (uc *CreditCardsUsecase) GetCreditCards(ctx context.Context, req *GetCreditCardsRequest) ([]*CreditCards, error) {
+	uc.log.WithContext(ctx).Infof("GetCreditCards: %+v\n", req)
+	return uc.repo.GetCreditCard(ctx, req)
 }
-func (uc *CreditCardsUsecase) ListCreditCards(ctx context.Context, username string) ([]*CreditCards, error) {
-	uc.log.WithContext(ctx).Infof("ListCreditCards: %+v\n", username)
-	return uc.repo.ListCreditCards(ctx, username)
+func (uc *CreditCardsUsecase) ListCreditCards(ctx context.Context, req *ListCreditCardsRequest) ([]*CreditCards, error) {
+	uc.log.WithContext(ctx).Infof("ListCreditCards: %+v\n", req)
+	return uc.repo.ListCreditCards(ctx, req)
 }

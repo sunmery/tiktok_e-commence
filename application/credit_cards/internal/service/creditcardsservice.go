@@ -60,7 +60,11 @@ func (s *CreditCardsServiceService) DeleteCreditCard(ctx context.Context, req *p
 	}, nil
 }
 func (s *CreditCardsServiceService) GetCreditCards(ctx context.Context, req *pb.GetCreditCardsRequest) (*pb.GetCreditCardsReply, error) {
-	creditCards, err := s.cs.GetCreditCards(ctx, req.CreditCardNumber)
+	creditCards, err := s.cs.GetCreditCards(ctx, &biz.GetCreditCardsRequest{
+		Owner:            req.Owner,
+		Username:         req.Username,
+		CreditCardNumber: req.CreditCardNumber,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +83,10 @@ func (s *CreditCardsServiceService) GetCreditCards(ctx context.Context, req *pb.
 	}, nil
 }
 func (s *CreditCardsServiceService) ListCreditCards(ctx context.Context, req *pb.ListCreditCardsRequest) (*pb.ListCreditCardsReply, error) {
-	creditCards, err := s.cs.GetCreditCards(ctx, req.Username)
+	creditCards, err := s.cs.ListCreditCards(ctx, &biz.ListCreditCardsRequest{
+		Owner:    req.Owner,
+		Username: req.Username,
+	})
 	if err != nil {
 		return nil, err
 	}

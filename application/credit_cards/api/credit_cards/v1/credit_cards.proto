@@ -30,12 +30,12 @@ service CreditCardsService {
 	};
 	rpc GetCreditCards (GetCreditCardsRequest) returns (GetCreditCardsReply){
 		option (google.api.http) = {
-			get: "/v1/credit_cards/{credit_card_number}"
+			get: "/v1/credit_cards/search"
 		};
 	};
 	rpc ListCreditCards (ListCreditCardsRequest) returns (ListCreditCardsReply){
 		option (google.api.http) = {
-			get: "/v1/credit_cards/all"
+			get: "/v1/credit_cards/list"
 		};
 	};
 }
@@ -68,14 +68,17 @@ message DeleteCreditCardsRequest {
 }
 
 message GetCreditCardsRequest {
-	string credit_card_number = 1 [json_name = "credit_card_number"];
+	string owner = 1;
+	string username = 2;
+	string credit_card_number = 3 [json_name = "credit_card_number"];
 }
 message GetCreditCardsReply {
 	repeated CreditCards credit_cards = 1 [json_name = "credit_cards"];
 }
 
 message ListCreditCardsRequest {
-	string username = 1 [json_name = "username"];
+	string owner = 1;
+	string username = 2;
 }
 
 message ListCreditCardsReply {

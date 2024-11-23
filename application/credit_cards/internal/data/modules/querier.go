@@ -32,14 +32,17 @@ type Querier interface {
 	//
 	//  SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
 	//  FROM credit_cards.credit_cards
-	//  WHERE credit_card_number ILIKE '%' || $1 || '%'
-	GetCreditCards(ctx context.Context, dollar_1 *string) ([]CreditCardsCreditCards, error)
+	//  WHERE owner = $1
+	//    AND username = $2
+	//    AND credit_card_number ILIKE '%' || $3 || '%'
+	GetCreditCards(ctx context.Context, arg GetCreditCardsParams) ([]CreditCardsCreditCards, error)
 	//ListCreditCards
 	//
 	//  SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
 	//  FROM credit_cards.credit_cards
-	//  WHERE username = $1
-	ListCreditCards(ctx context.Context, username string) ([]CreditCardsCreditCards, error)
+	//  WHERE owner = $1
+	//    AND username = $2
+	ListCreditCards(ctx context.Context, arg ListCreditCardsParams) ([]CreditCardsCreditCards, error)
 	//UpdateCreditCard
 	//
 	//  UPDATE credit_cards.credit_cards

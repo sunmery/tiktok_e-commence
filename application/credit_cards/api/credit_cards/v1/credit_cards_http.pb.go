@@ -38,8 +38,8 @@ func RegisterCreditCardsServiceHTTPServer(s *http.Server, srv CreditCardsService
 	r.POST("/v1/credit_cards", _CreditCardsService_CreateCreditCard0_HTTP_Handler(srv))
 	r.PATCH("/v1/credit_cards", _CreditCardsService_UpdateCreditCard0_HTTP_Handler(srv))
 	r.DELETE("/v1/credit_cards/{id}", _CreditCardsService_DeleteCreditCard0_HTTP_Handler(srv))
-	r.GET("/v1/credit_cards/{credit_card_number}", _CreditCardsService_GetCreditCards0_HTTP_Handler(srv))
-	r.GET("/v1/credit_cards/all", _CreditCardsService_ListCreditCards0_HTTP_Handler(srv))
+	r.GET("/v1/credit_cards/search", _CreditCardsService_GetCreditCards0_HTTP_Handler(srv))
+	r.GET("/v1/credit_cards/list", _CreditCardsService_ListCreditCards0_HTTP_Handler(srv))
 }
 
 func _CreditCardsService_CreateCreditCard0_HTTP_Handler(srv CreditCardsServiceHTTPServer) func(ctx http.Context) error {
@@ -112,9 +112,6 @@ func _CreditCardsService_GetCreditCards0_HTTP_Handler(srv CreditCardsServiceHTTP
 	return func(ctx http.Context) error {
 		var in GetCreditCardsRequest
 		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationCreditCardsServiceGetCreditCards)
@@ -193,7 +190,7 @@ func (c *CreditCardsServiceHTTPClientImpl) DeleteCreditCard(ctx context.Context,
 
 func (c *CreditCardsServiceHTTPClientImpl) GetCreditCards(ctx context.Context, in *GetCreditCardsRequest, opts ...http.CallOption) (*GetCreditCardsReply, error) {
 	var out GetCreditCardsReply
-	pattern := "/v1/credit_cards/{credit_card_number}"
+	pattern := "/v1/credit_cards/search"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCreditCardsServiceGetCreditCards))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -206,7 +203,7 @@ func (c *CreditCardsServiceHTTPClientImpl) GetCreditCards(ctx context.Context, i
 
 func (c *CreditCardsServiceHTTPClientImpl) ListCreditCards(ctx context.Context, in *ListCreditCardsRequest, opts ...http.CallOption) (*ListCreditCardsReply, error) {
 	var out ListCreditCardsReply
-	pattern := "/v1/credit_cards/all"
+	pattern := "/v1/credit_cards/list"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCreditCardsServiceListCreditCards))
 	opts = append(opts, http.PathTemplate(pattern))

@@ -27,9 +27,12 @@ RETURNING *;
 -- name: GetCreditCards :many
 SELECT *
 FROM credit_cards.credit_cards
-WHERE credit_card_number ILIKE '%' || $1 || '%';
+WHERE owner = @owner
+  AND username = @username
+  AND credit_card_number ILIKE '%' || @credit_card_number || '%';
 
 -- name: ListCreditCards :many
 SELECT *
 FROM credit_cards.credit_cards
-WHERE username = @username;
+WHERE owner = @owner
+  AND username = @username;

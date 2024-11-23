@@ -99,16 +99,26 @@ func (q *Queries) DeleteCreditCard(ctx context.Context, arg DeleteCreditCardPara
 const GetCreditCards = `-- name: GetCreditCards :many
 SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
 FROM credit_cards.credit_cards
-WHERE credit_card_number ILIKE '%' || $1 || '%'
+WHERE owner = $1
+  AND username = $2
+  AND credit_card_number ILIKE '%' || $3 || '%'
 `
+
+type GetCreditCardsParams struct {
+	Owner            string  `json:"owner"`
+	Username         string  `json:"username"`
+	CreditCardNumber *string `json:"creditCardNumber"`
+}
 
 // GetCreditCards
 //
 //	SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
 //	FROM credit_cards.credit_cards
-//	WHERE credit_card_number ILIKE '%' || $1 || '%'
-func (q *Queries) GetCreditCards(ctx context.Context, dollar_1 *string) ([]CreditCardsCreditCards, error) {
-	rows, err := q.db.Query(ctx, GetCreditCards, dollar_1)
+//	WHERE owner = $1
+//	  AND username = $2
+//	  AND credit_card_number ILIKE '%' || $3 || '%'
+func (q *Queries) GetCreditCards(ctx context.Context, arg GetCreditCardsParams) ([]CreditCardsCreditCards, error) {
+	rows, err := q.db.Query(ctx, GetCreditCards, arg.Owner, arg.Username, arg.CreditCardNumber)
 	if err != nil {
 		return nil, err
 	}
@@ -138,16 +148,23 @@ func (q *Queries) GetCreditCards(ctx context.Context, dollar_1 *string) ([]Credi
 const ListCreditCards = `-- name: ListCreditCards :many
 SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
 FROM credit_cards.credit_cards
-WHERE username = $1
+WHERE owner = $1
+  AND username = $2
 `
+
+type ListCreditCardsParams struct {
+	Owner    string `json:"owner"`
+	Username string `json:"username"`
+}
 
 // ListCreditCards
 //
 //	SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
 //	FROM credit_cards.credit_cards
-//	WHERE username = $1
-func (q *Queries) ListCreditCards(ctx context.Context, username string) ([]CreditCardsCreditCards, error) {
-	rows, err := q.db.Query(ctx, ListCreditCards, username)
+//	WHERE owner = $1
+//	  AND username = $2
+func (q *Queries) ListCreditCards(ctx context.Context, arg ListCreditCardsParams) ([]CreditCardsCreditCards, error) {
+	rows, err := q.db.Query(ctx, ListCreditCards, arg.Owner, arg.Username)
 	if err != nil {
 		return nil, err
 	}
