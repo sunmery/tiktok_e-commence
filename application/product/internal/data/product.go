@@ -2,9 +2,11 @@ package data
 
 import (
 	"context"
+	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"product/internal/biz"
 	"product/internal/data/modules"
+	"product/internal/pkg/token"
 )
 
 type productRepo struct {
@@ -13,8 +15,18 @@ type productRepo struct {
 }
 
 func (p *productRepo) CreateProduct(ctx context.Context, req *biz.CreateProductRequest) (*biz.CreateProductReply, error) {
+	payload, err := token.ExtractPayload(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.Owner != payload.Owner || req.Name != payload.Name {
+		return nil, errors.New("invalid token")
+	}
+
 	product, err := p.data.db.CreateProduct(ctx, modules.CreateProductParams{
-		Name:        req.Name,
+
+		Name:        payload.Name,
 		Description: req.Description,
 		Picture:     req.Picture,
 		Price:       req.Price,
@@ -77,7 +89,8 @@ func (p *productRepo) GetProduct(ctx context.Context, id uint32) (*biz.GetProduc
 }
 
 func (p *productRepo) SearchProducts(ctx context.Context, req *biz.SearchProductsReq) (*biz.SearchProductsResp, error) {
-	products, err := p.data.db.SearchProducts(ctx, req.Query)
+
+	products, err := p.data.db.SearchProducts(ctx, &req.Query)
 	if err != nil {
 		return nil, err
 	}

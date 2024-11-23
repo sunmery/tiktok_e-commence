@@ -48,3 +48,11 @@ message Data {
   Database database = 1;
   Redis redis = 2;
 }
+
+message Auth {
+  message JWT {
+    string service_key = 1;
+    string api_key = 2;
+  }
+  JWT jwt = 1;
+}

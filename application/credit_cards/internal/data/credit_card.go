@@ -85,7 +85,7 @@ func (c *creditCardsRepo) UpdateCreditCard(ctx context.Context, req *biz.CreditC
 		return nil, err
 	}
 
-	if req.Owner != payload.Owner && req.Username != payload.Name {
+	if req.Owner != payload.Owner || req.Username != payload.Name {
 		return nil, errors.New("invalid token")
 	}
 
@@ -125,7 +125,7 @@ func (c *creditCardsRepo) ListCreditCards(ctx context.Context, req *biz.ListCred
 	if err != nil {
 		return nil, err
 	}
-	if req.Owner != payload.Owner && req.Username != payload.Name {
+	if req.Owner != payload.Owner || req.Username != payload.Name {
 		return nil, errors.New("invalid token")
 	}
 	cards, err := c.data.db.ListCreditCards(ctx, modules.ListCreditCardsParams{

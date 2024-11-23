@@ -7,6 +7,7 @@ toolchain go1.23.3
 require (
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20241105072421-f8b97f675b32
 	github.com/go-kratos/kratos/v2 v2.8.2
+	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/wire v0.6.0
 	github.com/gorilla/handlers v1.5.2
 	github.com/hashicorp/consul/api v1.30.0

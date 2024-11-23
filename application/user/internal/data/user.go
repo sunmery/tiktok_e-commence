@@ -47,13 +47,7 @@ func (u *userRepo) GetUserInfo(ctx context.Context, req *biz.GetUserInfoRequest)
 	if err != nil {
 		return nil, fmt.Errorf("ParseJwtToken() error")
 	}
-	fmt.Printf("Owner: %+v\n", claims.Owner)
-	fmt.Printf("Type: %+v\n", claims.Type)
-	fmt.Printf("Name: %+v\n", claims.Name)
-	fmt.Printf("Id: %+v\n", claims.Id)
-	fmt.Printf("Avatar: %+v\n", claims.Avatar)
-	fmt.Printf("Email: %+v\n", claims.Email)
-
+	
 	resp := casdoorsdk.User{
 		Owner:  claims.Owner,
 		Type:   claims.Type,

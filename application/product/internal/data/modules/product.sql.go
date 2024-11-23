@@ -10,12 +10,13 @@ import (
 )
 
 const CreateProduct = `-- name: CreateProduct :one
-INSERT INTO products.products(name, description, picture, price, categories)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING id, name, description, picture, price, categories
+INSERT INTO products.products(owner, name, description, picture, price, categories)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, owner, name, description, picture, price, categories
 `
 
 type CreateProductParams struct {
+	Owner       string   `json:"owner"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	Picture     string   `json:"picture"`
@@ -25,11 +26,12 @@ type CreateProductParams struct {
 
 // CreateProduct
 //
-//	INSERT INTO products.products(name, description, picture, price, categories)
-//	VALUES ($1, $2, $3, $4, $5)
-//	RETURNING id, name, description, picture, price, categories
+//	INSERT INTO products.products(owner, name, description, picture, price, categories)
+//	VALUES ($1, $2, $3, $4, $5, $6)
+//	RETURNING id, owner, name, description, picture, price, categories
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (ProductsProducts, error) {
 	row := q.db.QueryRow(ctx, CreateProduct,
+		arg.Owner,
 		arg.Name,
 		arg.Description,
 		arg.Picture,
@@ -39,6 +41,7 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 	var i ProductsProducts
 	err := row.Scan(
 		&i.ID,
+		&i.Owner,
 		&i.Name,
 		&i.Description,
 		&i.Picture,
@@ -49,7 +52,7 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 }
 
 const GetProduct = `-- name: GetProduct :one
-SELECT id, name, description, picture, price, categories
+SELECT id, owner, name, description, picture, price, categories
 FROM products.products
 WHERE id = $1
 LIMIT 1
@@ -57,7 +60,7 @@ LIMIT 1
 
 // GetProduct
 //
-//	SELECT id, name, description, picture, price, categories
+//	SELECT id, owner, name, description, picture, price, categories
 //	FROM products.products
 //	WHERE id = $1
 //	LIMIT 1
@@ -66,6 +69,7 @@ func (q *Queries) GetProduct(ctx context.Context, id int32) (ProductsProducts, e
 	var i ProductsProducts
 	err := row.Scan(
 		&i.ID,
+		&i.Owner,
 		&i.Name,
 		&i.Description,
 		&i.Picture,
@@ -76,7 +80,7 @@ func (q *Queries) GetProduct(ctx context.Context, id int32) (ProductsProducts, e
 }
 
 const ListProducts = `-- name: ListProducts :many
-SELECT id, name, description, picture, price, categories
+SELECT id, owner, name, description, picture, price, categories
 FROM products.products
 ORDER BY id
 OFFSET $1 LIMIT $2
@@ -89,7 +93,7 @@ type ListProductsParams struct {
 
 // ListProducts
 //
-//	SELECT id, name, description, picture, price, categories
+//	SELECT id, owner, name, description, picture, price, categories
 //	FROM products.products
 //	ORDER BY id
 //	OFFSET $1 LIMIT $2
@@ -104,6 +108,7 @@ func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]P
 		var i ProductsProducts
 		if err := rows.Scan(
 			&i.ID,
+			&i.Owner,
 			&i.Name,
 			&i.Description,
 			&i.Picture,
@@ -121,17 +126,17 @@ func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]P
 }
 
 const SearchProducts = `-- name: SearchProducts :many
-SELECT id, name, description, picture, price, categories
+SELECT id, owner, name, description, picture, price, categories
 FROM products.products
-WHERE name = $1
+WHERE name ILIKE '%' || $1 || '%'
 `
 
 // SearchProducts
 //
-//	SELECT id, name, description, picture, price, categories
+//	SELECT id, owner, name, description, picture, price, categories
 //	FROM products.products
-//	WHERE name = $1
-func (q *Queries) SearchProducts(ctx context.Context, name string) ([]ProductsProducts, error) {
+//	WHERE name ILIKE '%' || $1 || '%'
+func (q *Queries) SearchProducts(ctx context.Context, name *string) ([]ProductsProducts, error) {
 	rows, err := q.db.Query(ctx, SearchProducts, name)
 	if err != nil {
 		return nil, err
@@ -142,6 +147,7 @@ func (q *Queries) SearchProducts(ctx context.Context, name string) ([]ProductsPr
 		var i ProductsProducts
 		if err := rows.Scan(
 			&i.ID,
+			&i.Owner,
 			&i.Name,
 			&i.Description,
 			&i.Picture,

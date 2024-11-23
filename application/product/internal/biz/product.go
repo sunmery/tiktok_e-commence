@@ -16,11 +16,12 @@ type Product struct {
 }
 
 type CreateProductRequest struct {
-	Name        string
-	Description string
-	Picture     string
-	Price       float32
-	Categories  []string
+	Owner       string   `json:"owner"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Picture     string   `json:"picture"`
+	Price       float32  `json:"price"`
+	Categories  []string `json:"categories"`
 }
 
 type CreateProductReply struct {
