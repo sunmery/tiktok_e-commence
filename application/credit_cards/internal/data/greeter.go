@@ -3,7 +3,10 @@ package data
 import (
 	"context"
 	"credit_cards/internal/data/modules"
-
+	"fmt"
+	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"net/http"
 
 	"credit_cards/internal/biz"
@@ -17,6 +20,11 @@ type creditCardsRepo struct {
 }
 
 func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditCardsRequest) ([]*biz.CreditCards, error) {
+	token, ok := jwt.FromContext(ctx)
+	if !ok {
+		return nil, grpc.Errorf(codes.Unauthenticated, "token not found")
+	}
+	fmt.Printf("token %v", token)
 	cards, err := c.data.db.GetCreditCards(ctx, modules.GetCreditCardsParams{
 		Owner:            req.Owner,
 		Username:         req.Username,
@@ -40,6 +48,7 @@ func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditC
 }
 
 func (c *creditCardsRepo) CreateCreditCard(ctx context.Context, req *biz.CreditCards) (*biz.CreditCardsReply, error) {
+
 	_, err := c.data.db.CreateCreditCard(ctx, modules.CreateCreditCardParams{
 		Owner:                     req.Owner,
 		Username:                  req.Username,

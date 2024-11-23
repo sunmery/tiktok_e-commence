@@ -64,8 +64,6 @@ func NewCache(c *conf.Data) *redis.Client {
 	return rdb
 }
 func NewCasdoor(cc *conf.Casdoor) *casdoorsdk.Client {
-	fmt.Printf("Server:%v\n", cc.Casdoor.Server)
-	fmt.Printf("certificate:%v\n", cc.Casdoor.Certificate)
 	client := casdoorsdk.NewClient(
 		cc.Casdoor.Server.Endpoint,
 		cc.Casdoor.Server.ClientId,

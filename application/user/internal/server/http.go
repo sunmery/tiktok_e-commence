@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"github.com/gorilla/handlers"
 	v1 "user/api/user/v1"
 	"user/internal/conf"
@@ -50,11 +49,10 @@ func MultipartFormDataDecoder(r *http.Request, v interface{}) error {
 	_, ok := http.CodecForRequest(r, "Content-Type")
 	// 如果找不到对应的解码器此时会报错
 	if !ok {
-		fmt.Printf("Content-Type: (%s)", r.Header.Get("Content-Type"))
 		r.Header.Set("Content-Type", "application/json")
 		// return errors.BadRequest("CODEC", r.Header.Get("Content-Type"))
 	}
-	fmt.Printf("method:%s\n", r.Method)
+	// fmt.Printf("method:%s\n", r.Method)
 	// if r.Method == "POST" {
 	// 	data, err := ioutil.ReadAll(r.Body)
 	// 	if err != nil {

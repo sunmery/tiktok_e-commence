@@ -43,10 +43,14 @@ func (u *userRepo) GetUserInfo(ctx context.Context, req *biz.GetUserInfoRequest)
 	}
 
 	claims, err := u.data.cs.ParseJwtToken(token[1])
-	fmt.Printf("claims%+v", claims)
 	if err != nil {
 		return nil, fmt.Errorf("ParseJwtToken() error")
 	}
+	fmt.Printf("Owner: %+v\n", claims.Owner)
+	fmt.Printf("Type: %+v\n", claims.Type)
+	fmt.Printf("Name: %+v\n", claims.Name)
+	fmt.Printf("Id: %+v\n", claims.Id)
+	fmt.Printf("Avatar: %+v\n", claims.Avatar)
 
 	return &biz.GetUserInfoReply{
 		State: "ok",

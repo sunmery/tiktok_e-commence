@@ -26,7 +26,7 @@ func (s *UserServiceService) Signin(ctx context.Context, req *pb.SigninRequest) 
 		State: req.State,
 		Code:  req.Code,
 	})
-	fmt.Printf("result:%+v", result)
+	// fmt.Printf("result:%+v", result)
 	if err != nil {
 		return nil, err
 	}
