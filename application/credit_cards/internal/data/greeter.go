@@ -3,10 +3,8 @@ package data
 import (
 	"context"
 	"credit_cards/internal/data/modules"
-	"fmt"
-	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
+	"credit_cards/internal/pkg/token"
+	"errors"
 	"net/http"
 
 	"credit_cards/internal/biz"
@@ -20,14 +18,16 @@ type creditCardsRepo struct {
 }
 
 func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditCardsRequest) ([]*biz.CreditCards, error) {
-	token, ok := jwt.FromContext(ctx)
-	if !ok {
-		return nil, grpc.Errorf(codes.Unauthenticated, "token not found")
+	payload, err := token.ParseJWTFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
-	fmt.Printf("token %v", token)
+	if req.Owner != payload.Owner && req.Username != payload.Name {
+		return nil, errors.New("invalid token")
+	}
 	cards, err := c.data.db.GetCreditCards(ctx, modules.GetCreditCardsParams{
-		Owner:            req.Owner,
-		Username:         req.Username,
+		Owner:            payload.Owner,
+		Username:         payload.Name,
 		CreditCardNumber: &req.CreditCardNumber,
 	})
 	if err != nil {
@@ -48,10 +48,16 @@ func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditC
 }
 
 func (c *creditCardsRepo) CreateCreditCard(ctx context.Context, req *biz.CreditCards) (*biz.CreditCardsReply, error) {
-
-	_, err := c.data.db.CreateCreditCard(ctx, modules.CreateCreditCardParams{
-		Owner:                     req.Owner,
-		Username:                  req.Username,
+	payload, err := token.ParseJWTFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if req.Owner != payload.Owner && req.Username != payload.Name {
+		return nil, errors.New("invalid token")
+	}
+	_, err = c.data.db.CreateCreditCard(ctx, modules.CreateCreditCardParams{
+		Owner:                     payload.Owner,
+		Username:                  payload.Name,
 		CreditCardNumber:          req.CreditCardNumber,
 		CreditCardCvv:             req.CreditCardCvv,
 		CreditCardExpirationYear:  req.CreditCardExpirationYear,
@@ -67,19 +73,57 @@ func (c *creditCardsRepo) CreateCreditCard(ctx context.Context, req *biz.CreditC
 }
 
 func (c *creditCardsRepo) UpdateCreditCard(ctx context.Context, req *biz.CreditCards) (*biz.CreditCardsReply, error) {
-	// TODO implement me
-	panic("implement me")
+	payload, err := token.ParseJWTFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.Owner != payload.Owner && req.Username != payload.Name {
+		return nil, errors.New("invalid token")
+	}
+
+	_, err = c.data.db.UpdateCreditCard(ctx, modules.UpdateCreditCardParams{
+		CreditCardNumber:          &req.CreditCardNumber,
+		CreditCardCvv:             &req.CreditCardCvv,
+		CreditCardExpirationYear:  &req.CreditCardExpirationYear,
+		CreditCardExpirationMonth: &req.CreditCardExpirationMonth,
+		Username:                  payload.Name,
+	})
+
+	return &biz.CreditCardsReply{
+		Message: "OK",
+		Code:    http.StatusOK,
+	}, nil
 }
 
 func (c *creditCardsRepo) DeleteCreditCard(ctx context.Context, id int32) (*biz.CreditCardsReply, error) {
-	// TODO implement me
-	panic("implement me")
+	payload, err := token.ParseJWTFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = c.data.db.DeleteCreditCard(ctx, modules.DeleteCreditCardParams{
+		Username: payload.Name,
+		ID:       id,
+	})
+
+	return &biz.CreditCardsReply{
+		Message: "OK",
+		Code:    http.StatusOK,
+	}, nil
 }
 
 func (c *creditCardsRepo) ListCreditCards(ctx context.Context, req *biz.ListCreditCardsRequest) ([]*biz.CreditCards, error) {
+	payload, err := token.ParseJWTFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if req.Owner != payload.Owner && req.Username != payload.Name {
+		return nil, errors.New("invalid token")
+	}
 	cards, err := c.data.db.ListCreditCards(ctx, modules.ListCreditCardsParams{
-		Owner:    req.Owner,
-		Username: req.Username,
+		Owner:    payload.Owner,
+		Username: payload.Name,
 	})
 	if err != nil {
 		return nil, err
