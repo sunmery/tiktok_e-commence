@@ -1,0 +1,16 @@
+server:
+  http:
+    addr: 0.0.0.0:30013
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:30014
+    timeout: 1s
+data:
+  database:
+    driver: postgres
+    source: postgresql://postgres:postgres@localhost:5432/tiktok?sslmode=disable&search_path=carts
+  redis:
+    addr: 127.0.0.1:6379
+    read_timeout: 5.2s
+    write_timeout: 5.2s
+    dial_timeout: 5s

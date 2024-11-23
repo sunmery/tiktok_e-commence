@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+// 银行卡服务
+
+import "google/api/annotations.proto";
+
+package api.credit_cards.v1;
+
+option go_package = "credit_cards/api/credit_cards/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.credit_cards.v1";
+
+service CreditCardsService {
+	rpc CreateCreditCard (CreditCards) returns (CardsReply){
+		option (google.api.http) = {
+			post: "/v1/credit_cards",
+			body: "*"
+		};
+	};
+	rpc UpdateCreditCard (UpdateCreditCardsRequest) returns (CardsReply){
+		option (google.api.http) = {
+			patch: "/v1/credit_cards",
+			body: "*"
+		};
+	};
+	rpc DeleteCreditCard (DeleteCreditCardsRequest) returns (CardsReply){
+		option (google.api.http) = {
+			delete: "/v1/credit_cards/{id}"
+		};
+	};
+	rpc GetCreditCards (GetCreditCardsRequest) returns (GetCreditCardsReply){
+		option (google.api.http) = {
+			get: "/v1/credit_cards/{credit_card_number}"
+		};
+	};
+	rpc ListCreditCards (ListCreditCardsRequest) returns (ListCreditCardsReply){
+		option (google.api.http) = {
+			get: "/v1/credit_cards/all"
+		};
+	};
+}
+
+message CreditCards {
+	string credit_card_number = 1 [json_name = "credit_card_number"];
+	int32 credit_card_cvv = 2 [json_name = "credit_card_cvv"];
+	int32 credit_card_expiration_year = 3 [json_name = "credit_card_expiration_year"];
+	int32 credit_card_expiration_month = 4 [json_name = "credit_card_expiration_month"];
+	string owner = 5;
+	string username = 6;
+}
+
+message CardsReply {
+	string message = 1;
+	int32 code = 2;
+}
+
+message UpdateCreditCardsRequest {
+	string credit_card_number = 1 [json_name = "credit_card_number"];
+	int32 credit_card_cvv = 2 [json_name = "credit_card_cvv"];
+	int32 credit_card_expiration_year = 3 [json_name = "credit_card_expiration_year"];
+	int32 credit_card_expiration_month = 4 [json_name = "credit_card_expiration_month"];
+	string owner = 5;
+	string username = 6;
+}
+
+message DeleteCreditCardsRequest {
+	int32 id = 1;
+}
+
+message GetCreditCardsRequest {
+	string credit_card_number = 1 [json_name = "credit_card_number"];
+}
+message GetCreditCardsReply {
+	repeated CreditCards credit_cards = 1 [json_name = "credit_cards"];
+}
+
+message ListCreditCardsRequest {
+	string username = 1 [json_name = "username"];
+}
+
+message ListCreditCardsReply {
+	repeated CreditCards credit_cards = 1 [json_name = "credit_cards"];
+}

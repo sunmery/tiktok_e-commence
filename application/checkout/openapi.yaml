@@ -3,8 +3,52 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: CheckoutService API
     version: 0.0.1
-paths: {}
+paths:
+    /v1/checkout:
+        post:
+            tags:
+                - CheckoutService
+            operationId: CheckoutService_Checkout
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.checkout.v1.CheckoutReq'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.checkout.v1.CheckoutResp'
 components:
-    schemas: {}
+    schemas:
+        api.checkout.v1.CheckoutReq:
+            type: object
+            properties:
+                userId:
+                    type: string
+                firstname:
+                    type: string
+                lastname:
+                    type: string
+                email:
+                    type: string
+                addressId:
+                    type: integer
+                    format: int32
+                creditCardId:
+                    type: integer
+                    format: int32
+        api.checkout.v1.CheckoutResp:
+            type: object
+            properties:
+                orderId:
+                    type: string
+                transactionId:
+                    type: string
+tags:
+    - name: CheckoutService

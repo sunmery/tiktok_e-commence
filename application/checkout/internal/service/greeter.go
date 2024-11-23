@@ -7,18 +7,31 @@ import (
 	"checkout/internal/biz"
 )
 
-// GreeterService is a greeter service.
-type GreeterService struct {
-	v1.UnimplementedGreeterServer
+type CheckoutService struct {
+	v1.UnimplementedCheckoutServiceServer
 
 	cc *biz.CheckoutUsecase
 }
 
-// NewGreeterService new a greeter service.
-func NewGreeterService(uc *biz.GreeterUsecase) *GreeterService {
-	return &GreeterService{uc: uc}
+// NewCheckoutService new a Checkout service.
+func NewCheckoutService(cc *biz.CheckoutUsecase) *CheckoutService {
+	return &CheckoutService{cc: cc}
 }
 
-func (s *GreeterService) CreateService(ctx context.Context, req *v1.CreateServiceRequest) (*v1.CreateServiceReply, error) {
-	s.cc.CreateService(ctx, &biz.CreateServiceRequest)
+func (s *CheckoutService) Checkout(ctx context.Context, req *v1.CheckoutReq) (*v1.CheckoutResp, error) {
+	resp, err := s.cc.CreateCheckout(ctx, &biz.CheckoutReq{
+		UserId:       req.UserId,
+		Firstname:    req.Firstname,
+		Lastname:     req.Lastname,
+		Email:        req.Email,
+		AddressId:    req.AddressId,
+		CreditCardId: req.CreditCardId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &v1.CheckoutResp{
+		OrderId:       resp.OrderId,
+		TransactionId: resp.TransactionId,
+	}, nil
 }

@@ -1,0 +1,159 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: CreditCardsService API
+    version: 0.0.1
+paths:
+    /v1/credit_cards:
+        post:
+            tags:
+                - CreditCardsService
+            operationId: CreditCardsService_CreateCreditCard
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.credit_cards.v1.CreditCards'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.credit_cards.v1.CardsReply'
+        patch:
+            tags:
+                - CreditCardsService
+            operationId: CreditCardsService_UpdateCreditCard
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.credit_cards.v1.UpdateCreditCardsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.credit_cards.v1.CardsReply'
+    /v1/credit_cards/all:
+        get:
+            tags:
+                - CreditCardsService
+            operationId: CreditCardsService_ListCreditCards
+            parameters:
+                - name: username
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.credit_cards.v1.ListCreditCardsReply'
+    /v1/credit_cards/{credit_card_number}:
+        get:
+            tags:
+                - CreditCardsService
+            operationId: CreditCardsService_GetCreditCards
+            parameters:
+                - name: credit_card_number
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.credit_cards.v1.GetCreditCardsReply'
+    /v1/credit_cards/{id}:
+        delete:
+            tags:
+                - CreditCardsService
+            operationId: CreditCardsService_DeleteCreditCard
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.credit_cards.v1.CardsReply'
+components:
+    schemas:
+        api.credit_cards.v1.CardsReply:
+            type: object
+            properties:
+                message:
+                    type: string
+                code:
+                    type: integer
+                    format: int32
+        api.credit_cards.v1.CreditCards:
+            type: object
+            properties:
+                credit_card_number:
+                    type: string
+                credit_card_cvv:
+                    type: integer
+                    format: int32
+                credit_card_expiration_year:
+                    type: integer
+                    format: int32
+                credit_card_expiration_month:
+                    type: integer
+                    format: int32
+                owner:
+                    type: string
+                username:
+                    type: string
+        api.credit_cards.v1.GetCreditCardsReply:
+            type: object
+            properties:
+                credit_cards:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.credit_cards.v1.CreditCards'
+        api.credit_cards.v1.ListCreditCardsReply:
+            type: object
+            properties:
+                credit_cards:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.credit_cards.v1.CreditCards'
+        api.credit_cards.v1.UpdateCreditCardsRequest:
+            type: object
+            properties:
+                credit_card_number:
+                    type: string
+                credit_card_cvv:
+                    type: integer
+                    format: int32
+                credit_card_expiration_year:
+                    type: integer
+                    format: int32
+                credit_card_expiration_month:
+                    type: integer
+                    format: int32
+                owner:
+                    type: string
+                username:
+                    type: string
+tags:
+    - name: CreditCardsService

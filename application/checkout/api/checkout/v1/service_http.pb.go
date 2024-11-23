@@ -19,56 +19,56 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationServiceCreateService = "/api.checkout.v1.Service/CreateService"
+const OperationCheckoutServiceCheckout = "/api.checkout.v1.CheckoutService/Checkout"
 
-type ServiceHTTPServer interface {
-	CreateService(context.Context, *CreateServiceRequest) (*CreateServiceReply, error)
+type CheckoutServiceHTTPServer interface {
+	Checkout(context.Context, *CheckoutReq) (*CheckoutResp, error)
 }
 
-func RegisterServiceHTTPServer(s *http.Server, srv ServiceHTTPServer) {
+func RegisterCheckoutServiceHTTPServer(s *http.Server, srv CheckoutServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/checkout", _Service_CreateService0_HTTP_Handler(srv))
+	r.POST("/v1/checkout", _CheckoutService_Checkout0_HTTP_Handler(srv))
 }
 
-func _Service_CreateService0_HTTP_Handler(srv ServiceHTTPServer) func(ctx http.Context) error {
+func _CheckoutService_Checkout0_HTTP_Handler(srv CheckoutServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in CreateServiceRequest
+		var in CheckoutReq
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationServiceCreateService)
+		http.SetOperation(ctx, OperationCheckoutServiceCheckout)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.CreateService(ctx, req.(*CreateServiceRequest))
+			return srv.Checkout(ctx, req.(*CheckoutReq))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*CreateServiceReply)
+		reply := out.(*CheckoutResp)
 		return ctx.Result(200, reply)
 	}
 }
 
-type ServiceHTTPClient interface {
-	CreateService(ctx context.Context, req *CreateServiceRequest, opts ...http.CallOption) (rsp *CreateServiceReply, err error)
+type CheckoutServiceHTTPClient interface {
+	Checkout(ctx context.Context, req *CheckoutReq, opts ...http.CallOption) (rsp *CheckoutResp, err error)
 }
 
-type ServiceHTTPClientImpl struct {
+type CheckoutServiceHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewServiceHTTPClient(client *http.Client) ServiceHTTPClient {
-	return &ServiceHTTPClientImpl{client}
+func NewCheckoutServiceHTTPClient(client *http.Client) CheckoutServiceHTTPClient {
+	return &CheckoutServiceHTTPClientImpl{client}
 }
 
-func (c *ServiceHTTPClientImpl) CreateService(ctx context.Context, in *CreateServiceRequest, opts ...http.CallOption) (*CreateServiceReply, error) {
-	var out CreateServiceReply
+func (c *CheckoutServiceHTTPClientImpl) Checkout(ctx context.Context, in *CheckoutReq, opts ...http.CallOption) (*CheckoutResp, error) {
+	var out CheckoutResp
 	pattern := "/v1/checkout"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationServiceCreateService))
+	opts = append(opts, http.Operation(OperationCheckoutServiceCheckout))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
