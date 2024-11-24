@@ -1,19 +1,19 @@
--- CREATE SCHEMA IF NOT EXISTS carts;
+CREATE SCHEMA IF NOT EXISTS carts;
 
-SET search_path TO carts;
-
-CREATE TABLE carts
+CREATE TABLE carts.carts
 (
     id         SERIAL PRIMARY KEY,
-    user_id    VARCHAR(100) UNIQUE         NOT NULL,
+    owner      VARCHAR(100)                NOT NULL,
+    name       VARCHAR(100)                NOT NULL,
     created_at timestamptz DEFAULT (now()) NOT NULL,
     updated_at timestamptz DEFAULT (now()) NOT NULL
 );
 
-CREATE TABLE cart_items
+CREATE TABLE carts.cart_items
 (
     id         SERIAL PRIMARY KEY,
-    user_id    VARCHAR(100)                NOT NULL,
+    owner      VARCHAR(100)                NOT NULL,
+    name       VARCHAR(100)                NOT NULL,
     cart_id    INT                         NOT NULL, -- 添加 cart_id 外键关联到购物车
     product_id INT                         NOT NULL,
     quantity   INT                         NOT NULL,
@@ -22,36 +22,32 @@ CREATE TABLE cart_items
 );
 
 -- 优化通过用户查询购物车的性能
-CREATE INDEX idx_carts_id ON carts (id);
+CREATE INDEX idx_carts_id ON carts.carts (id);
 
 -- 加速通过用户查询购物车的操作
-CREATE INDEX idx_carts_user_id ON carts (user_id);
-
-ALTER TABLE public.user
-    ADD
-        CONSTRAINT idx_user_id UNIQUE (id);
+CREATE INDEX idx_carts_user_name ON carts.carts (name);
 
 -- 关联用户表的id
-ALTER TABLE carts
+ALTER TABLE carts.carts
     ADD
-        FOREIGN KEY (user_id) REFERENCES public.user (id);
+        FOREIGN KEY (owner, name) REFERENCES public.user (owner, name);
 
 -- 关联用户表的id
-ALTER TABLE cart_items
+ALTER TABLE carts.cart_items
     ADD
-        FOREIGN KEY (user_id) REFERENCES public.user (id);
+        FOREIGN KEY (owner, name) REFERENCES public.user (owner, name);
 
 -- 每个购物车中只能有一个特定的商品（即一个 cart_id 对应多个商品，但每个商品只能出现一次
-ALTER TABLE cart_items
+ALTER TABLE carts.cart_items
     ADD
         CONSTRAINT unique_cart_product UNIQUE (cart_id, product_id);
 
 -- 级联删除
-ALTER TABLE cart_items
+ALTER TABLE carts.cart_items
     ADD
-        FOREIGN KEY (cart_id) REFERENCES carts (id) ON DELETE CASCADE;
+        FOREIGN KEY (cart_id) REFERENCES carts.carts (id) ON DELETE CASCADE;
 
 -- 商品删除时删除购物车项
-ALTER TABLE cart_items
+ALTER TABLE carts.cart_items
     ADD
         FOREIGN KEY (product_id) REFERENCES products.products (id) ON DELETE CASCADE;

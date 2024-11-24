@@ -2,7 +2,9 @@ package data
 
 import (
 	"checkout/internal/data/modules"
+	"checkout/internal/pkg/token"
 	"context"
+	"errors"
 	"fmt"
 
 	"checkout/internal/biz"
@@ -16,8 +18,17 @@ type checkoutRepo struct {
 }
 
 func (c *checkoutRepo) Checkout(ctx context.Context, req *biz.CheckoutReq) (*biz.CheckoutResp, error) {
+	payload, err := token.ExtractPayload(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if req.Owner != payload.Owner || req.Name != payload.Name {
+		return nil, errors.New("invalid token")
+	}
+
 	checkout, err := c.data.db.CreateCheckout(ctx, modules.CreateCheckoutParams{
-		UserID:       req.UserId,
+		Owner:        payload.Owner,
+		Name:         payload.Name,
 		Firstname:    req.Firstname,
 		Lastname:     req.Lastname,
 		Email:        req.Email,

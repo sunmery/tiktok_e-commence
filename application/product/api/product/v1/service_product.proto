@@ -11,9 +11,15 @@ option java_multiple_files = true;
 option java_package = "api.product.v1";
 
 service ProductCatalogService {
-	rpc CreateProduct(CreateProductRequest) returns (CreateProductReply) {
+	rpc CreateProduct(CreateProductRequest) returns (ProductReply) {
 		option (google.api.http) = {
 			post: "/v1/products",
+			body: "*"
+		};
+	}
+	rpc UpdateProduct(Product) returns (ProductReply) {
+		option (google.api.http) = {
+			patch: "/v1/products",
 			body: "*"
 		};
 	}
@@ -22,7 +28,7 @@ service ProductCatalogService {
 			get: "/v1/products"
 		};
 	}
-	rpc GetProduct(GetProductReq) returns (GetProductResp) {
+	rpc GetProduct(GetProductReq) returns (ProductReply) {
 		option (google.api.http) = {
 			get: "/v1/products/{id}"
 		};
@@ -45,14 +51,16 @@ message Product {
 }
 
 message CreateProductRequest {
-	string name = 1;
-	string description = 2;
-	string picture = 3;
-	float price = 4;
-	repeated string categories = 5;
+	string owner = 1;
+	string username = 2;
+	string name = 3;
+	string description = 4;
+	string picture = 5;
+	float price = 6;
+	repeated string categories = 7;
 }
 
-message CreateProductReply {
+message ProductReply {
 	Product product = 1 ;
 }
 
@@ -69,10 +77,6 @@ message ListProductsResp {
 
 message GetProductReq {
 	uint32 id = 1;
-}
-
-message GetProductResp {
-	Product product = 1;
 }
 
 message SearchProductsReq {

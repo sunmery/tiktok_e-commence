@@ -1,6 +1,6 @@
 -- name: CreateProduct :one
-INSERT INTO products.products(owner, name, description, picture, price, categories)
-VALUES ($1, $2, $3, $4, $5, $6)
+INSERT INTO products.products(owner, username, name, description, picture, price, categories)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING *;
 
 -- name: ListProducts :many

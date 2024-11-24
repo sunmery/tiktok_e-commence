@@ -48,7 +48,24 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.product.v1.CreateProductReply'
+                                $ref: '#/components/schemas/api.product.v1.ProductReply'
+        patch:
+            tags:
+                - ProductCatalogService
+            operationId: ProductCatalogService_UpdateProduct
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.product.v1.Product'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.product.v1.ProductReply'
     /v1/products/search/{query}:
         get:
             tags:
@@ -85,17 +102,16 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.product.v1.GetProductResp'
+                                $ref: '#/components/schemas/api.product.v1.ProductReply'
 components:
     schemas:
-        api.product.v1.CreateProductReply:
-            type: object
-            properties:
-                product:
-                    $ref: '#/components/schemas/api.product.v1.Product'
         api.product.v1.CreateProductRequest:
             type: object
             properties:
+                owner:
+                    type: string
+                username:
+                    type: string
                 name:
                     type: string
                 description:
@@ -109,11 +125,6 @@ components:
                     type: array
                     items:
                         type: string
-        api.product.v1.GetProductResp:
-            type: object
-            properties:
-                product:
-                    $ref: '#/components/schemas/api.product.v1.Product'
         api.product.v1.ListProductsResp:
             type: object
             properties:
@@ -140,6 +151,11 @@ components:
                     type: array
                     items:
                         type: string
+        api.product.v1.ProductReply:
+            type: object
+            properties:
+                product:
+                    $ref: '#/components/schemas/api.product.v1.Product'
         api.product.v1.SearchProductsResp:
             type: object
             properties:

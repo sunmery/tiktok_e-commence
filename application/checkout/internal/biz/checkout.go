@@ -21,7 +21,8 @@ import (
 //		CreditCardExpirationMonth int32  `json:"credit_card_expiration_month"`
 //	}
 type CheckoutReq struct {
-	UserId       string `json:"user_id"`
+	Owner        string `json:"owner"`
+	Name         string `json:"name"`
 	Firstname    string `json:"firstname"`
 	Lastname     string `json:"lastname"`
 	Email        string `json:"email"`

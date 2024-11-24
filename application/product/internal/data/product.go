@@ -20,13 +20,14 @@ func (p *productRepo) CreateProduct(ctx context.Context, req *biz.CreateProductR
 		return nil, err
 	}
 
-	if req.Owner != payload.Owner || req.Name != payload.Name {
+	if req.Owner != payload.Owner || req.Username != payload.Name {
 		return nil, errors.New("invalid token")
 	}
 
 	product, err := p.data.db.CreateProduct(ctx, modules.CreateProductParams{
-
-		Name:        payload.Name,
+		Owner:       req.Owner,
+		Username:    req.Username,
+		Name:        req.Name,
 		Description: req.Description,
 		Picture:     req.Picture,
 		Price:       req.Price,

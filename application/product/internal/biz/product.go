@@ -17,6 +17,7 @@ type Product struct {
 
 type CreateProductRequest struct {
 	Owner       string   `json:"owner"`
+	Username    string   `json:"username"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	Picture     string   `json:"picture"`

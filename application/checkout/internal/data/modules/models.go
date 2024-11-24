@@ -6,7 +6,8 @@ package modules
 
 type CheckoutCheckout struct {
 	ID           int32  `json:"id"`
-	UserID       string `json:"userID"`
+	Owner        string `json:"owner"`
+	Name         string `json:"name"`
 	Firstname    string `json:"firstname"`
 	Lastname     string `json:"lastname"`
 	Email        string `json:"email"`

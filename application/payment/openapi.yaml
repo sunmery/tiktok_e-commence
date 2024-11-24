@@ -3,8 +3,60 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: PaymentService API
     version: 0.0.1
-paths: {}
+paths:
+    /v1/payment:
+        post:
+            tags:
+                - PaymentService
+            operationId: PaymentService_Charge
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.payment.v1.ChargeReq'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.payment.v1.ChargeResp'
 components:
-    schemas: {}
+    schemas:
+        api.payment.v1.ChargeReq:
+            type: object
+            properties:
+                amount:
+                    type: number
+                    format: float
+                creditCard:
+                    $ref: '#/components/schemas/api.payment.v1.CreditCardInfo'
+                orderId:
+                    type: string
+                userId:
+                    type: integer
+                    format: uint32
+        api.payment.v1.ChargeResp:
+            type: object
+            properties:
+                transactionId:
+                    type: string
+        api.payment.v1.CreditCardInfo:
+            type: object
+            properties:
+                creditCardNumber:
+                    type: string
+                creditCardCvv:
+                    type: integer
+                    format: int32
+                creditCardExpirationYear:
+                    type: integer
+                    format: int32
+                creditCardExpirationMonth:
+                    type: integer
+                    format: int32
+tags:
+    - name: PaymentService

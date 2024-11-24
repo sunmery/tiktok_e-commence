@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+// 结算
+import "google/api/annotations.proto";
+
 package api.payment.v1;
 
 option go_package = "payment/api/payment/v1;v1";
@@ -7,7 +10,12 @@ option java_multiple_files = true;
 option java_package = "api.payment.v1";
 
 service PaymentService {
-	rpc Charge(ChargeReq) returns (ChargeResp) {}
+	rpc Charge(ChargeReq) returns (ChargeResp) {
+		option (google.api.http) = {
+			post: "/v1/payment",
+			body: "*"
+		};
+	}
 }
 
 message CreditCardInfo {

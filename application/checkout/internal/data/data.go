@@ -5,14 +5,17 @@ import (
 	"checkout/internal/data/modules"
 	"context"
 	"fmt"
+	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/google/wire"
+	consulAPI "github.com/hashicorp/consul/api"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewCheckoutRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewCheckoutRepo, NewDiscovery)
 
 // Data .
 type Data struct {
@@ -57,4 +60,17 @@ func NewCache(c *conf.Data) *redis.Client {
 	})
 
 	return rdb
+}
+
+// NewDiscovery 配置服务发现功能
+func NewDiscovery(conf *conf.Registry) (registry.Discovery, error) {
+	c := consulAPI.DefaultConfig()
+	c.Address = conf.Consul.Address
+	c.Scheme = conf.Consul.Scheme
+	cli, err := consulAPI.NewClient(c)
+	if err != nil {
+		return nil, err
+	}
+	r := consul.New(cli, consul.WithHealthCheck(false))
+	return r, nil
 }

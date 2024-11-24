@@ -2,14 +2,18 @@ package service
 
 import (
 	"context"
-	"product/internal/biz"
-
 	pb "product/api/product/v1"
+	"product/internal/biz"
 )
 
 type ProductService struct {
 	pb.UnsafeProductCatalogServiceServer
 	ps *biz.ProductUsecase
+}
+
+func (s *ProductService) UpdateProduct(ctx context.Context, product *pb.Product) (*pb.ProductReply, error) {
+	// TODO implement me
+	panic("implement me")
 }
 
 func (s *ProductService) SearchProducts(ctx context.Context, req *pb.SearchProductsReq) (*pb.SearchProductsResp, error) {
@@ -33,8 +37,10 @@ func (s *ProductService) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	}, nil
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductReply, error) {
+func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.ProductReply, error) {
 	p, err := s.ps.CreateProduct(ctx, &biz.CreateProductRequest{
+		Owner:       req.Owner,
+		Username:    req.Username,
 		Name:        req.Name,
 		Description: req.Description,
 		Picture:     req.Picture,
@@ -44,7 +50,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProduc
 	if err != nil {
 		return nil, err
 	}
-	return &pb.CreateProductReply{
+	return &pb.ProductReply{
 		Product: &pb.Product{
 			Id:          p.Product.Id,
 			Name:        p.Product.Name,
@@ -81,12 +87,12 @@ func (s *ProductService) ListProducts(ctx context.Context, req *pb.ListProductsR
 	}, nil
 }
 
-func (s *ProductService) GetProduct(ctx context.Context, req *pb.GetProductReq) (*pb.GetProductResp, error) {
+func (s *ProductService) GetProduct(ctx context.Context, req *pb.GetProductReq) (*pb.ProductReply, error) {
 	product, err := s.ps.GetProduct(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GetProductResp{Product: &pb.Product{
+	return &pb.ProductReply{Product: &pb.Product{
 		Id:          product.Product.Id,
 		Name:        product.Product.Name,
 		Description: product.Product.Description,

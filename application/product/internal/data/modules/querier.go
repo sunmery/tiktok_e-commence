@@ -11,27 +11,27 @@ import (
 type Querier interface {
 	//CreateProduct
 	//
-	//  INSERT INTO products.products(owner, name, description, picture, price, categories)
-	//  VALUES ($1, $2, $3, $4, $5, $6)
-	//  RETURNING id, owner, name, description, picture, price, categories
+	//  INSERT INTO products.products(owner, username, name, description, picture, price, categories)
+	//  VALUES ($1, $2, $3, $4, $5, $6, $7)
+	//  RETURNING id, owner, username, name, description, picture, price, categories
 	CreateProduct(ctx context.Context, arg CreateProductParams) (ProductsProducts, error)
 	//GetProduct
 	//
-	//  SELECT id, owner, name, description, picture, price, categories
+	//  SELECT id, owner, username, name, description, picture, price, categories
 	//  FROM products.products
 	//  WHERE id = $1
 	//  LIMIT 1
 	GetProduct(ctx context.Context, id int32) (ProductsProducts, error)
 	//ListProducts
 	//
-	//  SELECT id, owner, name, description, picture, price, categories
+	//  SELECT id, owner, username, name, description, picture, price, categories
 	//  FROM products.products
 	//  ORDER BY id
 	//  OFFSET $1 LIMIT $2
 	ListProducts(ctx context.Context, arg ListProductsParams) ([]ProductsProducts, error)
 	//SearchProducts
 	//
-	//  SELECT id, owner, name, description, picture, price, categories
+	//  SELECT id, owner, username, name, description, picture, price, categories
 	//  FROM products.products
 	//  WHERE name ILIKE '%' || $1 || '%'
 	SearchProducts(ctx context.Context, name *string) ([]ProductsProducts, error)

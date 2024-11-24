@@ -34,7 +34,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	productUsecase := biz.NewProductUsecase(productRepo, logger)
 	productService := service.NewServiceProductService(productUsecase)
 	grpcServer := server.NewGRPCServer(confServer, productService, logger)
-	httpServer := server.NewHTTPServer(confServer, productService, logger)
+	httpServer := server.NewHTTPServer(confServer, auth, productService, logger)
 	registrar := server.NewRegistrar(registry)
 	app := newApp(logger, grpcServer, httpServer, registrar)
 	return app, func() {

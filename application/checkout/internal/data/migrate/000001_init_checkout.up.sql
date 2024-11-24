@@ -3,7 +3,8 @@ CREATE SCHEMA checkout;
 CREATE TABLE checkout.checkout
 (
     id             SERIAL PRIMARY KEY,
-    user_id        VARCHAR(100) NOT NULL,
+    owner          VARCHAR(100) NOT NULL,
+    name           VARCHAR(100) NOT NULL,
     firstname      VARCHAR(50)  NOT NULL,
     lastname       VARCHAR(50)  NOT NULL,
     email          VARCHAR(255) NOT NULL,
@@ -12,9 +13,9 @@ CREATE TABLE checkout.checkout
 );
 
 -- 关联用户
-ALTER TABLE checkout.checkout
-    ADD
-        FOREIGN KEY (user_id) REFERENCES public.user (id);
+-- ALTER TABLE checkout.checkout
+--     ADD
+--         FOREIGN KEY (name) REFERENCES public.user (id);
 
 -- 关联地址
 ALTER TABLE checkout.checkout
@@ -27,6 +28,6 @@ ALTER TABLE checkout.checkout
         FOREIGN KEY (credit_card_id) REFERENCES credit_cards.credit_cards (id);
 -- 索引
 CREATE INDEX idx_checkout_id ON checkout.checkout (id);
-CREATE INDEX idx_checkout_user_id ON checkout.checkout (user_id);
+CREATE INDEX idx_checkout_username ON checkout.checkout (name);
 CREATE INDEX idx_checkout_address_id ON checkout.checkout (address_id);
 CREATE INDEX idx_checkout_credit_card_id ON checkout.checkout (credit_card_id);

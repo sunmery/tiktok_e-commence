@@ -11,9 +11,9 @@ import (
 type Querier interface {
 	//CreateCheckout
 	//
-	//  INSERT INTO checkout.checkout(user_id, firstname, lastname, email, address_id, credit_card_id)
-	//  VALUES ($1, $2, $3, $4, $5, $6)
-	//  RETURNING id, user_id, firstname, lastname, email, address_id, credit_card_id
+	//  INSERT INTO checkout.checkout(owner, name, firstname, lastname, email, address_id, credit_card_id)
+	//  VALUES ($1, $2, $3, $4, $5, $6, $7)
+	//  RETURNING id, owner, name, firstname, lastname, email, address_id, credit_card_id
 	CreateCheckout(ctx context.Context, arg CreateCheckoutParams) (CheckoutCheckout, error)
 }
 

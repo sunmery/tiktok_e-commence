@@ -10,13 +10,14 @@ import (
 )
 
 const CreateCheckout = `-- name: CreateCheckout :one
-INSERT INTO checkout.checkout(user_id, firstname, lastname, email, address_id, credit_card_id)
-VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, user_id, firstname, lastname, email, address_id, credit_card_id
+INSERT INTO checkout.checkout(owner, name, firstname, lastname, email, address_id, credit_card_id)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING id, owner, name, firstname, lastname, email, address_id, credit_card_id
 `
 
 type CreateCheckoutParams struct {
-	UserID       string `json:"userID"`
+	Owner        string `json:"owner"`
+	Name         string `json:"name"`
 	Firstname    string `json:"firstname"`
 	Lastname     string `json:"lastname"`
 	Email        string `json:"email"`
@@ -26,12 +27,13 @@ type CreateCheckoutParams struct {
 
 // CreateCheckout
 //
-//	INSERT INTO checkout.checkout(user_id, firstname, lastname, email, address_id, credit_card_id)
-//	VALUES ($1, $2, $3, $4, $5, $6)
-//	RETURNING id, user_id, firstname, lastname, email, address_id, credit_card_id
+//	INSERT INTO checkout.checkout(owner, name, firstname, lastname, email, address_id, credit_card_id)
+//	VALUES ($1, $2, $3, $4, $5, $6, $7)
+//	RETURNING id, owner, name, firstname, lastname, email, address_id, credit_card_id
 func (q *Queries) CreateCheckout(ctx context.Context, arg CreateCheckoutParams) (CheckoutCheckout, error) {
 	row := q.db.QueryRow(ctx, CreateCheckout,
-		arg.UserID,
+		arg.Owner,
+		arg.Name,
 		arg.Firstname,
 		arg.Lastname,
 		arg.Email,
@@ -41,7 +43,8 @@ func (q *Queries) CreateCheckout(ctx context.Context, arg CreateCheckoutParams) 
 	var i CheckoutCheckout
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Owner,
+		&i.Name,
 		&i.Firstname,
 		&i.Lastname,
 		&i.Email,
