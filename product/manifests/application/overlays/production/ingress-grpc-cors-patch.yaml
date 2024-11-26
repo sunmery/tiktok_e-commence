@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: e-commence-user-grpc-ingress
+  name: e-commence-product-grpc-ingress
   annotations:
     # 重定向至HTTPS
     higress.io/force-ssl-redirect: "true"

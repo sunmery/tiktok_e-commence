@@ -1,0 +1,11 @@
+services:
+  postgres17:
+    image: postgres:17.0-alpine3.20
+    ports:
+      - "5432:5432"
+    container_name: postgres17
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=tiktok

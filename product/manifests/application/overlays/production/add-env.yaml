@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: e-commence-user
+  name: e-commence-product
 spec:
   template:
     spec:
       containers:
-        - name: e-commence-user
+        - name: e-commence-product
           env:
             - name: DB_SOURCE
               valueFrom:

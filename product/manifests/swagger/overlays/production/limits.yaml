@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-bank-swagger
+  labels:
+    app: simple-bank-swagger
+spec:
+  template:
+    spec:
+      containers:
+        - name: simple-bank-swagger
+          resources:
+            limits:
+              memory: "100Mi"
+              cpu: "100m"
+

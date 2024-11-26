@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-bank-swagger-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  ingressClassName: higress
+  rules:
+    - host: "swagger.api-r.com"
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: swagger-simple-bank-service
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - swagger.api-r.com
+      secretName: simple-bank-swagger-cert
