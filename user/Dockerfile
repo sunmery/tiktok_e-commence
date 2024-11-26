@@ -41,10 +41,10 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
    # 带版本的形式: go build -ldflags="-X main.Version=${VERSION}" -o /bin/main .
    # 多个服务的形式: go build -o /bin/ ./...
 COPY ./configs /bin/configs
+
 FROM alpine:latest AS final
 # 从构建阶段复制编译好的 Go 应用程序到运行阶段
-COPY --from=build /bin/user /bin/
-COPY --from=build /bin/configs /bin/configs
+COPY --from=build /bin /bin/
 
 # 用户进程ID
 ARG UID=10001
@@ -75,7 +75,6 @@ EXPOSE $HTTP_PORT
 EXPOSE $GRPC_PORT
 
 RUN mkdir -p /data/conf
-RUN ls /bin
 RUN ls /bin
 
 # 设置容器启动时执行的命令

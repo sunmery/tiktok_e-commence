@@ -16,7 +16,7 @@ env:
   # 微服务所在目录
   SERVICE_DIR: user
   # 仓库
-  REGISTER_REPOSITORY: 'e-commence/user'
+  REGISTER_NAMESPACE: e-commence
   # 版本号, git tag的标签名
   # https://docs.github.com/zh/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
   #VERSION: ${{ github.ref_name }}
@@ -104,16 +104,21 @@ jobs:
       -
         # -short: 跳过耗时久的test
         name: Go test
-        run: go test -short ./...
+        run: |
+          go test -short -coverprofile=coverage.out ./...
+          go tool cover -html=coverage.out -o coverage.html
 
   backend-build:
     needs: backend-test
     name: Build image
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [ user, product ] # 服务列表
     defaults:
       run:
         shell: bash
-        working-directory: user
+        working-directory: ${{ matrix.service }} # 动态指定工作目录
     steps:
       - # 检出仓库中的代码，确保脚本可以访问仓库中的所有文件
         name: Checkout repository
@@ -143,8 +148,9 @@ jobs:
       - # 构建, 标记, 推送镜像到容器注册表
         name: Build tag and push image to Cloud Registry
         run: |
-          docker build . \
-            -t actions/backend \
+          ls ./
+          docker buildx build . \
+            -t actions/${{ matrix.service }} \
             --build-arg GO_PROXY=$GO_PROXY \
             --build-arg GOIMAGE=$GO_IMAGE \
             --build-arg CGOENABLED=$CGO_ENABLED \
@@ -152,15 +158,16 @@ jobs:
             --build-arg HTTP_PORT=$BACKEND_HTTP_PORT \
             --build-arg GRPC_PORT=$BACKEND_GRPC_PORT \
             --build-arg GOOS=$GOOS \
-            --build-arg GOARCH=$GOARCH
+            --build-arg GOARCH=$GOARCH \
+            --platform linux/amd64
 
-          docker tag actions/backend ${{ secrets.REGISTRY }}/$REGISTER_REPOSITORY:$VERSION
-          # docker tag actions/backend ${{ secrets.REGISTRY }}/$REGISTER_REPOSITORY:latest
-          # docker tag actions/backend ${{ secrets.REGISTRY }}/$REGISTER_REPOSITORY:$GITHUB_SHA
+          docker tag actions/${{ matrix.service }} ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          # docker tag actions/backend ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:latest
+          # docker tag actions/backend ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$GITHUB_SHA
           
-          docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:$VERSION
-          # docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:latest
-          # docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:$GITHUB_SHA
+          docker push ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          # docker push ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:latest
+          # docker push ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$GITHUB_SHA
 
   backend-deploy:
     needs: backend-build
@@ -190,6 +197,7 @@ jobs:
         run: |
           mkdir -pv ~/.kube/
           echo "${{secrets.KUBE_CONF}}" > ~/.kube/config
+          chmod 600 ~/.kube/config
 
       # Deploy the Docker image to the TKE cluster
       - name: Deploy
@@ -214,10 +222,10 @@ jobs:
           ./kubectl delete secret redis-password-secret || true
           ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
           
-          ./kustomize edit set image example=${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:$VERSION
+          ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           ./kustomize build . | kubectl apply -f -
           
-          ./kubectl rollout status deploy
+          ./kubectl rollout status deploy || ./kubectl rollout undo deploy
           ./kubectl get po -owide
           ./kubectl get svc
 
