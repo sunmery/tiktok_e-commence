@@ -140,7 +140,7 @@ jobs:
       - # 构建, 标记, 推送镜像到容器注册表
         name: Build tag and push image to Cloud Registry
         run: |
-          docker build . \
+          docker build user \
             --progress=plain \
             -t actions/backend \
             --build-arg GO_PROXY=$GO_PROXY \
