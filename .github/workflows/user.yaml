@@ -43,16 +43,18 @@ env:
   BACKEND_GRPC_PORT: 30002
 
 jobs:
-  matrix:
-    service: [ user, product ] # 服务列表
 
   backend-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [ user, product ]  # 定义要并行执行的服务
+
       # DB_SOURCE: "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"
     defaults:
       run:
         shell: bash
-        working-directory: user
+        working-directory: ${{ matrix.service }}
     # Service containers to run with `container-job`
     services:
       # Label used to access the service container
@@ -116,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: ${{ matrix.service }}  # 同样引用共享的矩阵配置
+        service: [ user, product ]  # 定义要并行执行的服务
     defaults:
       run:
         shell: bash
@@ -176,7 +178,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: ${{ matrix.service }}  # 引用共享的矩阵配置
+        service: [ user, product ]  # 定义要并行执行的服务
     defaults:
       run:
         shell: bash
