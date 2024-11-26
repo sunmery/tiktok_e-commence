@@ -1,0 +1,60 @@
+services:
+
+  users:
+    image: tiktok/users:prod
+    build:
+      context: user
+      dockerfile: user
+    platform: linux/amd64
+    ports:
+      - "30001:30001"
+      - "30002:30002"
+    container_name: users
+    restart: always
+    networks:
+      - app-network
+    environment:
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/simple_bank?sslmode=disable
+      - REDIS_ADDRESS=redis7:6379
+    command:
+      - "/bin/user"
+      - "-conf"
+      - "/bin/configs"
+
+  postgres17:
+    image: postgres:17-alpine3.20
+    ports:
+      - "5432:5432"
+    container_name: postgres17
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=simple_bank
+    networks:
+      - app
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres", "-d", "simple_bank", "-h", "localhost" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  redis7:
+    image: redis:7.4.1-alpine
+    restart: always
+    container_name: redis7
+    ports:
+      - "6379:6379"
+    networks:
+      - app
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+networks:
+  app:
+    name: app-network

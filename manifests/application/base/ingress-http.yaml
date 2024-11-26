@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: simple-bank-http-ingress
+  name: e-commence-user-http-ingress
   annotations:
     # cert-manager.io/cluster-issuer: letsencrypt
     higress.io/backend-protocol: "HTTPS"
@@ -15,7 +15,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: prod-api-simple-bank-service
+                name: prod-api-e-commence-user-service
                 port:
                   number: 30001
 

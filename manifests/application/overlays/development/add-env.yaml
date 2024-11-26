@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: simple-bank-api
+  name: e-commence-user
 spec:
   template:
     spec:
       containers:
-        - name: simple-bank-api
+        - name: e-commence-user
           env:
             - name: DB_SOURCE
               value: "DB_SOURCE=postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable"

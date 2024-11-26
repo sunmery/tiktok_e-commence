@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: simple-bank-api
+  name: e-commence-user
   labels:
-    app: simple-bank-api
+    app: e-commence-user
 spec:
   template:
     spec:
       containers:
-        - name: simple-bank-api
+        - name: e-commence-user
           resources:
             limits:
               memory: "200Mi"

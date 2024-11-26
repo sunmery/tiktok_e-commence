@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: simple-bank-api
+  name: e-commence-user
   labels:
-    app: simple-bank-api
+    app: e-commence-user
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: simple-bank-api
+      app: e-commence-user
   template:
     metadata:
-      name: simple-bank-api
+      name: e-commence-user
       labels:
-        app: simple-bank-api
+        app: e-commence-user
     spec:
       containers:
-        - name: simple-bank-api
+        - name: e-commence-user
           image: example
           imagePullPolicy: Always
           ports:

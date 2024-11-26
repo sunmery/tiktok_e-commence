@@ -36,9 +36,10 @@ components:
                     $ref: '#/components/schemas/api.payment.v1.CreditCardInfo'
                 orderId:
                     type: string
-                userId:
-                    type: integer
-                    format: uint32
+                owner:
+                    type: string
+                name:
+                    type: string
         api.payment.v1.ChargeResp:
             type: object
             properties:

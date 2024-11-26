@@ -1,15 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: simple-bank-api
+  name: e-commence-user
 spec:
   template:
     spec:
       containers:
-        - name: simple-bank-api
+        - name: e-commence-user
           env:
-            - name: GIN_MODE
-              value: release
             - name: DB_SOURCE
               valueFrom:
                 secretKeyRef:

@@ -1,7 +1,7 @@
 package server
 
 import (
-	v1 "user/api/user/v1"
+	v1 "user/api/users/v1"
 	"user/internal/conf"
 	"user/internal/service"
 

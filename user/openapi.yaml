@@ -6,7 +6,7 @@ info:
     title: UserService API
     version: 0.0.1
 paths:
-    /v1/user:
+    /v1/users:
         post:
             tags:
                 - UserService
@@ -24,7 +24,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.user.v1.SigninReply'
-    /v1/user/profile:
+    /v1/users/profile:
         get:
             tags:
                 - UserService

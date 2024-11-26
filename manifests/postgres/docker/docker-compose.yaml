@@ -5,7 +5,12 @@ services:
       - "5432:5432"
     container_name: postgres17
     restart: always
+    networks:
+      - app-network
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=simple_bank
+
+networks:
+  app-network:

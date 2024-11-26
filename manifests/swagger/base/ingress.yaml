@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: simple-bank-swagger-ingress
+  name: e-commence-user-swagger-ingress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
 spec:
@@ -14,10 +14,10 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: swagger-simple-bank-service
+                name: swagger-e-commence-user-service
                 port:
                   number: 8080
   tls:
     - hosts:
         - swagger.api-r.com
-      secretName: simple-bank-swagger-cert
+      secretName: e-commence-user-swagger-cert

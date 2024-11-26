@@ -1,0 +1,295 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Deploy backend application and swagger document to production
+run-name: Deploy backend application and swagger document to production
+
+# git add .; git commit -m "test: test github actions"
+# git tag v1.1.8; git push; git push main v1.1.8
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+env:
+  # 版本号, git tag的标签名
+  # https://docs.github.com/zh/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
+  VERSION: ${{ github.ref_name }}
+  # 目标的操作系统
+  GOOS: linux
+  # 目标的架构
+  GOARCH: amd64
+  # 目标架构列表,例如: linux/amd64,linux/arm64
+  TARGET_PLATFORMS: linux/amd64
+  # golang的镜像
+  GO_IMAGE: golang:1.23.3-alpine3.20
+  # 代理
+  GO_PROXY: https://proxy.golang.org
+  # golang环境变量
+  CGO_ENABLED: 0
+  # 等待部署完成的超时时间, 超时即为失败
+  DEPLOY_TIMEOUT: 30s
+  # 后端应用的命名空间
+  BACKEND_NAMESPACE: bank
+  # 后端应用的HTTP端口
+  BACKEND_HTTP_PORT: 30001
+  # 后端应用的GRPC端口
+  BACKEND_GRPC_PORT: 30002
+  # 后端应用的swagger端口
+  SWAGGER_PORT: 8080
+
+jobs:
+
+  backend-test:
+    runs-on: ubuntu-latest
+    env:
+      GIN_MODE: release
+      # DB_SOURCE: "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+    defaults:
+      run:
+        shell: bash
+        working-directory: user
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres:17-alpine
+        # Provide the password for postgres
+        env:
+          # 数据库用户名
+          POSTGRES_USER: postgres
+          # 数据库用户密码
+          POSTGRES_PASSWORD: postgres
+          # 此可选环境变量可用于为首次启动映像时创建的默认数据库定义不同的名称。如果未指定，则将使用 POSTGRES_USER 的值。
+          POSTGRES_DB: simple_bank
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        # Maps tcp port 5432 on service container to the host
+        ports:
+          - '5432:5432'
+    steps:
+      - # 检出仓库中的代码，确保脚本可以访问仓库中的所有文件
+        name: Checkout repository
+        uses: actions/checkout@v4
+
+      -
+        # 设置Go版本和缓存机制
+        # https://github.com/actions/setup-go#caching-dependency-files-and-build-outputs
+        name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          # 检查是否最新版
+          check-latest: true
+          # 检查项目中所有的go.sum, 对于单体和多服务的应用都生效
+          cache-dependency-path: '**/go.sum'
+
+      - name: Install migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.18.1/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate /usr/bin/
+          which migrate
+
+      - name: Run database migrate
+        run: |
+          export DB_SOURCE="postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable"
+          make migrate-up
+      -
+        # -short: 跳过耗时久的test
+        name: Go test
+        run: go test -short ./...
+
+  backend-build:
+    needs: backend-test
+    name: Build image
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: user
+    steps:
+      - # 检出仓库中的代码，确保脚本可以访问仓库中的所有文件
+        name: Checkout repository
+        uses: actions/checkout@v4
+
+      - # 设置 QEMU 仿真器。允许你在 x86 架构的主机上构建和测试其他架构的 Docker 镜像
+        # https://github.com/docker/setup-qemu-action
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # - # Buildx 是 Docker 的一个插件，支持多平台构建
+      #   name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
+
+      - # 缓存依赖项
+        name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-modules-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-modules-
+
+      - # 登录到容器注册表
+        name: Login Cloud Registry
+        run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login ${{ secrets.REGISTRY }} --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+
+      - # 构建, 标记, 推送镜像到容器注册表
+        name: Build tag and push image to Cloud Registry
+        run: |
+          docker build . \
+            --progress=plain \
+            -t actions/backend \
+            --build-arg GO_PROXY=$GO_PROXY \
+            --build-arg GOIMAGE=$GO_IMAGE \
+            --build-arg CGOENABLED=$CGO_ENABLED \
+            --build-arg VERSION=$VERSION \
+            --build-arg HTTP_PORT=$BACKEND_HTTP_PORT \
+            --build-arg GRPC_PORT=$BACKEND_GRPC_PORT \
+            --build-arg GOOS=$GOOS \
+            --build-arg GOARCH=$GOARCH
+
+          docker tag actions/backend ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:$VERSION
+          # docker tag actions/backend ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:latest
+          # docker tag actions/backend ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:$GITHUB_SHA
+          
+          docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:$VERSION
+          # docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:latest
+          # docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:$GITHUB_SHA
+
+  backend-deploy:
+    needs: backend-build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: user/manifests/application/overlays/production
+    steps:
+      - # 检出仓库中的代码，确保脚本可以访问仓库中的所有文件
+        name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Kustomize
+        run: |
+          curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+          chmod u+x ./kustomize
+          ./kustomize version
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl{,.sha256}"
+          echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+          chmod +x ./kubectl
+
+      - name: Connect Kubernetes Cluster
+        run: |
+          mkdir -pv ~/.kube/
+          echo "${{secrets.KUBE_CONF}}" > ~/.kube/config
+
+      # Deploy the Docker image to the TKE cluster
+      - name: Deploy
+        run: |
+          if ./kubectl get ns $BACKEND_NAMESPACE; then
+            echo "namespaces $BACKEND_NAMESPACE already exists, skip create"
+          else
+            ./kubectl create ns $BACKEND_NAMESPACE
+          fi
+          
+          ./kubectl config set-context --current --namespace $BACKEND_NAMESPACE
+          
+          ./kubectl delete secret db-source-secret || true
+          ./kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}'
+          
+          ./kubectl delete secret redis-address-secret || true
+          ./kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}'
+          
+          ./kubectl delete secret redis-username-secret || true
+          ./kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}'
+          
+          ./kubectl delete secret redis-password-secret || true
+          ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
+          
+          ./kustomize edit set image example=${{ secrets.REGISTRY }}/${{ secrets.REGISTER_REPOSITORY }}:$VERSION
+          ./kustomize build . | kubectl apply -f -
+          
+          ./kubectl rollout status deploy
+          ./kubectl get po -owide
+          ./kubectl get svc
+
+  swagger-build:
+    needs: backend-test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: user
+    steps:
+      - # 检出仓库中的代码，确保脚本可以访问仓库中的所有文件
+        name: Checkout repository
+        uses: actions/checkout@v4
+
+      - # 登录到容器注册表
+        name: Login Cloud Registry
+        run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login ${{ secrets.REGISTRY }} --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+
+      - # 打包swagger静态文件为镜像
+        name: Build swagger image
+        run: |
+          docker build . --progress=plain -t actions/swagger -f Dockerfile-swagger --build-arg PORT=$SWAGGER_PORT
+          docker tag actions/swagger ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_SWAGGER_REPOSITORY }}:$VERSION
+          docker push ${{ secrets.REGISTRY }}/${{ secrets.REGISTER_SWAGGER_REPOSITORY }}:$VERSION
+
+  swagger-deploy:
+    needs: swagger-build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: user/manifests/swagger/overlays/production
+    steps:
+      - # 检出仓库中的代码，确保脚本可以访问仓库中的所有文件
+        name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Kustomize
+        run: |
+          curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+          chmod u+x ./kustomize
+          ./kustomize version
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl{,.sha256}"
+          echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+          chmod +x ./kubectl
+
+      - name: Connect Kubernetes Cluster
+        run: |
+          mkdir -pv ~/.kube/
+          echo "${{secrets.KUBE_CONF}}" > ~/.kube/config
+      - name: Set up Kustomize
+        run: |
+          curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+          chmod u+x ./kustomize
+          ./kustomize version
+
+      - # 部署到Kubernetes环境
+        name: Deploy static api docs site
+        run: |
+          if ./kubectl get ns $BACKEND_NAMESPACE; then
+            echo "namespaces $BACKEND_NAMESPACE already exists, skip create"
+          else
+            ./kubectl create ns $BACKEND_NAMESPACE
+          fi
+          
+          ./kubectl config set-context --current --namespace $BACKEND_NAMESPACE
+
+          ./kustomize edit set image example=${{ secrets.REGISTRY }}/${{ secrets.REGISTER_SWAGGER_REPOSITORY }}:$VERSION
+          ./kustomize build . | kubectl apply -f -
+          
+          ./kubectl rollout status deploy --timeout=$DEPLOY_TIMEOUT
+          ./kubectl get po -owide
+          ./kubectl get svc

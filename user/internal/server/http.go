@@ -8,7 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	jwtV5 "github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/handlers"
-	v1 "user/api/user/v1"
+	v1 "user/api/users/v1"
 	"user/internal/conf"
 	"user/internal/service"
 
@@ -68,7 +68,7 @@ func NewHTTPServer(
 				Match(NewWhiteListMatcher()).Build(),
 		),
 		http.Filter(handlers.CORS( // 浏览器跨域
-			handlers.AllowedOrigins([]string{"http://localhost:3000", "http://127.0.0.1:3000"}),
+			handlers.AllowedOrigins([]string{"http://localhost:3000", "http://127.0.0.1:3000", "http://127.0.0.1:443", "https://node1.apikv.com"}),
 			handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}),
 			handlers.AllowedHeaders([]string{"Authorization", "Content-Type"}),
 			handlers.AllowCredentials(),

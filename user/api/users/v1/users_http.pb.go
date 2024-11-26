@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.8.2
 // - protoc             v5.28.3
-// source: user/v1/user.proto
+// source: users/v1/users.proto
 
 package v1
 
@@ -29,8 +29,8 @@ type UserServiceHTTPServer interface {
 
 func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/user", _UserService_Signin0_HTTP_Handler(srv))
-	r.GET("/v1/user/profile", _UserService_GetUserInfo0_HTTP_Handler(srv))
+	r.POST("/v1/users", _UserService_Signin0_HTTP_Handler(srv))
+	r.GET("/v1/users/profile", _UserService_GetUserInfo0_HTTP_Handler(srv))
 }
 
 func _UserService_Signin0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
@@ -89,7 +89,7 @@ func NewUserServiceHTTPClient(client *http.Client) UserServiceHTTPClient {
 
 func (c *UserServiceHTTPClientImpl) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...http.CallOption) (*GetUserInfoResponse, error) {
 	var out GetUserInfoResponse
-	pattern := "/v1/user/profile"
+	pattern := "/v1/users/profile"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserServiceGetUserInfo))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -102,7 +102,7 @@ func (c *UserServiceHTTPClientImpl) GetUserInfo(ctx context.Context, in *GetUser
 
 func (c *UserServiceHTTPClientImpl) Signin(ctx context.Context, in *SigninRequest, opts ...http.CallOption) (*SigninReply, error) {
 	var out SigninReply
-	pattern := "/v1/user"
+	pattern := "/v1/users"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserServiceSignin))
 	opts = append(opts, http.PathTemplate(pattern))
