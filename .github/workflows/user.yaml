@@ -98,7 +98,7 @@ jobs:
 
       - name: Run database migrate
         run: |
-          export DB_SOURCE="postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable"
+          export DB_SOURCE="postgresql://postgres:postgres@localhost:5432/tiktok?sslmode=disable"
           make migrate-up
       -
         # -short: 跳过耗时久的test
