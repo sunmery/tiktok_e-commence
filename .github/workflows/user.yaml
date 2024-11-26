@@ -43,6 +43,8 @@ env:
   BACKEND_GRPC_PORT: 30002
 
 jobs:
+  matrix:
+    service: [ user, product ] # 服务列表
 
   backend-test:
     runs-on: ubuntu-latest
@@ -114,7 +116,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [ user, product ] # 服务列表
+        service: ${{ matrix.service }}  # 同样引用共享的矩阵配置
     defaults:
       run:
         shell: bash
@@ -172,6 +174,9 @@ jobs:
   backend-deploy:
     needs: backend-build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ${{ matrix.service }}  # 引用共享的矩阵配置
     defaults:
       run:
         shell: bash
