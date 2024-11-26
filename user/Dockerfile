@@ -71,7 +71,8 @@ RUN echo 'Asia/Shanghai' >/etc/timezone
 # USER appuser
 
 # 指定容器对外暴露的端口号
-EXPOSE $HTTP_PORT $GRPC_PORT
+EXPOSE $HTTP_PORT
+EXPOSE $GRPC_PORT
 
 RUN mkdir -p /data/conf
 
