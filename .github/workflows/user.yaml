@@ -142,7 +142,7 @@ jobs:
       - # 构建, 标记, 推送镜像到容器注册表
         name: Build tag and push image to Cloud Registry
         run: |
-          docker build $SERVICE_DIR \
+          docker build . \
             -t actions/backend \
             --build-arg GO_PROXY=$GO_PROXY \
             --build-arg GOIMAGE=$GO_IMAGE \
