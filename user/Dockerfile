@@ -73,7 +73,7 @@ RUN echo 'Asia/Shanghai' >/etc/timezone
 # 指定容器对外暴露的端口号
 EXPOSE $HTTP_PORT $GRPC_PORT
 
-VOLUME /data/conf
+RUN mkdir -p /data/conf
 
 # 设置容器启动时执行的命令
 CMD ["/bin/user", "-conf", "/data/conf"]
