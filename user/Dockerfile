@@ -75,6 +75,8 @@ EXPOSE $HTTP_PORT
 EXPOSE $GRPC_PORT
 
 RUN mkdir -p /data/conf
+RUN ls /bin
+RUN ls /bin
 
 # 设置容器启动时执行的命令
 CMD ["/bin/user", "-conf", "/data/conf"]
