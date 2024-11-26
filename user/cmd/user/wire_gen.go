@@ -24,10 +24,9 @@ import (
 
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, casdoor *conf.Casdoor, auth *conf.Auth, logger log.Logger) (*kratos.App, func(), error) {
-	pool := data.NewDB(confData)
 	client := data.NewCache(confData)
 	casdoorsdkClient := data.NewCasdoor(casdoor)
-	dataData, cleanup, err := data.NewData(logger, pool, client, casdoorsdkClient)
+	dataData, cleanup, err := data.NewData(logger, client, casdoorsdkClient)
 	if err != nil {
 		return nil, nil, err
 	}

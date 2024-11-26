@@ -6,8 +6,6 @@ server:
     addr: 0.0.0.0:30002
     timeout: 1s
 data:
-  database:
-    source: postgresql://postgres:postgres@localhost:5432/tiktok?sslmode=disable&search_path=users
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 4.2s
@@ -46,10 +44,8 @@ casdoor:
     -----END CERTIFICATE-----
   server:
     # casdoor url
-    # endpoint: "http://localhost:8000"
     endpoint: "http://node8.apikv.com:31922"
     client_id: "58ae47eed5903ca1c3ce"
     client_secret: "d092bd2b51a075fe7a790e01e8a2b1a8176a2d40"
     organization: "tiktok"
     application: "e-commence"
-    frontend_url: "http://localhost:3000"

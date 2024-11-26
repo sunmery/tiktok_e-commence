@@ -1,24 +1,20 @@
 package data
 
 import (
-	"context"
-	"fmt"
 	"github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"user/internal/conf"
 
 	"github.com/google/wire"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewUserRepo, NewDB, NewCache, NewCasdoor)
+var ProviderSet = wire.NewSet(NewData, NewUserRepo, NewCache, NewCasdoor)
 
 // Data .
 type Data struct {
-	*Queries
 	rdb *redis.Client
 	cs  *casdoorsdk.Client
 }
@@ -26,7 +22,7 @@ type Data struct {
 // NewData .
 func NewData(
 	logger log.Logger,
-	db *pgxpool.Pool,
+
 	rdb *redis.Client,
 	cs *casdoorsdk.Client,
 ) (*Data, func(), error) {
@@ -34,20 +30,10 @@ func NewData(
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
-		Queries: New(db),
-		rdb:     rdb,
-		cs:      cs,
+
+		rdb: rdb,
+		cs:  cs,
 	}, cleanup, nil
-}
-
-func NewDB(c *conf.Data) *pgxpool.Pool {
-
-	conn, err := pgxpool.New(context.Background(), c.Database.Source)
-	if err != nil {
-		panic(fmt.Sprintf("Unable to connect to database: %v", err))
-	}
-
-	return conn
 }
 
 func NewCache(c *conf.Data) *redis.Client {
