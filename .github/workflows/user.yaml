@@ -13,6 +13,10 @@ on:
     tags:
       - 'v*.*.*'
 env:
+  # 微服务所在目录
+  SERVICE_DIR: user
+  # 仓库
+  REGISTER_REPOSITORY: e-commence/$SERVICE_DIR
   # 版本号, git tag的标签名
   # https://docs.github.com/zh/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
   VERSION: ${{ github.ref_name }}
@@ -36,8 +40,6 @@ env:
   BACKEND_HTTP_PORT: 30001
   # 后端应用的GRPC端口
   BACKEND_GRPC_PORT: 30002
-  # 仓库
-  REGISTER_REPOSITORY: e-commence/users
 
 jobs:
 
@@ -47,7 +49,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: user
+        working-directory: $SERVICE_DIR
     # Service containers to run with `container-job`
     services:
       # Label used to access the service container
@@ -140,8 +142,7 @@ jobs:
       - # 构建, 标记, 推送镜像到容器注册表
         name: Build tag and push image to Cloud Registry
         run: |
-          docker build user \
-            --progress=plain \
+          docker build $SERVICE_DIR \
             -t actions/backend \
             --build-arg GO_PROXY=$GO_PROXY \
             --build-arg GOIMAGE=$GO_IMAGE \
