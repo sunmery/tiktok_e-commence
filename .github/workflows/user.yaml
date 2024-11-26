@@ -49,7 +49,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: $SERVICE_DIR
+        working-directory: user
     # Service containers to run with `container-job`
     services:
       # Label used to access the service container
@@ -63,7 +63,7 @@ jobs:
           # 数据库用户密码
           POSTGRES_PASSWORD: postgres
           # 此可选环境变量可用于为首次启动映像时创建的默认数据库定义不同的名称。如果未指定，则将使用 POSTGRES_USER 的值。
-          POSTGRES_DB: simple_bank
+          POSTGRES_DB: tiktok
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
