@@ -8,6 +8,8 @@ run-name: Deploy backend application and swagger document to production
 # git tag v1.1.8; git push; git push main v1.1.8
 on:
   push:
+    branches:
+      - pre
     tags:
       - 'v*.*.*'
 env:
