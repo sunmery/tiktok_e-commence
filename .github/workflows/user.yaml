@@ -175,7 +175,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: user/manifests/application/overlays/production
+        working-directory: ${{ matrix.service }}/manifests/application/overlays/production
     steps:
       - # 检出仓库中的代码，确保脚本可以访问仓库中的所有文件
         name: Checkout repository
