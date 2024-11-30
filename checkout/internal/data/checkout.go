@@ -26,7 +26,7 @@ func (c *checkoutRepo) Checkout(ctx context.Context, req *biz.CheckoutReq) (*biz
 		return nil, errors.New("invalid token")
 	}
 
-	checkout, err := c.data.db.CreateCheckout(ctx, modules.CreateCheckoutParams{
+	checkout, err := c.data.db.CreateCheckout(ctx, models.CreateCheckoutParams{
 		Owner:        payload.Owner,
 		Name:         payload.Name,
 		Firstname:    req.Firstname,

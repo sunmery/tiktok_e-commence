@@ -28,7 +28,7 @@ func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditC
 		return nil, errors.New("invalid token")
 	}
 
-	cards, err := c.data.db.GetCreditCards(ctx, modules.GetCreditCardsParams{
+	cards, err := c.data.db.GetCreditCards(ctx, models.GetCreditCardsParams{
 		Owner:            payload.Owner,
 		Username:         payload.Name,
 		CreditCardNumber: &req.CreditCardNumber,
@@ -62,7 +62,7 @@ func (c *creditCardsRepo) CreateCreditCard(ctx context.Context, req *biz.CreditC
 		return nil, errors.New("invalid token")
 	}
 
-	_, err = c.data.db.CreateCreditCard(ctx, modules.CreateCreditCardParams{
+	_, err = c.data.db.CreateCreditCard(ctx, models.CreateCreditCardParams{
 		Owner:                     payload.Owner,
 		Username:                  payload.Name,
 		CreditCardNumber:          req.CreditCardNumber,
@@ -89,7 +89,7 @@ func (c *creditCardsRepo) UpdateCreditCard(ctx context.Context, req *biz.CreditC
 		return nil, errors.New("invalid token")
 	}
 
-	_, err = c.data.db.UpdateCreditCard(ctx, modules.UpdateCreditCardParams{
+	_, err = c.data.db.UpdateCreditCard(ctx, models.UpdateCreditCardParams{
 		CreditCardNumber:          &req.CreditCardNumber,
 		CreditCardCvv:             &req.CreditCardCvv,
 		CreditCardExpirationYear:  &req.CreditCardExpirationYear,
@@ -109,7 +109,7 @@ func (c *creditCardsRepo) DeleteCreditCard(ctx context.Context, id int32) (*biz.
 		return nil, err
 	}
 
-	_, err = c.data.db.DeleteCreditCard(ctx, modules.DeleteCreditCardParams{
+	_, err = c.data.db.DeleteCreditCard(ctx, models.DeleteCreditCardParams{
 		Username: payload.Name,
 		ID:       id,
 	})
@@ -128,7 +128,7 @@ func (c *creditCardsRepo) ListCreditCards(ctx context.Context, req *biz.ListCred
 	if req.Owner != payload.Owner || req.Username != payload.Name {
 		return nil, errors.New("invalid token")
 	}
-	cards, err := c.data.db.ListCreditCards(ctx, modules.ListCreditCardsParams{
+	cards, err := c.data.db.ListCreditCards(ctx, models.ListCreditCardsParams{
 		Owner:    payload.Owner,
 		Username: payload.Name,
 	})

@@ -24,7 +24,7 @@ func (p *productRepo) CreateProduct(ctx context.Context, req *biz.CreateProductR
 		return nil, errors.New("invalid token")
 	}
 
-	product, err := p.data.db.CreateProduct(ctx, modules.CreateProductParams{
+	product, err := p.data.db.CreateProduct(ctx, models.CreateProductParams{
 		Owner:       req.Owner,
 		Username:    req.Username,
 		Name:        req.Name,
@@ -50,7 +50,7 @@ func (p *productRepo) CreateProduct(ctx context.Context, req *biz.CreateProductR
 }
 
 func (p *productRepo) ListProducts(ctx context.Context, req *biz.ListProductsReq) (*biz.ListProductsResp, error) {
-	products, err := p.data.db.ListProducts(ctx, modules.ListProductsParams{
+	products, err := p.data.db.ListProducts(ctx, models.ListProductsParams{
 		Page:     int64((req.Page - 1) * req.PageSize),
 		PageSize: int64(req.PageSize),
 	})

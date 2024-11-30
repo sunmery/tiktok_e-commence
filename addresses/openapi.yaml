@@ -1,0 +1,143 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: AddressesService API
+    version: 0.0.1
+paths:
+    /v1/addresses:
+        get:
+            tags:
+                - AddressesService
+            operationId: AddressesService_GetAddresses
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.addresses.v1.Addresses'
+        post:
+            tags:
+                - AddressesService
+            operationId: AddressesService_CreateAddresses
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.addresses.v1.CreateAddressesRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.addresses.v1.Reply'
+        delete:
+            tags:
+                - AddressesService
+            operationId: AddressesService_DeleteAddresses
+            parameters:
+                - name: addressesId
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: userId
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.addresses.v1.Reply'
+        patch:
+            tags:
+                - AddressesService
+            operationId: AddressesService_UpdateAddresses
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.addresses.v1.UpdateAddressesRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.addresses.v1.Reply'
+components:
+    schemas:
+        api.addresses.v1.Addresses:
+            required:
+                - streetAddress
+                - city
+                - state
+                - country
+                - zipCode
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                streetAddress:
+                    type: string
+                    description: Street address (required).
+                city:
+                    type: string
+                    description: City (required).
+                state:
+                    type: string
+                    description: State or province (required).
+                country:
+                    type: string
+                    description: Country (required).
+                zipCode:
+                    type: integer
+                    description: Zip code (required).
+                    format: int32
+        api.addresses.v1.CreateAddressesRequest:
+            required:
+                - userId
+            type: object
+            properties:
+                addresses:
+                    allOf:
+                        - $ref: '#/components/schemas/api.addresses.v1.Addresses'
+                    description: User ID associated with this address (required).
+                userId:
+                    type: string
+        api.addresses.v1.Reply:
+            type: object
+            properties:
+                message:
+                    type: string
+                code:
+                    type: integer
+                    format: int32
+        api.addresses.v1.UpdateAddressesRequest:
+            required:
+                - userId
+            type: object
+            properties:
+                addressesId:
+                    type: integer
+                    format: int32
+                userId:
+                    type: string
+tags:
+    - name: AddressesService

@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package api.addresses.v1;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+option go_package = "addresses/api/addresses/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.addresses.v1";
+
+service AddressesService {
+	rpc CreateAddresses (CreateAddressesRequest) returns (Reply) {
+		option (google.api.http) = {
+			post: "/v1/addresses",
+			body: "*"
+		};
+	};
+	rpc UpdateAddresses (UpdateAddressesRequest) returns (Reply) {
+		option (google.api.http) = {
+			patch: "/v1/addresses",
+			body: "*"
+		};
+	};
+	rpc DeleteAddresses (DeleteAddressesRequest) returns (Reply) {
+		option (google.api.http) = {
+			delete: "/v1/addresses"
+		};
+	};
+	rpc GetAddresses (GetAddressesRequest) returns (Addresses) {
+		option (google.api.http) = {
+			get: "/v1/addresses/{user_id}"
+		};
+	};
+}
+
+message Addresses {
+	int32 id = 1;
+
+	// Street address (required).
+	string street_address = 3 [(google.api.field_behavior) = REQUIRED];
+
+	// City (required).
+	string city = 4 [(google.api.field_behavior) = REQUIRED];
+
+	// State or province (required).
+	string state = 5 [(google.api.field_behavior) = REQUIRED];
+
+	// Country (required).
+	string country = 6 [(google.api.field_behavior) = REQUIRED];
+
+	// Zip code (required).
+	int32 zip_code = 7 [(google.api.field_behavior) = REQUIRED];
+}
+
+message Reply {
+	string message = 1;
+	int32 code = 2;
+}
+
+message CreateAddressesRequest {
+	// User ID associated with this address (required).
+	Addresses addresses = 1;
+	string user_id = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdateAddressesRequest {
+	int32 addresses_id = 1;
+	string user_id = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message DeleteAddressesRequest {
+	int32 addresses_id = 1;
+	int32 user_id = 2;
+}
+
+message GetAddressesRequest {
+	int32 user_id = 1;
+}
+

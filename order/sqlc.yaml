@@ -7,7 +7,7 @@ sql:
       uri: ${DB_SOURCE}
     gen:
       go:
-        package: "modules"
+        package: "models"
         out: "internal/data/models"
         sql_package: "pgx/v5"
         emit_db_tags: false # 如果为 true，则将 DB 标记添加到生成的结构中。默认值为 false

@@ -7,7 +7,9 @@ server:
     timeout: 1s
 data:
   redis:
-    addr: 127.0.0.1:6379
+    addr: localhost:6379
+    username: default
+    password: msdnmm
     read_timeout: 4.2s
     write_timeout: 4.2s
     dial_timeout: 4s
@@ -44,7 +46,7 @@ casdoor:
     -----END CERTIFICATE-----
   server:
     # casdoor url
-    endpoint: "http://node8.apikv.com:31922"
+    endpoint: "http://localhost:8000"
     client_id: "58ae47eed5903ca1c3ce"
     client_secret: "d092bd2b51a075fe7a790e01e8a2b1a8176a2d40"
     organization: "tiktok"

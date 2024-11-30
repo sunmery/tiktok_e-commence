@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: orders.sql
 
-package modules
+package models
 
 import (
 	"context"

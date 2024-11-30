@@ -1,7 +1,7 @@
 version: "2"
 sql:
   - schema: "internal/data/migrate"
-    queries: "internal/data/query"
+    queries: "internal/data/queries"
     engine: "postgresql"
     database:
       uri: ${DB_SOURCE}

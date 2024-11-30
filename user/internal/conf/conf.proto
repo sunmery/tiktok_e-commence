@@ -26,9 +26,7 @@ message Server {
 }
 
 message Data {
-  message Database {
-    string source = 1;
-  }
+
   message Redis {
     string addr = 1;
     string username = 2;
@@ -37,7 +35,7 @@ message Data {
     google.protobuf.Duration read_timeout = 5;
     google.protobuf.Duration write_timeout = 6;
   }
-  Database database = 1;
+
   Redis redis = 2;
 }
 
@@ -63,4 +61,13 @@ message Auth {
     string api_key = 2;
   }
   JWT jwt = 1;
+}
+
+message Registry {
+  message Consul {
+    string address = 1;
+    string scheme = 2;
+    bool health_check = 3;
+  }
+  Consul consul = 1;
 }

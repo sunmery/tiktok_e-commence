@@ -17,7 +17,7 @@ var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewCreditCardsRepo)
 
 // Data .
 type Data struct {
-	db  *modules.Queries
+	db  *models.Queries
 	rdb *redis.Client
 }
 
@@ -31,7 +31,7 @@ func NewData(
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
-		db:  modules.New(pgx),
+		db:  models.New(pgx),
 		rdb: rdb,
 	}, cleanup, nil
 }
