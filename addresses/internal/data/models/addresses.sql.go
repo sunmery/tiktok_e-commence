@@ -9,29 +9,31 @@ import (
 	"context"
 )
 
-const CreatUserAddress = `-- name: CreatUserAddress :one
-INSERT INTO addresses.addresses(user_id, street_address, city, state, country, zip_code)
-VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, user_id, street_address, city, state, country, zip_code
+const CreatAddress = `-- name: CreatAddress :one
+INSERT INTO addresses.addresses(owner, name, street_address, city, state, country, zip_code)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING id, owner, name, street_address, city, state, country, zip_code
 `
 
-type CreatUserAddressParams struct {
-	UserID        string `json:"UserID"`
-	StreetAddress string `json:"StreetAddress"`
-	City          string `json:"City"`
-	State         string `json:"State"`
-	Country       string `json:"Country"`
-	ZipCode       int32  `json:"ZipCode"`
+type CreatAddressParams struct {
+	Owner         string `json:"owner"`
+	Name          string `json:"name"`
+	StreetAddress string `json:"street_address"`
+	City          string `json:"city"`
+	State         string `json:"state"`
+	Country       string `json:"country"`
+	ZipCode       string `json:"zip_code"`
 }
 
-// CreatUserAddress
+// CreatAddress
 //
-//	INSERT INTO addresses.addresses(user_id, street_address, city, state, country, zip_code)
-//	VALUES ($1, $2, $3, $4, $5, $6)
-//	RETURNING id, user_id, street_address, city, state, country, zip_code
-func (q *Queries) CreatUserAddress(ctx context.Context, arg CreatUserAddressParams) (AddressesAddresses, error) {
-	row := q.db.QueryRow(ctx, CreatUserAddress,
-		arg.UserID,
+//	INSERT INTO addresses.addresses(owner, name, street_address, city, state, country, zip_code)
+//	VALUES ($1, $2, $3, $4, $5, $6, $7)
+//	RETURNING id, owner, name, street_address, city, state, country, zip_code
+func (q *Queries) CreatAddress(ctx context.Context, arg CreatAddressParams) (AddressesAddresses, error) {
+	row := q.db.QueryRow(ctx, CreatAddress,
+		arg.Owner,
+		arg.Name,
 		arg.StreetAddress,
 		arg.City,
 		arg.State,
@@ -41,7 +43,8 @@ func (q *Queries) CreatUserAddress(ctx context.Context, arg CreatUserAddressPara
 	var i AddressesAddresses
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Owner,
+		&i.Name,
 		&i.StreetAddress,
 		&i.City,
 		&i.State,
@@ -51,32 +54,36 @@ func (q *Queries) CreatUserAddress(ctx context.Context, arg CreatUserAddressPara
 	return i, err
 }
 
-const DeleteUserAddress = `-- name: DeleteUserAddress :one
+const DeleteAddress = `-- name: DeleteAddress :one
 DELETE
 FROM addresses.addresses
-WHERE user_id = $1
-  AND id = $2
-RETURNING id, user_id, street_address, city, state, country, zip_code
+WHERE id = $1
+  AND owner = $2
+  AND name = $3
+RETURNING id, owner, name, street_address, city, state, country, zip_code
 `
 
-type DeleteUserAddressParams struct {
-	UserID string `json:"UserID"`
-	ID     int32  `json:"ID"`
+type DeleteAddressParams struct {
+	ID    int32  `json:"id"`
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
 }
 
-// DeleteUserAddress
+// DeleteAddress
 //
 //	DELETE
 //	FROM addresses.addresses
-//	WHERE user_id = $1
-//	  AND id = $2
-//	RETURNING id, user_id, street_address, city, state, country, zip_code
-func (q *Queries) DeleteUserAddress(ctx context.Context, arg DeleteUserAddressParams) (AddressesAddresses, error) {
-	row := q.db.QueryRow(ctx, DeleteUserAddress, arg.UserID, arg.ID)
+//	WHERE id = $1
+//	  AND owner = $2
+//	  AND name = $3
+//	RETURNING id, owner, name, street_address, city, state, country, zip_code
+func (q *Queries) DeleteAddress(ctx context.Context, arg DeleteAddressParams) (AddressesAddresses, error) {
+	row := q.db.QueryRow(ctx, DeleteAddress, arg.ID, arg.Owner, arg.Name)
 	var i AddressesAddresses
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Owner,
+		&i.Name,
 		&i.StreetAddress,
 		&i.City,
 		&i.State,
@@ -86,85 +93,37 @@ func (q *Queries) DeleteUserAddress(ctx context.Context, arg DeleteUserAddressPa
 	return i, err
 }
 
-const DeleteUserAddresses = `-- name: DeleteUserAddresses :one
-DELETE
+const GetAddresses = `-- name: GetAddresses :many
+SELECT id, owner, name, street_address, city, state, country, zip_code
 FROM addresses.addresses
-WHERE user_id = $1
-RETURNING id, user_id, street_address, city, state, country, zip_code
+WHERE owner = $1
+  AND name = $2
 `
 
-// DeleteUserAddresses
-//
-//	DELETE
-//	FROM addresses.addresses
-//	WHERE user_id = $1
-//	RETURNING id, user_id, street_address, city, state, country, zip_code
-func (q *Queries) DeleteUserAddresses(ctx context.Context, userID string) (AddressesAddresses, error) {
-	row := q.db.QueryRow(ctx, DeleteUserAddresses, userID)
-	var i AddressesAddresses
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
-		&i.StreetAddress,
-		&i.City,
-		&i.State,
-		&i.Country,
-		&i.ZipCode,
-	)
-	return i, err
+type GetAddressesParams struct {
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
 }
 
-const GetUserAddress = `-- name: GetUserAddress :one
-SELECT id, user_id, street_address, city, state, country, zip_code
-FROM addresses.addresses
-WHERE user_id = $1
-LIMIT 1
-`
-
-// GetUserAddress
+// GetAddresses
 //
-//	SELECT id, user_id, street_address, city, state, country, zip_code
+//	SELECT id, owner, name, street_address, city, state, country, zip_code
 //	FROM addresses.addresses
-//	WHERE user_id = $1
-//	LIMIT 1
-func (q *Queries) GetUserAddress(ctx context.Context, userID string) (AddressesAddresses, error) {
-	row := q.db.QueryRow(ctx, GetUserAddress, userID)
-	var i AddressesAddresses
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
-		&i.StreetAddress,
-		&i.City,
-		&i.State,
-		&i.Country,
-		&i.ZipCode,
-	)
-	return i, err
-}
-
-const ListUserAddresses = `-- name: ListUserAddresses :many
-SELECT id, user_id, street_address, city, state, country, zip_code
-FROM addresses.addresses
-WHERE user_id = $1
-`
-
-// ListUserAddresses
-//
-//	SELECT id, user_id, street_address, city, state, country, zip_code
-//	FROM addresses.addresses
-//	WHERE user_id = $1
-func (q *Queries) ListUserAddresses(ctx context.Context, userID string) ([]AddressesAddresses, error) {
-	rows, err := q.db.Query(ctx, ListUserAddresses, userID)
+//	WHERE owner = $1
+//	  AND name = $2
+func (q *Queries) GetAddresses(ctx context.Context, arg GetAddressesParams) ([]AddressesAddresses, error) {
+	rows, err := q.db.Query(ctx, GetAddresses, arg.Owner, arg.Name)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []AddressesAddresses{}
+	var items []AddressesAddresses
 	for rows.Next() {
 		var i AddressesAddresses
 		if err := rows.Scan(
 			&i.ID,
-			&i.UserID,
+			&i.Owner,
+			&i.Name,
 			&i.StreetAddress,
 			&i.City,
 			&i.State,
@@ -181,27 +140,31 @@ func (q *Queries) ListUserAddresses(ctx context.Context, userID string) ([]Addre
 	return items, nil
 }
 
-const UpdateUserAddress = `-- name: UpdateUserAddress :one
+const UpdateAddress = `-- name: UpdateAddress :one
 UPDATE addresses.addresses
 SET street_address = coalesce($1, street_address),
     city           = coalesce($2, city),
     state          = coalesce($3, state),
     country        = coalesce($4, country),
     zip_code       = coalesce($5, zip_code)
-WHERE user_id = $6
-RETURNING id, user_id, street_address, city, state, country, zip_code
+WHERE id = $6
+  AND owner = $7
+  AND name = $8
+RETURNING id, owner, name, street_address, city, state, country, zip_code
 `
 
-type UpdateUserAddressParams struct {
-	StreetAddress *string `json:"StreetAddress"`
-	City          *string `json:"City"`
-	State         *string `json:"State"`
-	Country       *string `json:"Country"`
-	ZipCode       *int32  `json:"ZipCode"`
-	UserID        string  `json:"UserID"`
+type UpdateAddressParams struct {
+	StreetAddress *string `json:"street_address"`
+	City          *string `json:"city"`
+	State         *string `json:"state"`
+	Country       *string `json:"country"`
+	ZipCode       *string `json:"zip_code"`
+	ID            int32   `json:"id"`
+	Owner         string  `json:"owner"`
+	Name          string  `json:"name"`
 }
 
-// UpdateUserAddress
+// UpdateAddress
 //
 //	UPDATE addresses.addresses
 //	SET street_address = coalesce($1, street_address),
@@ -209,21 +172,26 @@ type UpdateUserAddressParams struct {
 //	    state          = coalesce($3, state),
 //	    country        = coalesce($4, country),
 //	    zip_code       = coalesce($5, zip_code)
-//	WHERE user_id = $6
-//	RETURNING id, user_id, street_address, city, state, country, zip_code
-func (q *Queries) UpdateUserAddress(ctx context.Context, arg UpdateUserAddressParams) (AddressesAddresses, error) {
-	row := q.db.QueryRow(ctx, UpdateUserAddress,
+//	WHERE id = $6
+//	  AND owner = $7
+//	  AND name = $8
+//	RETURNING id, owner, name, street_address, city, state, country, zip_code
+func (q *Queries) UpdateAddress(ctx context.Context, arg UpdateAddressParams) (AddressesAddresses, error) {
+	row := q.db.QueryRow(ctx, UpdateAddress,
 		arg.StreetAddress,
 		arg.City,
 		arg.State,
 		arg.Country,
 		arg.ZipCode,
-		arg.UserID,
+		arg.ID,
+		arg.Owner,
+		arg.Name,
 	)
 	var i AddressesAddresses
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Owner,
+		&i.Name,
 		&i.StreetAddress,
 		&i.City,
 		&i.State,

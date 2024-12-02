@@ -9,41 +9,29 @@ import (
 )
 
 type Querier interface {
-	//CreatUserAddress
+	//CreatAddress
 	//
-	//  INSERT INTO addresses.addresses(user_id, street_address, city, state, country, zip_code)
-	//  VALUES ($1, $2, $3, $4, $5, $6)
-	//  RETURNING id, user_id, street_address, city, state, country, zip_code
-	CreatUserAddress(ctx context.Context, arg CreatUserAddressParams) (AddressesAddresses, error)
-	//DeleteUserAddress
-	//
-	//  DELETE
-	//  FROM addresses.addresses
-	//  WHERE user_id = $1
-	//    AND id = $2
-	//  RETURNING id, user_id, street_address, city, state, country, zip_code
-	DeleteUserAddress(ctx context.Context, arg DeleteUserAddressParams) (AddressesAddresses, error)
-	//DeleteUserAddresses
+	//  INSERT INTO addresses.addresses(owner, name, street_address, city, state, country, zip_code)
+	//  VALUES ($1, $2, $3, $4, $5, $6, $7)
+	//  RETURNING id, owner, name, street_address, city, state, country, zip_code
+	CreatAddress(ctx context.Context, arg CreatAddressParams) (AddressesAddresses, error)
+	//DeleteAddress
 	//
 	//  DELETE
 	//  FROM addresses.addresses
-	//  WHERE user_id = $1
-	//  RETURNING id, user_id, street_address, city, state, country, zip_code
-	DeleteUserAddresses(ctx context.Context, userID string) (AddressesAddresses, error)
-	//GetUserAddress
+	//  WHERE id = $1
+	//    AND owner = $2
+	//    AND name = $3
+	//  RETURNING id, owner, name, street_address, city, state, country, zip_code
+	DeleteAddress(ctx context.Context, arg DeleteAddressParams) (AddressesAddresses, error)
+	//GetAddresses
 	//
-	//  SELECT id, user_id, street_address, city, state, country, zip_code
+	//  SELECT id, owner, name, street_address, city, state, country, zip_code
 	//  FROM addresses.addresses
-	//  WHERE user_id = $1
-	//  LIMIT 1
-	GetUserAddress(ctx context.Context, userID string) (AddressesAddresses, error)
-	//ListUserAddresses
-	//
-	//  SELECT id, user_id, street_address, city, state, country, zip_code
-	//  FROM addresses.addresses
-	//  WHERE user_id = $1
-	ListUserAddresses(ctx context.Context, userID string) ([]AddressesAddresses, error)
-	//UpdateUserAddress
+	//  WHERE owner = $1
+	//    AND name = $2
+	GetAddresses(ctx context.Context, arg GetAddressesParams) ([]AddressesAddresses, error)
+	//UpdateAddress
 	//
 	//  UPDATE addresses.addresses
 	//  SET street_address = coalesce($1, street_address),
@@ -51,9 +39,11 @@ type Querier interface {
 	//      state          = coalesce($3, state),
 	//      country        = coalesce($4, country),
 	//      zip_code       = coalesce($5, zip_code)
-	//  WHERE user_id = $6
-	//  RETURNING id, user_id, street_address, city, state, country, zip_code
-	UpdateUserAddress(ctx context.Context, arg UpdateUserAddressParams) (AddressesAddresses, error)
+	//  WHERE id = $6
+	//    AND owner = $7
+	//    AND name = $8
+	//  RETURNING id, owner, name, street_address, city, state, country, zip_code
+	UpdateAddress(ctx context.Context, arg UpdateAddressParams) (AddressesAddresses, error)
 }
 
 var _ Querier = (*Queries)(nil)

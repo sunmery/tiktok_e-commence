@@ -2,40 +2,48 @@ package biz
 
 import (
 	"context"
-	"time"
 
-	v1 "addresses/api/helloworld/v1"
-
-	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-var (
-	// ErrUserNotFound is user not found.
-	ErrUserNotFound = errors.NotFound(v1.ErrorReason_USER_NOT_FOUND.String(), "user not found")
-)
+type Request struct {
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
+}
 
-// Address represents a user's address information.
+type DeleteAddressesRequest struct {
+	AddressId uint32 `json:"address_id"`
+	Owner     string `json:"owner"`
+	Name      string `json:"name"`
+}
+
 type Address struct {
-	UserID        string `json:"user_id"`
+	Id            uint32 `json:"id"`
+	Owner         string `json:"owner"`
+	Name          string `json:"name"`
 	StreetAddress string `json:"street_address"`
 	City          string `json:"city"`
 	State         string `json:"state"`
 	Country       string `json:"country"`
-	ZipCode       int32  `json:"zip_code"`
+	ZipCode       string `json:"zip_code"`
 }
 
-type Reply struct {
+type Addresses struct {
+	Addresses []*Address `json:"addresses"`
+}
+
+type DeleteAddressesReply struct {
 	Message string `json:"message"`
-	Code    uint   `json:"code"`
+	Id      uint32 `json:"id"`
+	Code    uint32 `json:"code"`
 }
 
 // AddressesRepo is a Greater repo.
 type AddressesRepo interface {
-	CreateAddress(ctx context.Context, req Address) (Reply, error)
-	UpdateAddress(ctx context.Context, req Address) (Reply, error)
-	DeleteAddress(ctx context.Context, req Address) (Reply, error)
-	GetAddresses(ctx context.Context, userId string) (Reply, error)
+	CreateAddress(ctx context.Context, req *Address) (*Address, error)
+	UpdateAddress(ctx context.Context, req *Address) (*Address, error)
+	DeleteAddress(ctx context.Context, req *DeleteAddressesRequest) (*DeleteAddressesReply, error)
+	GetAddresses(ctx context.Context, req *Request) (*Addresses, error)
 }
 
 // AddressesUsecase is a Addresses usecase.
@@ -50,7 +58,19 @@ func NewAddressesUsecase(repo AddressesRepo, logger log.Logger) *AddressesUsecas
 }
 
 // CreateAddress creates a Addresses, and returns the new Addresses.
-func (uc *AddressesUsecase) CreateAddress(ctx context.Context, req Address) (Reply, error) {
-	uc.log.WithContext(ctx).Infof("CreateAddresses: %v", req)
+func (uc *AddressesUsecase) CreateAddress(ctx context.Context, req *Address) (*Address, error) {
+	uc.log.WithContext(ctx).Infof("CreateAddress: %+v", req)
 	return uc.repo.CreateAddress(ctx, req)
+}
+func (uc *AddressesUsecase) UpdateAddress(ctx context.Context, req *Address) (*Address, error) {
+	uc.log.WithContext(ctx).Infof("UpdateAddress: %+v", req)
+	return uc.repo.UpdateAddress(ctx, req)
+}
+func (uc *AddressesUsecase) DeleteAddress(ctx context.Context, req *DeleteAddressesRequest) (*DeleteAddressesReply, error) {
+	uc.log.WithContext(ctx).Infof("DeleteAddress: %+v", req)
+	return uc.repo.DeleteAddress(ctx, req)
+}
+func (uc *AddressesUsecase) GetAddresses(ctx context.Context, req *Request) (*Addresses, error) {
+	uc.log.WithContext(ctx).Infof("GetAddresses: %+v", req)
+	return uc.repo.GetAddresses(ctx, req)
 }

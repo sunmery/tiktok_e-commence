@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"product/internal/biz"
-	"product/internal/data/modules"
+	"product/internal/data/models"
 	"product/internal/pkg/token"
 )
 

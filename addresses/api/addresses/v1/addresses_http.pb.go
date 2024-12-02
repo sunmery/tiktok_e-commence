@@ -25,10 +25,10 @@ const OperationAddressesServiceGetAddresses = "/api.addresses.v1.AddressesServic
 const OperationAddressesServiceUpdateAddresses = "/api.addresses.v1.AddressesService/UpdateAddresses"
 
 type AddressesServiceHTTPServer interface {
-	CreateAddresses(context.Context, *CreateAddressesRequest) (*Reply, error)
-	DeleteAddresses(context.Context, *DeleteAddressesRequest) (*Reply, error)
-	GetAddresses(context.Context, *GetAddressesRequest) (*Addresses, error)
-	UpdateAddresses(context.Context, *UpdateAddressesRequest) (*Reply, error)
+	CreateAddresses(context.Context, *Address) (*Address, error)
+	DeleteAddresses(context.Context, *DeleteAddressesRequest) (*DeleteAddressesReply, error)
+	GetAddresses(context.Context, *GetAddressesRequest) (*GetAddressesReply, error)
+	UpdateAddresses(context.Context, *Address) (*Address, error)
 }
 
 func RegisterAddressesServiceHTTPServer(s *http.Server, srv AddressesServiceHTTPServer) {
@@ -41,7 +41,7 @@ func RegisterAddressesServiceHTTPServer(s *http.Server, srv AddressesServiceHTTP
 
 func _AddressesService_CreateAddresses0_HTTP_Handler(srv AddressesServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in CreateAddressesRequest
+		var in Address
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -50,20 +50,20 @@ func _AddressesService_CreateAddresses0_HTTP_Handler(srv AddressesServiceHTTPSer
 		}
 		http.SetOperation(ctx, OperationAddressesServiceCreateAddresses)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.CreateAddresses(ctx, req.(*CreateAddressesRequest))
+			return srv.CreateAddresses(ctx, req.(*Address))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*Reply)
+		reply := out.(*Address)
 		return ctx.Result(200, reply)
 	}
 }
 
 func _AddressesService_UpdateAddresses0_HTTP_Handler(srv AddressesServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UpdateAddressesRequest
+		var in Address
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -72,13 +72,13 @@ func _AddressesService_UpdateAddresses0_HTTP_Handler(srv AddressesServiceHTTPSer
 		}
 		http.SetOperation(ctx, OperationAddressesServiceUpdateAddresses)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateAddresses(ctx, req.(*UpdateAddressesRequest))
+			return srv.UpdateAddresses(ctx, req.(*Address))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*Reply)
+		reply := out.(*Address)
 		return ctx.Result(200, reply)
 	}
 }
@@ -97,7 +97,7 @@ func _AddressesService_DeleteAddresses0_HTTP_Handler(srv AddressesServiceHTTPSer
 		if err != nil {
 			return err
 		}
-		reply := out.(*Reply)
+		reply := out.(*DeleteAddressesReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -116,16 +116,16 @@ func _AddressesService_GetAddresses0_HTTP_Handler(srv AddressesServiceHTTPServer
 		if err != nil {
 			return err
 		}
-		reply := out.(*Addresses)
+		reply := out.(*GetAddressesReply)
 		return ctx.Result(200, reply)
 	}
 }
 
 type AddressesServiceHTTPClient interface {
-	CreateAddresses(ctx context.Context, req *CreateAddressesRequest, opts ...http.CallOption) (rsp *Reply, err error)
-	DeleteAddresses(ctx context.Context, req *DeleteAddressesRequest, opts ...http.CallOption) (rsp *Reply, err error)
-	GetAddresses(ctx context.Context, req *GetAddressesRequest, opts ...http.CallOption) (rsp *Addresses, err error)
-	UpdateAddresses(ctx context.Context, req *UpdateAddressesRequest, opts ...http.CallOption) (rsp *Reply, err error)
+	CreateAddresses(ctx context.Context, req *Address, opts ...http.CallOption) (rsp *Address, err error)
+	DeleteAddresses(ctx context.Context, req *DeleteAddressesRequest, opts ...http.CallOption) (rsp *DeleteAddressesReply, err error)
+	GetAddresses(ctx context.Context, req *GetAddressesRequest, opts ...http.CallOption) (rsp *GetAddressesReply, err error)
+	UpdateAddresses(ctx context.Context, req *Address, opts ...http.CallOption) (rsp *Address, err error)
 }
 
 type AddressesServiceHTTPClientImpl struct {
@@ -136,8 +136,8 @@ func NewAddressesServiceHTTPClient(client *http.Client) AddressesServiceHTTPClie
 	return &AddressesServiceHTTPClientImpl{client}
 }
 
-func (c *AddressesServiceHTTPClientImpl) CreateAddresses(ctx context.Context, in *CreateAddressesRequest, opts ...http.CallOption) (*Reply, error) {
-	var out Reply
+func (c *AddressesServiceHTTPClientImpl) CreateAddresses(ctx context.Context, in *Address, opts ...http.CallOption) (*Address, error) {
+	var out Address
 	pattern := "/v1/addresses"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAddressesServiceCreateAddresses))
@@ -149,8 +149,8 @@ func (c *AddressesServiceHTTPClientImpl) CreateAddresses(ctx context.Context, in
 	return &out, nil
 }
 
-func (c *AddressesServiceHTTPClientImpl) DeleteAddresses(ctx context.Context, in *DeleteAddressesRequest, opts ...http.CallOption) (*Reply, error) {
-	var out Reply
+func (c *AddressesServiceHTTPClientImpl) DeleteAddresses(ctx context.Context, in *DeleteAddressesRequest, opts ...http.CallOption) (*DeleteAddressesReply, error) {
+	var out DeleteAddressesReply
 	pattern := "/v1/addresses"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAddressesServiceDeleteAddresses))
@@ -162,8 +162,8 @@ func (c *AddressesServiceHTTPClientImpl) DeleteAddresses(ctx context.Context, in
 	return &out, nil
 }
 
-func (c *AddressesServiceHTTPClientImpl) GetAddresses(ctx context.Context, in *GetAddressesRequest, opts ...http.CallOption) (*Addresses, error) {
-	var out Addresses
+func (c *AddressesServiceHTTPClientImpl) GetAddresses(ctx context.Context, in *GetAddressesRequest, opts ...http.CallOption) (*GetAddressesReply, error) {
+	var out GetAddressesReply
 	pattern := "/v1/addresses"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAddressesServiceGetAddresses))
@@ -175,8 +175,8 @@ func (c *AddressesServiceHTTPClientImpl) GetAddresses(ctx context.Context, in *G
 	return &out, nil
 }
 
-func (c *AddressesServiceHTTPClientImpl) UpdateAddresses(ctx context.Context, in *UpdateAddressesRequest, opts ...http.CallOption) (*Reply, error) {
-	var out Reply
+func (c *AddressesServiceHTTPClientImpl) UpdateAddresses(ctx context.Context, in *Address, opts ...http.CallOption) (*Address, error) {
+	var out Address
 	pattern := "/v1/addresses"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAddressesServiceUpdateAddresses))
