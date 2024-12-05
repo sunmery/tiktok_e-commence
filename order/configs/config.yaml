@@ -8,7 +8,7 @@ server:
 data:
   database:
     driver: postgres
-    source: postgresql://postgres:postgres@localhost:5432/tiktok?sslmode=disable&search_path=orders
+    source: postgresql://postgres:msdnmm@node1.apikv.com:5432/tiktok?sslmode=disable&timezone=Asia/Shanghai
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 5.2s

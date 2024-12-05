@@ -6,6 +6,86 @@ info:
     title: ""
     version: 0.0.1
 paths:
+    /v1/addresses:
+        get:
+            tags:
+                - AddressesService
+            operationId: AddressesService_GetAddresses
+            parameters:
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+                - name: owner
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.addresses.v1.GetAddressesReply'
+        post:
+            tags:
+                - AddressesService
+            operationId: AddressesService_CreateAddresses
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.addresses.v1.Address'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.addresses.v1.Address'
+        delete:
+            tags:
+                - AddressesService
+            operationId: AddressesService_DeleteAddresses
+            parameters:
+                - name: addresses_id
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+                - name: owner
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.addresses.v1.DeleteAddressesReply'
+        patch:
+            tags:
+                - AddressesService
+            operationId: AddressesService_UpdateAddresses
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.addresses.v1.Address'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.addresses.v1.Address'
     /v1/cart:
         post:
             tags:
@@ -24,15 +104,19 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.order.v1.AddItemResp'
-    /v1/cart/{user_id}:
+    /v1/cart/{name}:
         get:
             tags:
                 - CartService
             operationId: CartService_GetCart
             parameters:
-                - name: user_id
+                - name: name
                   in: path
                   required: true
+                  schema:
+                    type: string
+                - name: owner
+                  in: query
                   schema:
                     type: string
             responses:
@@ -47,9 +131,13 @@ paths:
                 - CartService
             operationId: CartService_EmptyCart
             parameters:
-                - name: user_id
+                - name: name
                   in: path
                   required: true
+                  schema:
+                    type: string
+                - name: owner
+                  in: query
                   schema:
                     type: string
             responses:
@@ -59,14 +147,18 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.order.v1.EmptyCartResp'
-    /v1/order:
+    /v1/orders:
         get:
             tags:
                 - OrderService
             description: 列出订单
             operationId: OrderService_ListOrder
             parameters:
-                - name: user_id
+                - name: owner
+                  in: query
+                  schema:
+                    type: string
+                - name: name
                   in: query
                   schema:
                     type: string
@@ -95,11 +187,10 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.order.v1.PlaceOrderResp'
-    /v1/order/mark:
-        post:
+        patch:
             tags:
                 - OrderService
-            description: 支付订单
+            description: 支付已支付的订单
             operationId: OrderService_MarkOrderPaid
             requestBody:
                 content:
@@ -195,20 +286,23 @@ paths:
                                 $ref: '#/components/schemas/api.product.v1.GetProductResp'
 components:
     schemas:
-        api.order.v1.AddItemReq:
+        api.addresses.v1.Address:
+            required:
+                - owner
+                - name
+                - city
+                - state
+                - country
+                - zip_code
+                - street_address
             type: object
             properties:
-                user_id:
+                id:
+                    type: integer
+                    format: uint32
+                owner:
                     type: string
-                item:
-                    $ref: '#/components/schemas/api.order.v1.CartItem'
-        api.order.v1.AddItemResp:
-            type: object
-            properties: {}
-        api.order.v1.Address:
-            type: object
-            properties:
-                streetAddress:
+                name:
                     type: string
                 city:
                     type: string
@@ -216,13 +310,52 @@ components:
                     type: string
                 country:
                     type: string
-                zipCode:
+                zip_code:
+                    type: string
+                street_address:
+                    type: string
+        api.addresses.v1.DeleteAddressesReply:
+            required:
+                - message
+                - id
+                - code
+            type: object
+            properties:
+                message:
+                    type: string
+                id:
                     type: integer
-                    format: int32
+                    format: uint32
+                code:
+                    type: integer
+                    format: uint32
+        api.addresses.v1.GetAddressesReply:
+            required:
+                - addresses
+            type: object
+            properties:
+                addresses:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.addresses.v1.Address'
+        api.order.v1.AddItemReq:
+            type: object
+            properties:
+                name:
+                    type: string
+                owner:
+                    type: string
+                item:
+                    $ref: '#/components/schemas/api.order.v1.CartItem'
+        api.order.v1.AddItemResp:
+            type: object
+            properties: {}
         api.order.v1.Cart:
             type: object
             properties:
-                user_id:
+                name:
+                    type: string
+                owner:
                     type: string
                 items:
                     type: array
@@ -236,7 +369,7 @@ components:
                     format: uint32
                 quantity:
                     type: integer
-                    format: int32
+                    format: uint32
         api.order.v1.EmptyCartResp:
             type: object
             properties: {}
@@ -255,33 +388,50 @@ components:
         api.order.v1.MarkOrderPaidReq:
             type: object
             properties:
-                user_id:
+                owner:
+                    type: string
+                name:
                     type: string
                 order_id:
-                    type: string
+                    type: integer
+                    format: uint32
         api.order.v1.MarkOrderPaidResp:
             type: object
-            properties: {}
+            properties:
+                status:
+                    type: string
+                code:
+                    type: integer
+                    format: uint32
+                message:
+                    type: string
         api.order.v1.Order:
             type: object
             properties:
+                owner:
+                    type: string
+                name:
+                    type: string
+                email:
+                    type: string
+                currency:
+                    type: string
+                order_id:
+                    type: integer
+                    format: uint32
+                addressId:
+                    type: integer
+                    format: uint32
                 order_items:
                     type: array
                     items:
                         $ref: '#/components/schemas/api.order.v1.OrderItem'
-                order_id:
-                    type: string
-                user_id:
-                    type: string
-                user_currency:
-                    type: string
-                address:
-                    $ref: '#/components/schemas/api.order.v1.Address'
-                email:
-                    type: string
                 created_at:
-                    type: integer
-                    format: int32
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
         api.order.v1.OrderItem:
             type: object
             properties:
@@ -294,16 +444,20 @@ components:
             type: object
             properties:
                 order_id:
-                    type: string
+                    type: integer
+                    format: uint32
         api.order.v1.PlaceOrderReq:
             type: object
             properties:
-                user_id:
+                owner:
                     type: string
-                user_currency:
+                name:
                     type: string
-                address:
-                    $ref: '#/components/schemas/api.order.v1.Address'
+                currency:
+                    type: string
+                address_id:
+                    type: integer
+                    format: uint32
                 email:
                     type: string
                 order_items:
@@ -374,6 +528,7 @@ components:
                     items:
                         $ref: '#/components/schemas/api.product.v1.Product'
 tags:
+    - name: AddressesService
     - name: CartService
     - name: OrderService
     - name: ProductCatalogService

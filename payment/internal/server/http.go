@@ -21,7 +21,7 @@ import (
 func NewHTTPServer(
 	c *conf.Server,
 	ac *conf.Auth,
-	payment *service.GreeterService,
+	payment *service.PaymentServiceService,
 	logger log.Logger,
 ) *http.Server {
 	publicKey, err := parseRSAPublicKeyFromPEM([]byte(ac.Jwt.ApiKey))
@@ -51,7 +51,6 @@ func NewHTTPServer(
 			handlers.AllowedHeaders([]string{"Authorization", "Content-Type"}),
 			handlers.AllowCredentials(),
 		)),
-		http.RequestDecoder(MultipartFormDataDecoder),
 	}
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
@@ -65,28 +64,6 @@ func NewHTTPServer(
 	srv := http.NewServer(opts...)
 	v1.RegisterPaymentServiceHTTPServer(srv, payment)
 	return srv
-}
-
-func MultipartFormDataDecoder(r *http.Request, v interface{}) error {
-	// 从Request Header的Content-Type中提取出对应的解码器
-	_, ok := http.CodecForRequest(r, "Content-Type")
-	// 如果找不到对应的解码器此时会报错
-	if !ok {
-		r.Header.Set("Content-Type", "application/json")
-		// return errors.BadRequest("CODEC", r.Header.Get("Content-Type"))
-	}
-	// fmt.Printf("method:%s\n", r.Method)
-	// if r.Method == "POST" {
-	// 	data, err := ioutil.ReadAll(r.Body)
-	// 	if err != nil {
-	// 		return errors.BadRequest("CODEC", err.Error())
-	// 	}
-	// 	if err = codec.Unmarshal(data, v); err != nil {
-	// 		return errors.BadRequest("CODEC", err.Error())
-	// 	}
-	// }
-
-	return nil
 }
 
 // NewWhiteListMatcher 创建jwt白名单

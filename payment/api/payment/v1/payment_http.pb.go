@@ -27,7 +27,7 @@ type PaymentServiceHTTPServer interface {
 
 func RegisterPaymentServiceHTTPServer(s *http.Server, srv PaymentServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/payment", _PaymentService_Charge0_HTTP_Handler(srv))
+	r.POST("/v1/payments", _PaymentService_Charge0_HTTP_Handler(srv))
 }
 
 func _PaymentService_Charge0_HTTP_Handler(srv PaymentServiceHTTPServer) func(ctx http.Context) error {
@@ -66,7 +66,7 @@ func NewPaymentServiceHTTPClient(client *http.Client) PaymentServiceHTTPClient {
 
 func (c *PaymentServiceHTTPClientImpl) Charge(ctx context.Context, in *ChargeReq, opts ...http.CallOption) (*ChargeResp, error) {
 	var out ChargeResp
-	pattern := "/v1/payment"
+	pattern := "/v1/payments"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationPaymentServiceCharge))
 	opts = append(opts, http.PathTemplate(pattern))

@@ -32,8 +32,8 @@ type CartServiceHTTPServer interface {
 func RegisterCartServiceHTTPServer(s *http.Server, srv CartServiceHTTPServer) {
 	r := s.Route("/")
 	r.POST("/v1/cart", _CartService_AddItem0_HTTP_Handler(srv))
-	r.GET("/v1/cart/{user_id}", _CartService_GetCart0_HTTP_Handler(srv))
-	r.DELETE("/v1/cart/{user_id}", _CartService_EmptyCart0_HTTP_Handler(srv))
+	r.GET("/v1/cart/{name}", _CartService_GetCart0_HTTP_Handler(srv))
+	r.DELETE("/v1/cart/{name}", _CartService_EmptyCart0_HTTP_Handler(srv))
 }
 
 func _CartService_AddItem0_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
@@ -131,7 +131,7 @@ func (c *CartServiceHTTPClientImpl) AddItem(ctx context.Context, in *AddItemReq,
 
 func (c *CartServiceHTTPClientImpl) EmptyCart(ctx context.Context, in *EmptyCartReq, opts ...http.CallOption) (*EmptyCartResp, error) {
 	var out EmptyCartResp
-	pattern := "/v1/cart/{user_id}"
+	pattern := "/v1/cart/{name}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCartServiceEmptyCart))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -144,7 +144,7 @@ func (c *CartServiceHTTPClientImpl) EmptyCart(ctx context.Context, in *EmptyCart
 
 func (c *CartServiceHTTPClientImpl) GetCart(ctx context.Context, in *GetCartReq, opts ...http.CallOption) (*GetCartResp, error) {
 	var out GetCartResp
-	pattern := "/v1/cart/{user_id}"
+	pattern := "/v1/cart/{name}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCartServiceGetCart))
 	opts = append(opts, http.PathTemplate(pattern))

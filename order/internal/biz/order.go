@@ -2,28 +2,23 @@ package biz
 
 import (
 	"context"
+	"time"
 
 	cartV1 "order/api/cart/v1"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-type Address struct {
-	StreetAddress string `json:"street_address"`
-	City          string `json:"city"`
-	State         string `json:"state"`
-	Country       string `json:"country"`
-	ZipCode       int32  `json:"zipCode"`
-}
 type PlaceOrderReq struct {
-	UserId      string       `json:"user_id"`
-	UserCurrent string       `json:"user_current"`
-	Address     Address      `json:"address"`
-	Email       string       `json:"email"`
-	OrderItems  []*OrderItem `json:"order_items"`
+	Owner      string       `json:"owner"`
+	Name       string       `json:"name"`
+	Currency   string       `json:"Currency"`
+	AddressId  uint32       `json:"address_id"`
+	Email      string       `json:"email"`
+	OrderItems []*OrderItem `json:"order_items"`
 }
 type OrderResult struct {
-	OrderId int32 `json:"order_id"`
+	OrderId uint32 `json:"order_id"`
 }
 
 type PlaceOrderResp struct {
@@ -31,25 +26,39 @@ type PlaceOrderResp struct {
 }
 
 type OrderItem struct {
-	Item cartV1.CartItem `json:"item"`
-	Cost float32         `json:"cost"`
+	Item *cartV1.CartItem `json:"item"`
+	Cost float32          `json:"cost"`
 }
 type Order struct {
-	OrderItems []*OrderItem
+	OrderItems []*OrderItem `json:"order_items"`
+	OrderId    uint32       `json:"order_id"`
+	Owner      string       `json:"owner"`
+	Name       string       `json:"name"`
+	Currency   string       `json:"currency"`
+	AddressId  uint32       `json:"address_id"`
+	Email      string       `json:"email"`
+	CreatedAt  time.Time    `json:"created_at"`
+	UpdatedAt  time.Time    `json:"updated_at"`
 }
 type ListOrderReq struct {
-	UserId string `json:"user_id"`
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
 }
 type ListOrderResp struct {
 	Orders []*Order `json:"orders"`
 }
 
 type MarkOrderPaidReq struct {
-	UserId  string `json:"user_id"`
-	OrderId string `json:"order_id"`
+	Owner   string `json:"owner"`
+	Name    string `json:"name"`
+	OrderId uint32 `json:"order_id"`
 }
 
-type MarkOrderPaidResp struct{}
+type MarkOrderPaidResp struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Code    uint32 `json:"code"`
+}
 
 // OrderRepo is a Greater repo.
 type OrderRepo interface {

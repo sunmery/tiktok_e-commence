@@ -6,7 +6,7 @@ info:
     title: PaymentService API
     version: 0.0.1
 paths:
-    /v1/payment:
+    /v1/payments:
         post:
             tags:
                 - PaymentService
@@ -32,10 +32,11 @@ components:
                 amount:
                     type: number
                     format: float
-                creditCard:
+                credit_card:
                     $ref: '#/components/schemas/api.payment.v1.CreditCardInfo'
-                orderId:
-                    type: string
+                order_id:
+                    type: integer
+                    format: uint32
                 owner:
                     type: string
                 name:
@@ -44,19 +45,20 @@ components:
             type: object
             properties:
                 transactionId:
-                    type: string
+                    type: integer
+                    format: uint32
         api.payment.v1.CreditCardInfo:
             type: object
             properties:
-                creditCardNumber:
+                number:
                     type: string
-                creditCardCvv:
+                cvv:
                     type: integer
                     format: int32
-                creditCardExpirationYear:
+                expiration_year:
                     type: integer
                     format: int32
-                creditCardExpirationMonth:
+                expiration_month:
                     type: integer
                     format: int32
 tags:

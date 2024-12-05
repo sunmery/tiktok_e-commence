@@ -5,6 +5,7 @@ go 1.21
 toolchain go1.22.6
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20241105072421-f8b97f675b32
 	github.com/go-kratos/kratos/v2 v2.8.2
 	github.com/golang-jwt/jwt/v5 v5.1.0

@@ -16,19 +16,21 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	addressesV1 "order/api/addresses/v1"
 	cartV1 "order/api/cart/v1"
 	protuctsV1 "order/api/product/v1"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewOrderRepo, NewDiscovery, NewCartServiceClient, NewProductServiceClient)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewOrderRepo, NewDiscovery, NewAddressesServiceClient, NewCartServiceClient, NewProductServiceClient)
 
 // Data .
 type Data struct {
-	db            *models.Queries
-	rdb           *redis.Client
-	cartClient    cartV1.CartServiceClient
-	productClient protuctsV1.ProductCatalogServiceClient
+	db              *models.Queries
+	rdb             *redis.Client
+	addressesClient addressesV1.AddressesServiceClient
+	cartClient      cartV1.CartServiceClient
+	productClient   protuctsV1.ProductCatalogServiceClient
 }
 
 // NewData .
@@ -36,6 +38,7 @@ func NewData(
 	logger log.Logger,
 	pgx *pgxpool.Pool,
 	rdb *redis.Client,
+	addressesClient addressesV1.AddressesServiceClient,
 	productClient protuctsV1.ProductCatalogServiceClient,
 	cartClient cartV1.CartServiceClient,
 ) (*Data, func(), error) {
@@ -43,20 +46,19 @@ func NewData(
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
-		db:            models.New(pgx),
-		rdb:           rdb,
-		cartClient:    cartClient,
-		productClient: productClient,
+		db:              models.New(pgx),
+		rdb:             rdb,
+		addressesClient: addressesClient,
+		cartClient:      cartClient,
+		productClient:   productClient,
 	}, cleanup, nil
 }
 
 func NewDB(c *conf.Data) *pgxpool.Pool {
-
 	conn, err := pgxpool.New(context.Background(), c.Database.Source)
 	if err != nil {
 		panic(fmt.Sprintf("Unable to connect to database: %v", err))
 	}
-
 	return conn
 }
 
@@ -85,6 +87,23 @@ func NewDiscovery(conf *conf.Registry) (registry.Discovery, error) {
 	}
 	r := consul.New(cli, consul.WithHealthCheck(false))
 	return r, nil
+}
+
+// NewAddressesServiceClient 地址微服务
+func NewAddressesServiceClient(d registry.Discovery, logger log.Logger) (addressesV1.AddressesServiceClient, error) {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint("discovery:///tiktok-e_commence-addresses"),
+		grpc.WithDiscovery(d),
+		grpc.WithMiddleware(
+			recovery.Recovery(),
+			logging.Client(logger),
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return addressesV1.NewAddressesServiceClient(conn), nil
 }
 
 // NewCartServiceClient 购物车

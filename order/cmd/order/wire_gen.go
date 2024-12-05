@@ -23,11 +23,15 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
 	registrar := server.NewRegistrar(registry)
 	pool := data.NewDB(confData)
 	client := data.NewCache(confData)
 	discovery, err := data.NewDiscovery(registry)
+	if err != nil {
+		return nil, nil, err
+	}
+	addressesServiceClient, err := data.NewAddressesServiceClient(discovery, logger)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -39,7 +43,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	if err != nil {
 		return nil, nil, err
 	}
-	dataData, cleanup, err := data.NewData(logger, pool, client, productCatalogServiceClient, cartServiceClient)
+	dataData, cleanup, err := data.NewData(logger, pool, client, addressesServiceClient, productCatalogServiceClient, cartServiceClient)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -47,7 +51,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	orderUsecase := biz.NewOrderUsecase(orderRepo, logger)
 	orderServiceService := service.NewOrderServiceService(orderUsecase)
 	grpcServer := server.NewGRPCServer(confServer, orderServiceService, logger)
-	httpServer := server.NewHTTPServer(confServer, orderServiceService, logger)
+	httpServer := server.NewHTTPServer(confServer, auth, orderServiceService, logger)
 	app := newApp(logger, registrar, grpcServer, httpServer)
 	return app, func() {
 		cleanup()

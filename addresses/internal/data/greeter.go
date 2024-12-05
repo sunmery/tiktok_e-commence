@@ -67,7 +67,6 @@ func (a *addressesRepo) UpdateAddress(ctx context.Context, req *biz.Address) (*b
 	if err != nil {
 		return nil, err
 	}
-	// id := uint32(address.ID)
 	return &biz.Address{
 		Id:            uint32(address.ID),
 		Owner:         address.Owner,

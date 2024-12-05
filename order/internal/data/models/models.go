@@ -8,23 +8,22 @@ import (
 	"time"
 )
 
-type AddressesAddresses struct {
-	ID            int32  `json:"ID"`
-	UserID        string `json:"UserID"`
-	StreetAddress string `json:"StreetAddress"`
-	City          string `json:"City"`
-	State         string `json:"State"`
-	Country       string `json:"Country"`
-	ZipCode       int32  `json:"ZipCode"`
+type OrdersOrderItems struct {
+	ID        int32 `json:"id"`
+	OrderID   int32 `json:"order_id"`
+	ProductID int32 `json:"product_id"`
+	Quantity  int32 `json:"quantity"`
+	Cost      int32 `json:"cost"`
 }
 
 type OrdersOrders struct {
-	ID           int32     `json:"ID"`
-	Email        string    `json:"Email"`
-	UserID       string    `json:"UserID"`
-	AddressID    int32     `json:"AddressID"`
-	UserCurrency string    `json:"UserCurrency"`
-	Paid         bool      `json:"Paid"`
-	CreatedAt    time.Time `json:"CreatedAt"`
-	UpdatedAt    time.Time `json:"UpdatedAt"`
+	ID        int32     `json:"id"`
+	Owner     string    `json:"owner"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	AddressID int32     `json:"address_id"`
+	Currency  string    `json:"currency"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

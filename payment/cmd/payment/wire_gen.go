@@ -7,13 +7,13 @@
 package main
 
 import (
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"payment/internal/biz"
 	"payment/internal/conf"
 	"payment/internal/data"
 	"payment/internal/server"
 	"payment/internal/service"
-	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 import (
@@ -23,17 +23,20 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
+func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
+	pool := data.NewDB(confData)
+	client := data.NewCache(confData)
+	dataData, cleanup, err := data.NewData(logger, pool, client)
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	app := newApp(logger, grpcServer, httpServer)
+	paymentRepo := data.NewPaymentRepo(dataData, logger)
+	paymentUsecase := biz.NewPaymentUsecase(paymentRepo, logger)
+	paymentServiceService := service.NewPaymentServiceService(paymentUsecase)
+	grpcServer := server.NewGRPCServer(confServer, paymentServiceService, logger)
+	httpServer := server.NewHTTPServer(confServer, auth, paymentServiceService, logger)
+	registrar := server.NewRegistrar(registry)
+	app := newApp(logger, grpcServer, httpServer, registrar)
 	return app, func() {
 		cleanup()
 	}, nil

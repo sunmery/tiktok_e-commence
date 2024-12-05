@@ -71,6 +71,11 @@ func main() {
 		panic(err)
 	}
 
+	var ac conf.Auth
+	if err := c.Scan(&ac); err != nil {
+		panic(err)
+	}
+
 	var bc conf.Bootstrap
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
@@ -81,7 +86,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, &rc, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, &ac, &rc, logger)
 	if err != nil {
 		panic(err)
 	}

@@ -18,7 +18,13 @@ message Registry {
   }
   Consul consul = 1;
 }
-
+message Auth {
+  message JWT {
+    string service_key = 1;
+    string api_key = 2;
+  }
+  JWT jwt = 1;
+}
 message Server {
   message HTTP {
     string network = 1;

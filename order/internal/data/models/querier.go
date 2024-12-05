@@ -9,72 +9,42 @@ import (
 )
 
 type Querier interface {
-	//CreatUserAddress
-	//
-	//  INSERT INTO addresses.addresses(user_id, street_address, city, state, country, zip_code)
-	//  VALUES ($1, $2, $3, $4, $5, $6)
-	//  RETURNING id, user_id, street_address, city, state, country, zip_code
-	CreatUserAddress(ctx context.Context, arg CreatUserAddressParams) (AddressesAddresses, error)
 	//CreateOrder
 	//
-	//  INSERT INTO orders.orders (email, user_id, address_id, user_currency)
+	//  INSERT INTO orders.orders (owner, name, email, address_id, currency, created_at)
+	//  VALUES ($1, $2, $3, $4, $5, now())
+	//  RETURNING id
+	CreateOrder(ctx context.Context, arg CreateOrderParams) (int32, error)
+	//CreateOrderItems
+	//
+	//  INSERT INTO orders.order_items(order_id, product_id, quantity, cost)
 	//  VALUES ($1, $2, $3, $4)
-	//  RETURNING id, email, user_id, address_id, user_currency, paid, created_at, updated_at
-	CreateOrder(ctx context.Context, arg CreateOrderParams) (OrdersOrders, error)
-	//DeleteUserAddress
+	//  RETURNING id, order_id, product_id, quantity, cost
+	CreateOrderItems(ctx context.Context, arg CreateOrderItemsParams) (OrdersOrderItems, error)
+	//ListOrderItems
 	//
-	//  DELETE
-	//  FROM addresses.addresses
-	//  WHERE user_id = $1
-	//    AND id = $2
-	//  RETURNING id, user_id, street_address, city, state, country, zip_code
-	DeleteUserAddress(ctx context.Context, arg DeleteUserAddressParams) (AddressesAddresses, error)
-	//DeleteUserAddresses
-	//
-	//  DELETE
-	//  FROM addresses.addresses
-	//  WHERE user_id = $1
-	//  RETURNING id, user_id, street_address, city, state, country, zip_code
-	DeleteUserAddresses(ctx context.Context, userID string) (AddressesAddresses, error)
-	//GetUserAddress
-	//
-	//  SELECT id, user_id, street_address, city, state, country, zip_code
-	//  FROM addresses.addresses
-	//  WHERE user_id = $1
-	//  LIMIT 1
-	GetUserAddress(ctx context.Context, userID string) (AddressesAddresses, error)
+	//  SELECT id, order_id, product_id, quantity, cost
+	//  FROM orders.order_items
+	//  WHERE order_id = $1
+	ListOrderItems(ctx context.Context, orderID int32) ([]OrdersOrderItems, error)
 	//ListOrders
 	//
-	//  SELECT id, email, user_id, address_id, user_currency, paid, created_at, updated_at
+	//  SELECT id, owner, name, email, address_id, currency, status, created_at, updated_at
 	//  FROM orders.orders
-	//  WHERE user_id = $1
-	//  ORDER BY created_at
-	ListOrders(ctx context.Context, userID string) ([]OrdersOrders, error)
-	//ListUserAddresses
-	//
-	//  SELECT id, user_id, street_address, city, state, country, zip_code
-	//  FROM addresses.addresses
-	//  WHERE user_id = $1
-	ListUserAddresses(ctx context.Context, userID string) ([]AddressesAddresses, error)
+	//  WHERE owner = $1
+	//    AND name = $2
+	//  ORDER BY updated_at
+	ListOrders(ctx context.Context, arg ListOrdersParams) ([]OrdersOrders, error)
 	//MarkOrderPaid
 	//
-	//  SELECT id, email, user_id, address_id, user_currency, paid, created_at, updated_at
-	//  FROM orders.orders
-	//  WHERE user_id = $1
-	//    AND paid = true
-	//  ORDER BY created_at
-	MarkOrderPaid(ctx context.Context, userID string) ([]OrdersOrders, error)
-	//UpdateUserAddress
-	//
-	//  UPDATE addresses.addresses
-	//  SET street_address = coalesce($1, street_address),
-	//      city           = coalesce($2, city),
-	//      state          = coalesce($3, state),
-	//      country        = coalesce($4, country),
-	//      zip_code       = coalesce($5, zip_code)
-	//  WHERE user_id = $6
-	//  RETURNING id, user_id, street_address, city, state, country, zip_code
-	UpdateUserAddress(ctx context.Context, arg UpdateUserAddressParams) (AddressesAddresses, error)
+	//  UPDATE orders.orders
+	//  SET status     = 'paid',
+	//      updated_at = now()
+	//  WHERE id = $1
+	//    AND owner = $2
+	//    AND name = $3
+	//  RETURNING id, owner, name, email, address_id, currency, status, created_at, updated_at
+	MarkOrderPaid(ctx context.Context, arg MarkOrderPaidParams) (OrdersOrders, error)
 }
 
 var _ Querier = (*Queries)(nil)

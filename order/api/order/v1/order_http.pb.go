@@ -26,7 +26,7 @@ const OperationOrderServicePlaceOrder = "/api.order.v1.OrderService/PlaceOrder"
 type OrderServiceHTTPServer interface {
 	// ListOrder 列出订单
 	ListOrder(context.Context, *ListOrderReq) (*ListOrderResp, error)
-	// MarkOrderPaid 支付订单
+	// MarkOrderPaid 支付已支付的订单
 	MarkOrderPaid(context.Context, *MarkOrderPaidReq) (*MarkOrderPaidResp, error)
 	// PlaceOrder 创建订单
 	PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error)
@@ -34,9 +34,9 @@ type OrderServiceHTTPServer interface {
 
 func RegisterOrderServiceHTTPServer(s *http.Server, srv OrderServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/order", _OrderService_PlaceOrder0_HTTP_Handler(srv))
-	r.GET("/v1/order", _OrderService_ListOrder0_HTTP_Handler(srv))
-	r.POST("/v1/order/mark", _OrderService_MarkOrderPaid0_HTTP_Handler(srv))
+	r.POST("/v1/orders", _OrderService_PlaceOrder0_HTTP_Handler(srv))
+	r.GET("/v1/orders", _OrderService_ListOrder0_HTTP_Handler(srv))
+	r.PATCH("/v1/orders", _OrderService_MarkOrderPaid0_HTTP_Handler(srv))
 }
 
 func _OrderService_PlaceOrder0_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
@@ -118,7 +118,7 @@ func NewOrderServiceHTTPClient(client *http.Client) OrderServiceHTTPClient {
 
 func (c *OrderServiceHTTPClientImpl) ListOrder(ctx context.Context, in *ListOrderReq, opts ...http.CallOption) (*ListOrderResp, error) {
 	var out ListOrderResp
-	pattern := "/v1/order"
+	pattern := "/v1/orders"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationOrderServiceListOrder))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -131,11 +131,11 @@ func (c *OrderServiceHTTPClientImpl) ListOrder(ctx context.Context, in *ListOrde
 
 func (c *OrderServiceHTTPClientImpl) MarkOrderPaid(ctx context.Context, in *MarkOrderPaidReq, opts ...http.CallOption) (*MarkOrderPaidResp, error) {
 	var out MarkOrderPaidResp
-	pattern := "/v1/order/mark"
+	pattern := "/v1/orders"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationOrderServiceMarkOrderPaid))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "PATCH", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func (c *OrderServiceHTTPClientImpl) MarkOrderPaid(ctx context.Context, in *Mark
 
 func (c *OrderServiceHTTPClientImpl) PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...http.CallOption) (*PlaceOrderResp, error) {
 	var out PlaceOrderResp
-	pattern := "/v1/order"
+	pattern := "/v1/orders"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationOrderServicePlaceOrder))
 	opts = append(opts, http.PathTemplate(pattern))

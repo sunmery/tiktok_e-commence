@@ -21,13 +21,13 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name = "tiktok_e-commence-payment"
+	Name = "tiktok_e-commence-payments"
 	// Version is the version of the compiled software.
 	Version = "1.0.0"
 	// flagconf is the config flag.
 	flagconf string
 
-	id = "tiktok_e-commence-payment"
+	id = "tiktok_e-commence-payments"
 )
 
 func init() {

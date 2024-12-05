@@ -7,22 +7,22 @@ import (
 )
 
 type CreditCardInfo struct {
-	CreditCardNumber          string `json:"credit_card_number"`
-	CreditCardCvv             int32  `json:"credit_card_cvv"`
-	CreditCardExpirationYear  int32  `json:"credit_card_expiration_year"`
-	CreditCardExpirationMonth int32  `json:"credit_card_expiration_month"`
+	Number          string `json:"credit_card_number"`
+	Cvv             int32  `json:"credit_card_cvv"`
+	ExpirationYear  int32  `json:"credit_card_expiration_year"`
+	ExpirationMonth int32  `json:"credit_card_expiration_month"`
 }
 
 type ChargeReq struct {
-	Amount         float32        `json:"amount"`
-	CreditCardInfo CreditCardInfo `json:"credit_card"`
-	OrderId        string         `json:"order_id"`
-	Owner          string         `json:"owner"`
-	Name           string         `json:"name"`
+	Amount     float32         `json:"amount"`
+	CreditCard *CreditCardInfo `json:"credit_card"`
+	OrderId    uint32          `json:"order_id"`
+	Owner      string          `json:"owner"`
+	Name       string          `json:"name"`
 }
 
 type ChargeResp struct {
-	TransactionId string `json:"transaction_id"`
+	TransactionId uint32 `json:"transaction_id"`
 }
 
 // PaymentRepo is a Greater repo.

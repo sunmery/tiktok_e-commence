@@ -34,7 +34,7 @@ type OrderServiceClient interface {
 	PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error)
 	// 列出订单
 	ListOrder(ctx context.Context, in *ListOrderReq, opts ...grpc.CallOption) (*ListOrderResp, error)
-	// 支付订单
+	// 支付已支付的订单
 	MarkOrderPaid(ctx context.Context, in *MarkOrderPaidReq, opts ...grpc.CallOption) (*MarkOrderPaidResp, error)
 }
 
@@ -84,7 +84,7 @@ type OrderServiceServer interface {
 	PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error)
 	// 列出订单
 	ListOrder(context.Context, *ListOrderReq) (*ListOrderResp, error)
-	// 支付订单
+	// 支付已支付的订单
 	MarkOrderPaid(context.Context, *MarkOrderPaidReq) (*MarkOrderPaidResp, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }

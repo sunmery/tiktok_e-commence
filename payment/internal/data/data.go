@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/redis/go-redis/v9"
+	"payment/internal/data/models"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"payment/internal/conf"
@@ -13,11 +14,11 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewGreeterRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewCache, NewPaymentRepo)
 
 // Data .
 type Data struct {
-	db  *modules.Queries
+	db  *models.Queries
 	rdb *redis.Client
 }
 
@@ -31,7 +32,7 @@ func NewData(
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
-		db:  modules.New(pgx),
+		db:  models.New(pgx),
 		rdb: rdb,
 	}, cleanup, nil
 }
