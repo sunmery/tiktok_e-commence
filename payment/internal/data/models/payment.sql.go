@@ -7,34 +7,34 @@ package models
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const CreatePayment = `-- name: CreatePayment :one
-INSERT INTO payment.payments(snowflake_id, owner, name, amount, order_id, credit_card_number, credit_card_expiration,
-                             status)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-RETURNING id, snowflake_id, owner, name, amount, order_id, credit_card_number, credit_card_expiration, status, created_at
+INSERT INTO payment.payments(snowflake_id, owner, name, amount, order_id, credit_card_number, credit_card_cvv,
+                             credit_card_expiration_year, credit_card_expiration_month, status)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+RETURNING id, snowflake_id, owner, name, amount, order_id, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month, status, created_at
 `
 
 type CreatePaymentParams struct {
-	SnowflakeID          int64          `json:"snowflakeID"`
-	Owner                string         `json:"owner"`
-	Name                 string         `json:"name"`
-	Amount               pgtype.Numeric `json:"amount"`
-	OrderID              int32          `json:"orderID"`
-	CreditCardNumber     string         `json:"creditCardNumber"`
-	CreditCardExpiration pgtype.Date    `json:"creditCardExpiration"`
-	Status               string         `json:"status"`
+	SnowflakeID               int64   `json:"snowflakeID"`
+	Owner                     string  `json:"owner"`
+	Name                      string  `json:"name"`
+	Amount                    float64 `json:"amount"`
+	OrderID                   int32   `json:"orderID"`
+	CreditCardNumber          string  `json:"creditCardNumber"`
+	CreditCardCvv             string  `json:"creditCardCvv"`
+	CreditCardExpirationYear  string  `json:"creditCardExpirationYear"`
+	CreditCardExpirationMonth string  `json:"creditCardExpirationMonth"`
+	Status                    string  `json:"status"`
 }
 
 // CreatePayment
 //
-//	INSERT INTO payment.payments(snowflake_id, owner, name, amount, order_id, credit_card_number, credit_card_expiration,
-//	                             status)
-//	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-//	RETURNING id, snowflake_id, owner, name, amount, order_id, credit_card_number, credit_card_expiration, status, created_at
+//	INSERT INTO payment.payments(snowflake_id, owner, name, amount, order_id, credit_card_number, credit_card_cvv,
+//	                             credit_card_expiration_year, credit_card_expiration_month, status)
+//	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+//	RETURNING id, snowflake_id, owner, name, amount, order_id, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month, status, created_at
 func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (PaymentPayments, error) {
 	row := q.db.QueryRow(ctx, CreatePayment,
 		arg.SnowflakeID,
@@ -43,7 +43,9 @@ func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (P
 		arg.Amount,
 		arg.OrderID,
 		arg.CreditCardNumber,
-		arg.CreditCardExpiration,
+		arg.CreditCardCvv,
+		arg.CreditCardExpirationYear,
+		arg.CreditCardExpirationMonth,
 		arg.Status,
 	)
 	var i PaymentPayments
@@ -55,7 +57,9 @@ func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (P
 		&i.Amount,
 		&i.OrderID,
 		&i.CreditCardNumber,
-		&i.CreditCardExpiration,
+		&i.CreditCardCvv,
+		&i.CreditCardExpirationYear,
+		&i.CreditCardExpirationMonth,
 		&i.Status,
 		&i.CreatedAt,
 	)

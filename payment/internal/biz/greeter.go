@@ -6,15 +6,22 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
+// 支付状态
+const (
+	PENDING = "pending"
+	SUCCESS = "success"
+	CANCEL  = "cancel"
+)
+
 type CreditCardInfo struct {
 	Number          string `json:"credit_card_number"`
-	Cvv             int32  `json:"credit_card_cvv"`
-	ExpirationYear  int32  `json:"credit_card_expiration_year"`
-	ExpirationMonth int32  `json:"credit_card_expiration_month"`
+	Cvv             string `json:"credit_card_cvv"`
+	ExpirationYear  string `json:"credit_card_expiration_year"`
+	ExpirationMonth string `json:"credit_card_expiration_month"`
 }
 
 type ChargeReq struct {
-	Amount     float32         `json:"amount"`
+	Amount     float64         `json:"amount"`
 	CreditCard *CreditCardInfo `json:"credit_card"`
 	OrderId    uint32          `json:"order_id"`
 	Owner      string          `json:"owner"`

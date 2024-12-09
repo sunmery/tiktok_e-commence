@@ -31,7 +31,7 @@ components:
             properties:
                 amount:
                     type: number
-                    format: float
+                    format: double
                 credit_card:
                     $ref: '#/components/schemas/api.payment.v1.CreditCardInfo'
                 order_id:
@@ -53,13 +53,10 @@ components:
                 number:
                     type: string
                 cvv:
-                    type: integer
-                    format: int32
+                    type: string
                 expiration_year:
-                    type: integer
-                    format: int32
+                    type: string
                 expiration_month:
-                    type: integer
-                    format: int32
+                    type: string
 tags:
     - name: PaymentService

@@ -6,19 +6,19 @@ package models
 
 import (
 	"time"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type PaymentPayments struct {
-	ID                   int32          `json:"id"`
-	SnowflakeID          int64          `json:"snowflakeID"`
-	Owner                string         `json:"owner"`
-	Name                 string         `json:"name"`
-	Amount               pgtype.Numeric `json:"amount"`
-	OrderID              int32          `json:"orderID"`
-	CreditCardNumber     string         `json:"creditCardNumber"`
-	CreditCardExpiration pgtype.Date    `json:"creditCardExpiration"`
-	Status               string         `json:"status"`
-	CreatedAt            time.Time      `json:"createdAt"`
+	ID                        int32     `json:"id"`
+	SnowflakeID               int64     `json:"snowflakeID"`
+	Owner                     string    `json:"owner"`
+	Name                      string    `json:"name"`
+	Amount                    float64   `json:"amount"`
+	OrderID                   int32     `json:"orderID"`
+	CreditCardNumber          string    `json:"creditCardNumber"`
+	CreditCardCvv             string    `json:"creditCardCvv"`
+	CreditCardExpirationYear  string    `json:"creditCardExpirationYear"`
+	CreditCardExpirationMonth string    `json:"creditCardExpirationMonth"`
+	Status                    string    `json:"status"`
+	CreatedAt                 time.Time `json:"createdAt"`
 }

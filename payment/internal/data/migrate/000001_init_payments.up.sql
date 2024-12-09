@@ -8,7 +8,7 @@ CREATE TABLE payment.payments
     snowflake_id                 BIGINT UNIQUE             NOT NULL,
     owner                        VARCHAR(100)              NOT NULL,
     name                         VARCHAR(100)              NOT NULL,
-    amount                       DECIMAL(10, 2)            NOT NULL,
+    amount                       FLOAT8                    NOT NULL,
     order_id                     INT                       NOT NULL,
     credit_card_number           VARCHAR(20)               NOT NULL, -- 卡号
     credit_card_cvv              VARCHAR(4)                NOT NULL, -- 安全码

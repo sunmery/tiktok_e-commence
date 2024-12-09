@@ -20,13 +20,13 @@ service PaymentService {
 
 message CreditCardInfo {
 	string number = 1 [json_name = "number"];
-	int32 cvv = 2 [json_name = "cvv"];
-	int32 expiration_year = 3 [json_name = "expiration_year"];
-	int32 expiration_month = 4 [json_name = "expiration_month"];
+	string cvv = 2 [json_name = "cvv"];
+	string expiration_year = 3 [json_name = "expiration_year"];
+	string expiration_month = 4 [json_name = "expiration_month"];
 }
 
 message ChargeReq {
-	float amount = 1 [json_name = "amount"];
+	double amount = 1 [json_name = "amount"];
 	CreditCardInfo credit_card = 2 [json_name = "credit_card"];
 	uint32 order_id = 3 [json_name = "order_id"];
 	string owner = 4 [json_name = "owner"];

@@ -2,9 +2,9 @@ package data
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5/pgtype"
 	"payment/internal/biz"
 	"payment/internal/data/models"
+	"payment/internal/pkg"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -15,16 +15,20 @@ type paymentRepo struct {
 }
 
 func (p *paymentRepo) Charge(ctx context.Context, req *biz.ChargeReq) (*biz.ChargeResp, error) {
-	payment, err := p.data.db.CreatePayment(ctx, models.CreatePaymentParams{
-		SnowflakeID:          0,
-		Owner:                req.Owner,
-		Name:                 req.Name,
-		Amount:               pgtype.Numeric{},
-		OrderID:              int32(req.OrderId),
-		CreditCardNumber:     "",
-		CreditCardExpiration: pgtype.Date{},
-		Status:               "",
-	})
+	params := models.CreatePaymentParams{
+		SnowflakeID:               pkg.SnowflakeID().Int64(),
+		Owner:                     req.Owner,
+		Name:                      req.Name,
+		Amount:                    req.Amount,
+		OrderID:                   int32(req.OrderId),
+		CreditCardNumber:          req.CreditCard.Number,
+		CreditCardCvv:             req.CreditCard.Cvv,
+		CreditCardExpirationYear:  req.CreditCard.ExpirationYear,
+		CreditCardExpirationMonth: req.CreditCard.ExpirationMonth,
+		Status:                    biz.PENDING,
+	}
+	
+	payment, err := p.data.db.CreatePayment(ctx, params)
 	if err != nil {
 		return nil, err
 	}
