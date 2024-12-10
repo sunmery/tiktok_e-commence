@@ -23,16 +23,14 @@ import (
 type CheckoutReq struct {
 	Owner        string `json:"owner"`
 	Name         string `json:"name"`
-	Firstname    string `json:"firstname"`
-	Lastname     string `json:"lastname"`
 	Email        string `json:"email"`
 	AddressId    int32  `json:"address_id"`
 	CreditCardId int32  `json:"credit_card_id"`
 }
 
 type CheckoutResp struct {
-	OrderId       string `json:"order_id"`
-	TransactionId string `json:"transaction_id"`
+	OrderId       uint32 `json:"order_id"`
+	TransactionId uint32 `json:"transaction_id"`
 }
 
 // CheckoutRepo is a Greater repo.

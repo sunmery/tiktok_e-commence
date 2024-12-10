@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentService_Charge_FullMethodName = "/api.checkout.v1.PaymentService/Charge"
+	PaymentService_Charge_FullMethodName = "/api.payment.v1.PaymentService/Charge"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -108,7 +108,7 @@ func _PaymentService_Charge_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PaymentService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.checkout.v1.PaymentService",
+	ServiceName: "api.payment.v1.PaymentService",
 	HandlerType: (*PaymentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

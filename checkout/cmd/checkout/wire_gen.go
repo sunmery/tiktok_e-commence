@@ -26,7 +26,23 @@ import (
 func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
 	pool := data.NewDB(confData)
 	client := data.NewCache(confData)
-	dataData, cleanup, err := data.NewData(logger, pool, client)
+	discovery, err := data.NewDiscovery(registry)
+	if err != nil {
+		return nil, nil, err
+	}
+	orderServiceClient, err := data.NewOrderServiceClient(discovery, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	paymentServiceClient, err := data.NewPaymentServiceClient(discovery, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	creditCardsServiceClient, err := data.NewCreditCardsServiceClient(discovery, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	dataData, cleanup, err := data.NewData(logger, pool, client, orderServiceClient, paymentServiceClient, creditCardsServiceClient)
 	if err != nil {
 		return nil, nil, err
 	}

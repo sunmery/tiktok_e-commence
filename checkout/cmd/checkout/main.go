@@ -20,13 +20,13 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string
+	Name = "tiktok-e_commence-checkout"
 	// Version is the version of the compiled software.
-	Version string
+	Version = "1.0.0"
 	// flagconf is the config flag.
 	flagconf string
 
-	id, _ = os.Hostname()
+	id = "tiktok-e_commence-checkout"
 )
 
 func init() {

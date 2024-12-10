@@ -11,52 +11,52 @@ import (
 
 const CreateCreditCard = `-- name: CreateCreditCard :one
 INSERT INTO credit_cards.credit_cards(owner,
-                                      username,
-                                      credit_card_number,
-                                      credit_card_cvv,
-                                      credit_card_expiration_year,
-                                      credit_card_expiration_month)
+                                      name,
+                                      number,
+                                      cvv,
+                                      expiration_year,
+                                      expiration_month)
 VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+RETURNING id, owner, name, number, cvv, expiration_year, expiration_month
 `
 
 type CreateCreditCardParams struct {
-	Owner                     string `json:"owner"`
-	Username                  string `json:"username"`
-	CreditCardNumber          string `json:"creditCardNumber"`
-	CreditCardCvv             int32  `json:"creditCardCvv"`
-	CreditCardExpirationYear  int32  `json:"creditCardExpirationYear"`
-	CreditCardExpirationMonth int32  `json:"creditCardExpirationMonth"`
+	Owner           string `json:"owner"`
+	Name            string `json:"name"`
+	Number          string `json:"number"`
+	Cvv             string `json:"cvv"`
+	ExpirationYear  string `json:"expiration_year"`
+	ExpirationMonth string `json:"expiration_month"`
 }
 
 // CreateCreditCard
 //
 //	INSERT INTO credit_cards.credit_cards(owner,
-//	                                      username,
-//	                                      credit_card_number,
-//	                                      credit_card_cvv,
-//	                                      credit_card_expiration_year,
-//	                                      credit_card_expiration_month)
+//	                                      name,
+//	                                      number,
+//	                                      cvv,
+//	                                      expiration_year,
+//	                                      expiration_month)
 //	VALUES ($1, $2, $3, $4, $5, $6)
-//	RETURNING id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+//	RETURNING id, owner, name, number, cvv, expiration_year, expiration_month
 func (q *Queries) CreateCreditCard(ctx context.Context, arg CreateCreditCardParams) (CreditCardsCreditCards, error) {
 	row := q.db.QueryRow(ctx, CreateCreditCard,
 		arg.Owner,
-		arg.Username,
-		arg.CreditCardNumber,
-		arg.CreditCardCvv,
-		arg.CreditCardExpirationYear,
-		arg.CreditCardExpirationMonth,
+		arg.Name,
+		arg.Number,
+		arg.Cvv,
+		arg.ExpirationYear,
+		arg.ExpirationMonth,
 	)
 	var i CreditCardsCreditCards
 	err := row.Scan(
 		&i.ID,
 		&i.Owner,
-		&i.Username,
-		&i.CreditCardNumber,
-		&i.CreditCardCvv,
-		&i.CreditCardExpirationYear,
-		&i.CreditCardExpirationMonth,
+		&i.Name,
+		&i.Number,
+		&i.Cvv,
+		&i.ExpirationYear,
+		&i.ExpirationMonth,
 	)
 	return i, err
 }
@@ -64,76 +64,112 @@ func (q *Queries) CreateCreditCard(ctx context.Context, arg CreateCreditCardPara
 const DeleteCreditCard = `-- name: DeleteCreditCard :one
 DELETE
 FROM credit_cards.credit_cards
-WHERE username = $1
-  AND id = $2
-RETURNING id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+WHERE owner = $1
+  AND name = $2
+  AND id = $3
+RETURNING id, owner, name, number, cvv, expiration_year, expiration_month
 `
 
 type DeleteCreditCardParams struct {
-	Username string `json:"username"`
-	ID       int32  `json:"id"`
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
+	ID    int32  `json:"id"`
 }
 
 // DeleteCreditCard
 //
 //	DELETE
 //	FROM credit_cards.credit_cards
-//	WHERE username = $1
-//	  AND id = $2
-//	RETURNING id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+//	WHERE owner = $1
+//	  AND name = $2
+//	  AND id = $3
+//	RETURNING id, owner, name, number, cvv, expiration_year, expiration_month
 func (q *Queries) DeleteCreditCard(ctx context.Context, arg DeleteCreditCardParams) (CreditCardsCreditCards, error) {
-	row := q.db.QueryRow(ctx, DeleteCreditCard, arg.Username, arg.ID)
+	row := q.db.QueryRow(ctx, DeleteCreditCard, arg.Owner, arg.Name, arg.ID)
 	var i CreditCardsCreditCards
 	err := row.Scan(
 		&i.ID,
 		&i.Owner,
-		&i.Username,
-		&i.CreditCardNumber,
-		&i.CreditCardCvv,
-		&i.CreditCardExpirationYear,
-		&i.CreditCardExpirationMonth,
+		&i.Name,
+		&i.Number,
+		&i.Cvv,
+		&i.ExpirationYear,
+		&i.ExpirationMonth,
 	)
 	return i, err
 }
 
-const GetCreditCards = `-- name: GetCreditCards :many
-SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+const GetCreditCards = `-- name: GetCreditCards :one
+SELECT id, owner, name, number, cvv, expiration_year, expiration_month
 FROM credit_cards.credit_cards
 WHERE owner = $1
-  AND username = $2
-  AND credit_card_number ILIKE '%' || $3 || '%'
+  AND name = $2
+  AND number = $3
 `
 
 type GetCreditCardsParams struct {
-	Owner            string  `json:"owner"`
-	Username         string  `json:"username"`
-	CreditCardNumber *string `json:"creditCardNumber"`
+	Owner  string `json:"owner"`
+	Name   string `json:"name"`
+	Number string `json:"number"`
 }
 
 // GetCreditCards
 //
-//	SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+//	SELECT id, owner, name, number, cvv, expiration_year, expiration_month
 //	FROM credit_cards.credit_cards
 //	WHERE owner = $1
-//	  AND username = $2
-//	  AND credit_card_number ILIKE '%' || $3 || '%'
-func (q *Queries) GetCreditCards(ctx context.Context, arg GetCreditCardsParams) ([]CreditCardsCreditCards, error) {
-	rows, err := q.db.Query(ctx, GetCreditCards, arg.Owner, arg.Username, arg.CreditCardNumber)
+//	  AND name = $2
+//	  AND number = $3
+func (q *Queries) GetCreditCards(ctx context.Context, arg GetCreditCardsParams) (CreditCardsCreditCards, error) {
+	row := q.db.QueryRow(ctx, GetCreditCards, arg.Owner, arg.Name, arg.Number)
+	var i CreditCardsCreditCards
+	err := row.Scan(
+		&i.ID,
+		&i.Owner,
+		&i.Name,
+		&i.Number,
+		&i.Cvv,
+		&i.ExpirationYear,
+		&i.ExpirationMonth,
+	)
+	return i, err
+}
+
+const ListCreditCards = `-- name: ListCreditCards :many
+SELECT id, owner, name, number, cvv, expiration_year, expiration_month
+FROM credit_cards.credit_cards
+WHERE owner = $1
+  AND name = $2
+`
+
+type ListCreditCardsParams struct {
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
+}
+
+// ListCreditCards
+//
+//	SELECT id, owner, name, number, cvv, expiration_year, expiration_month
+//	FROM credit_cards.credit_cards
+//	WHERE owner = $1
+//	  AND name = $2
+func (q *Queries) ListCreditCards(ctx context.Context, arg ListCreditCardsParams) ([]CreditCardsCreditCards, error) {
+	rows, err := q.db.Query(ctx, ListCreditCards, arg.Owner, arg.Name)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []CreditCardsCreditCards{}
+	var items []CreditCardsCreditCards
 	for rows.Next() {
 		var i CreditCardsCreditCards
 		if err := rows.Scan(
 			&i.ID,
 			&i.Owner,
-			&i.Username,
-			&i.CreditCardNumber,
-			&i.CreditCardCvv,
-			&i.CreditCardExpirationYear,
-			&i.CreditCardExpirationMonth,
+			&i.Name,
+			&i.Number,
+			&i.Cvv,
+			&i.ExpirationYear,
+			&i.ExpirationMonth,
 		); err != nil {
 			return nil, err
 		}
@@ -145,41 +181,44 @@ func (q *Queries) GetCreditCards(ctx context.Context, arg GetCreditCardsParams) 
 	return items, nil
 }
 
-const ListCreditCards = `-- name: ListCreditCards :many
-SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+const SearchCreditCards = `-- name: SearchCreditCards :many
+SELECT id, owner, name, number, cvv, expiration_year, expiration_month
 FROM credit_cards.credit_cards
 WHERE owner = $1
-  AND username = $2
+  AND name = $2
+  AND number ILIKE '%' || $3
 `
 
-type ListCreditCardsParams struct {
-	Owner    string `json:"owner"`
-	Username string `json:"username"`
+type SearchCreditCardsParams struct {
+	Owner  string  `json:"owner"`
+	Name   string  `json:"name"`
+	Number *string `json:"number"`
 }
 
-// ListCreditCards
+// SearchCreditCards
 //
-//	SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+//	SELECT id, owner, name, number, cvv, expiration_year, expiration_month
 //	FROM credit_cards.credit_cards
 //	WHERE owner = $1
-//	  AND username = $2
-func (q *Queries) ListCreditCards(ctx context.Context, arg ListCreditCardsParams) ([]CreditCardsCreditCards, error) {
-	rows, err := q.db.Query(ctx, ListCreditCards, arg.Owner, arg.Username)
+//	  AND name = $2
+//	  AND number ILIKE '%' || $3
+func (q *Queries) SearchCreditCards(ctx context.Context, arg SearchCreditCardsParams) ([]CreditCardsCreditCards, error) {
+	rows, err := q.db.Query(ctx, SearchCreditCards, arg.Owner, arg.Name, arg.Number)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []CreditCardsCreditCards{}
+	var items []CreditCardsCreditCards
 	for rows.Next() {
 		var i CreditCardsCreditCards
 		if err := rows.Scan(
 			&i.ID,
 			&i.Owner,
-			&i.Username,
-			&i.CreditCardNumber,
-			&i.CreditCardCvv,
-			&i.CreditCardExpirationYear,
-			&i.CreditCardExpirationMonth,
+			&i.Name,
+			&i.Number,
+			&i.Cvv,
+			&i.ExpirationYear,
+			&i.ExpirationMonth,
 		); err != nil {
 			return nil, err
 		}
@@ -193,48 +232,52 @@ func (q *Queries) ListCreditCards(ctx context.Context, arg ListCreditCardsParams
 
 const UpdateCreditCard = `-- name: UpdateCreditCard :one
 UPDATE credit_cards.credit_cards
-SET credit_card_number           = coalesce($1, credit_card_number),
-    credit_card_cvv              = coalesce($2, credit_card_cvv),
-    credit_card_expiration_year  = coalesce($3, credit_card_expiration_year),
-    credit_card_expiration_month = coalesce($4, credit_card_expiration_month)
-WHERE username = $5
-RETURNING id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+SET number           = coalesce($1, number),
+    cvv              = coalesce($2, cvv),
+    expiration_year  = coalesce($3, expiration_year),
+    expiration_month = coalesce($4, expiration_month)
+WHERE owner = $5
+  AND name = $6
+RETURNING id, owner, name, number, cvv, expiration_year, expiration_month
 `
 
 type UpdateCreditCardParams struct {
-	CreditCardNumber          *string `json:"creditCardNumber"`
-	CreditCardCvv             *int32  `json:"creditCardCvv"`
-	CreditCardExpirationYear  *int32  `json:"creditCardExpirationYear"`
-	CreditCardExpirationMonth *int32  `json:"creditCardExpirationMonth"`
-	Username                  string  `json:"username"`
+	Number          *string `json:"number"`
+	Cvv             *string `json:"cvv"`
+	ExpirationYear  *string `json:"expiration_year"`
+	ExpirationMonth *string `json:"expiration_month"`
+	Owner           string  `json:"owner"`
+	Name            string  `json:"name"`
 }
 
 // UpdateCreditCard
 //
 //	UPDATE credit_cards.credit_cards
-//	SET credit_card_number           = coalesce($1, credit_card_number),
-//	    credit_card_cvv              = coalesce($2, credit_card_cvv),
-//	    credit_card_expiration_year  = coalesce($3, credit_card_expiration_year),
-//	    credit_card_expiration_month = coalesce($4, credit_card_expiration_month)
-//	WHERE username = $5
-//	RETURNING id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+//	SET number           = coalesce($1, number),
+//	    cvv              = coalesce($2, cvv),
+//	    expiration_year  = coalesce($3, expiration_year),
+//	    expiration_month = coalesce($4, expiration_month)
+//	WHERE owner = $5
+//	  AND name = $6
+//	RETURNING id, owner, name, number, cvv, expiration_year, expiration_month
 func (q *Queries) UpdateCreditCard(ctx context.Context, arg UpdateCreditCardParams) (CreditCardsCreditCards, error) {
 	row := q.db.QueryRow(ctx, UpdateCreditCard,
-		arg.CreditCardNumber,
-		arg.CreditCardCvv,
-		arg.CreditCardExpirationYear,
-		arg.CreditCardExpirationMonth,
-		arg.Username,
+		arg.Number,
+		arg.Cvv,
+		arg.ExpirationYear,
+		arg.ExpirationMonth,
+		arg.Owner,
+		arg.Name,
 	)
 	var i CreditCardsCreditCards
 	err := row.Scan(
 		&i.ID,
 		&i.Owner,
-		&i.Username,
-		&i.CreditCardNumber,
-		&i.CreditCardCvv,
-		&i.CreditCardExpirationYear,
-		&i.CreditCardExpirationMonth,
+		&i.Name,
+		&i.Number,
+		&i.Cvv,
+		&i.ExpirationYear,
+		&i.ExpirationMonth,
 	)
 	return i, err
 }

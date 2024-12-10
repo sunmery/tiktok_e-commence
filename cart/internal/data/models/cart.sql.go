@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: cart.sql
 
-package modules
+package models
 
 import (
 	"context"
@@ -189,7 +189,7 @@ func (q *Queries) GetCart(ctx context.Context, arg GetCartParams) ([]GetCartRow,
 		return nil, err
 	}
 	defer rows.Close()
-	items := []GetCartRow{}
+	var items []GetCartRow
 	for rows.Next() {
 		var i GetCartRow
 		if err := rows.Scan(

@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package api.order.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "checkout/api/cart/v1;v1";
+
+service CartService {
+	rpc AddItem(AddItemReq) returns (AddItemResp) {
+		option (google.api.http) = {
+			post: "/v1/cart",
+			body: "*"
+		};
+	}
+	rpc GetCart(GetCartReq) returns (GetCartResp) {
+		option (google.api.http) = {
+			get: "/v1/cart/{name}"
+		};
+	}
+	rpc EmptyCart(EmptyCartReq) returns (EmptyCartResp) {
+		option (google.api.http) = {
+			delete: "/v1/cart/{name}"
+		};
+	}
+}
+
+message CartItem {
+	uint32 product_id = 1 [json_name = "product_id" ];
+	uint32 quantity = 2;
+}
+
+message AddItemReq {
+	string name = 1;
+	string owner = 2;
+	CartItem item = 3;
+}
+
+message AddItemResp {}
+
+message EmptyCartReq {
+	string name = 1;
+	string owner = 2;
+}
+
+message EmptyCartResp {}
+
+message GetCartReq {
+	string name = 1;
+	string owner = 2;
+}
+
+message GetCartResp {
+	Cart cart = 1;
+}
+
+message Cart {
+	string name = 1;
+	string owner = 2;
+	repeated CartItem items = 3;
+}

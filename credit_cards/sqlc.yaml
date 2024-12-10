@@ -26,7 +26,7 @@ sql:
         emit_sql_as_comment: true # 如果为 true，则将 SQL 语句作为代码块注释发出，并附加到任何现有注释。默认值为 false 。
         # build_tags: # 如果设置，则在每个生成的 Go 文件的开头添加一个 //go:build <build_tags> 指令。
         json_tags_id_uppercase: true # 如果为 true，则 json 标记中的“Id”将为大写。如果为 false，则为 camelcase。默认值为 false
-        json_tags_case_style: camel # camel: 首字符小写、 pascal: 首字符大写、 snake: 蛇形 或 none 在数据库中使用列名。默认值为 none 。
+        json_tags_case_style: none # camel: 首字符小写、 pascal: 首字符大写、 snake: 蛇形 或 none 在数据库中使用列名。默认值为 none 。
         omit_unused_structs: false # 如果 true ，sqlc 不会生成在给定包的查询中未使用的表和枚举结构。默认值为 false 。
         output_batch_file_name: batch.go # 自定义批处理文件的名称。默认值为 batch.go 。
         output_db_file_name: db.go # 自定义数据库文件的名称。默认值为 db.go 。

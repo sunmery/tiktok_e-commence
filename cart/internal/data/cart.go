@@ -2,7 +2,7 @@ package data
 
 import (
 	"cart/internal/biz"
-	modules "cart/internal/data/models"
+	"cart/internal/data/models"
 	"cart/internal/pkg/token"
 	"context"
 	"errors"
@@ -34,7 +34,7 @@ func (c *cartRepo) CreateCartItem(ctx context.Context, req *biz.CreateCartItemRe
 	if quantity < 0 {
 		return nil, errors.New("quantity must be greater than zero")
 	}
-	result, err := c.data.db.CreateOrUpdateCartItem(ctx, modules.CreateOrUpdateCartItemParams{
+	result, err := c.data.db.CreateOrUpdateCartItem(ctx, models.CreateOrUpdateCartItemParams{
 		Owner:     payload.Owner,
 		Name:      payload.Name,
 		ProductID: int32(req.CartItem.ProductId),
@@ -60,7 +60,7 @@ func (c *cartRepo) GetCart(ctx context.Context, req *biz.CartRequest) (*biz.GetC
 		return nil, errors.New("invalid token")
 	}
 
-	cartInfo, err := c.data.db.GetCart(ctx, modules.GetCartParams{
+	cartInfo, err := c.data.db.GetCart(ctx, models.GetCartParams{
 		Owner: &payload.Owner,
 		Name:  &payload.Name,
 	})
@@ -93,7 +93,7 @@ func (c *cartRepo) EmptyCart(ctx context.Context, req *biz.CartRequest) (*biz.Em
 		return nil, errors.New("invalid token")
 	}
 
-	_, err = c.data.db.DeleteCart(ctx, modules.DeleteCartParams{
+	_, err = c.data.db.DeleteCart(ctx, models.DeleteCartParams{
 		Owner: payload.Owner,
 		Name:  payload.Name,
 	})

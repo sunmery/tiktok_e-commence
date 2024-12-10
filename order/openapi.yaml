@@ -205,6 +205,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.order.v1.MarkOrderPaidResp'
+    /v1/payments:
+        post:
+            tags:
+                - PaymentService
+            operationId: PaymentService_Charge
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.payment.v1.ChargeReq'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.payment.v1.ChargeResp'
     /v1/products:
         get:
             tags:
@@ -469,6 +487,38 @@ components:
             properties:
                 order:
                     $ref: '#/components/schemas/api.order.v1.OrderResult'
+        api.payment.v1.ChargeReq:
+            type: object
+            properties:
+                amount:
+                    type: number
+                    format: double
+                credit_card:
+                    $ref: '#/components/schemas/api.payment.v1.CreditCardInfo'
+                order_id:
+                    type: integer
+                    format: uint32
+                owner:
+                    type: string
+                name:
+                    type: string
+        api.payment.v1.ChargeResp:
+            type: object
+            properties:
+                transactionId:
+                    type: integer
+                    format: uint32
+        api.payment.v1.CreditCardInfo:
+            type: object
+            properties:
+                number:
+                    type: string
+                cvv:
+                    type: string
+                expiration_year:
+                    type: string
+                expiration_month:
+                    type: string
         api.product.v1.CreateProductReply:
             type: object
             properties:
@@ -531,4 +581,5 @@ tags:
     - name: AddressesService
     - name: CartService
     - name: OrderService
+    - name: PaymentService
     - name: ProductCatalogService

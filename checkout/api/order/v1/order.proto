@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+// 订单服务
+
+package api.order.v1;
+
+import "cart/v1/cart.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "checkout/api/order/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.order.v1";
+
+service OrderService {
+	// 创建订单
+	rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp) {
+		option (google.api.http) = {
+			post: "/v1/orders"
+			body: "*"
+		};
+	}
+	// 列出订单
+	rpc ListOrder(ListOrderReq) returns (ListOrderResp) {
+		option (google.api.http) = {
+			get: "/v1/orders"
+		};
+	}
+	// 支付已支付的订单
+	rpc MarkOrderPaid(MarkOrderPaidReq) returns (MarkOrderPaidResp) {
+		option (google.api.http) = {
+			patch: "/v1/orders"
+			body: "*"
+		};
+	}
+}
+
+message Address {
+	string street_address = 1;
+	string city = 2;
+	string state = 3;
+	string country = 4;
+	int32 zip_code = 5;
+}
+
+message PlaceOrderReq {
+	string owner = 1;
+	string name = 2;
+	string currency = 3;
+	uint32 address_id = 4 [json_name = "address_id"];
+	string email = 5;
+	repeated OrderItem order_items = 6 [json_name = "order_items"];
+}
+
+message OrderItem {
+	CartItem item = 1;
+	float cost = 2;
+}
+
+message OrderResult {
+	uint32 order_id = 1 [json_name = "order_id"];
+}
+
+message PlaceOrderResp {
+	OrderResult order = 1;
+}
+
+message ListOrderReq {
+	string owner = 1;
+	string name = 2;
+}
+
+message Order {
+	string owner = 1;
+	string name = 2;
+	string email = 3;
+	string currency = 4 [json_name = "currency"];
+	uint32 order_id = 5 [json_name = "order_id"];
+	uint32 address_id = 6;
+	repeated OrderItem order_items = 7 [json_name = "order_items"];
+	google.protobuf.Timestamp created_at = 8 [json_name = "created_at"];
+	google.protobuf.Timestamp updated_at = 9 [json_name = "updated_at"];
+}
+
+message ListOrderResp {
+	repeated Order orders = 1;
+}
+
+message MarkOrderPaidReq {
+	string owner = 1;
+	string name = 2;
+	uint32 order_id = 3 [json_name = "order_id"];
+}
+
+message MarkOrderPaidResp {
+	string status = 1;
+	uint32 code = 2;
+	string message = 3;
+}

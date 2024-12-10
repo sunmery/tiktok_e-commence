@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+// 结算
+import "google/api/annotations.proto";
+
+package api.payment.v1;
+
+option go_package = "payment/api/payment/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.payment.v1";
+
+service PaymentService {
+	rpc Charge(ChargeReq) returns (ChargeResp) {
+		option (google.api.http) = {
+			post: "/v1/payments",
+			body: "*"
+		};
+	}
+}
+
+message CreditCardInfo {
+	string number = 1 [json_name = "number"];
+	string cvv = 2 [json_name = "cvv"];
+	string expiration_year = 3 [json_name = "expiration_year"];
+	string expiration_month = 4 [json_name = "expiration_month"];
+}
+
+message ChargeReq {
+	double amount = 1 [json_name = "amount"];
+	CreditCardInfo credit_card = 2 [json_name = "credit_card"];
+	uint32 order_id = 3 [json_name = "order_id"];
+	string owner = 4 [json_name = "owner"];
+	string name = 5 [json_name = "name"];
+}
+
+message ChargeResp {
+	uint32 transaction_id = 1;
+}

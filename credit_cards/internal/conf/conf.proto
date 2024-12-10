@@ -9,6 +9,30 @@ message Bootstrap {
   Server server = 1;
   Data data = 2;
 }
+message Registry {
+  message Consul {
+    string address = 1;
+    string scheme = 2;
+    bool health_check = 3;
+  }
+  Consul consul = 1;
+}
+
+// 分布式链路追踪
+message Trace {
+  message Jaeger {
+    message GRPC {
+      string endpoint = 1;
+    }
+    message HTTP {
+      string endpoint = 1;
+    }
+    string service_name = 1;
+    GRPC grpc = 2;
+    HTTP http = 3;
+  }
+  Jaeger jaeger = 1;
+}
 
 message Server {
   message HTTP {

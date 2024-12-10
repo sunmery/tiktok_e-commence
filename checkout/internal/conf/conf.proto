@@ -19,6 +19,22 @@ message Registry {
   Consul consul = 1;
 }
 
+// 分布式链路追踪
+message Trace {
+  message Jaeger {
+    message GRPC {
+      string endpoint = 1;
+    }
+    message HTTP {
+      string endpoint = 1;
+    }
+    string service_name = 1;
+    GRPC grpc = 2;
+    HTTP http = 3;
+  }
+  Jaeger jaeger = 1;
+}
+
 message Server {
   message HTTP {
     string network = 1;
@@ -44,6 +60,8 @@ message Data {
     string addr = 2;
     google.protobuf.Duration read_timeout = 3;
     google.protobuf.Duration write_timeout = 4;
+    string username = 5;
+    string password = 6;
   }
   Database database = 1;
   Redis redis = 2;

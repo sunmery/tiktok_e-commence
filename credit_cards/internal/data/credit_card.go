@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	"credit_cards/internal/data/modules"
+	"credit_cards/internal/data/models"
 	"credit_cards/internal/pkg/token"
 	"errors"
 	"fmt"
@@ -18,20 +18,48 @@ type creditCardsRepo struct {
 	log  *log.Helper
 }
 
-func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditCardsRequest) ([]*biz.CreditCards, error) {
+func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditCardsRequest) (*biz.CreditCards, error) {
 	payload, err := token.ExtractPayload(ctx)
 	if err != nil {
 		return nil, errors.New("invalid token")
 	}
 
-	if req.Owner != payload.Owner || req.Username != payload.Name {
+	if req.Owner != payload.Owner || req.Name != payload.Name {
 		return nil, errors.New("invalid token")
 	}
 
-	cards, err := c.data.db.GetCreditCards(ctx, models.GetCreditCardsParams{
-		Owner:            payload.Owner,
-		Username:         payload.Name,
-		CreditCardNumber: &req.CreditCardNumber,
+	card, err := c.data.db.GetCreditCards(ctx, models.GetCreditCardsParams{
+		Owner:  payload.Owner,
+		Name:   payload.Name,
+		Number: req.Number,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &biz.CreditCards{
+		Owner:           card.Owner,
+		Name:            card.Name,
+		Number:          card.Number,
+		Cvv:             card.Cvv,
+		ExpirationYear:  card.ExpirationYear,
+		ExpirationMonth: card.ExpirationMonth,
+	}, nil
+}
+func (c *creditCardsRepo) SearchCreditCards(ctx context.Context, req *biz.GetCreditCardsRequest) ([]*biz.CreditCards, error) {
+	payload, err := token.ExtractPayload(ctx)
+	if err != nil {
+		return nil, errors.New("invalid token")
+	}
+
+	if req.Owner != payload.Owner || req.Name != payload.Name {
+		return nil, errors.New("invalid token")
+	}
+
+	cards, err := c.data.db.SearchCreditCards(ctx, models.SearchCreditCardsParams{
+		Owner:  payload.Owner,
+		Name:   payload.Name,
+		Number: &req.Number,
 	})
 	if err != nil {
 		return nil, err
@@ -39,37 +67,28 @@ func (c *creditCardsRepo) GetCreditCard(ctx context.Context, req *biz.GetCreditC
 	cardList := make([]*biz.CreditCards, len(cards))
 	for i, card := range cards {
 		cardList[i] = &biz.CreditCards{
-			Owner:                     card.Owner,
-			Username:                  card.Username,
-			CreditCardNumber:          card.CreditCardNumber,
-			CreditCardCvv:             card.CreditCardCvv,
-			CreditCardExpirationYear:  card.CreditCardExpirationYear,
-			CreditCardExpirationMonth: card.CreditCardExpirationMonth,
+			Owner:           card.Owner,
+			Name:            card.Name,
+			Number:          card.Number,
+			Cvv:             card.Cvv,
+			ExpirationYear:  card.ExpirationYear,
+			ExpirationMonth: card.ExpirationMonth,
 		}
 	}
 	return cardList, nil
 }
 
 func (c *creditCardsRepo) CreateCreditCard(ctx context.Context, req *biz.CreditCards) (*biz.CreditCardsReply, error) {
-	payload, err := token.ExtractPayload(ctx)
-	if err != nil {
-		return nil, errors.New("invalid token")
+	params := models.CreateCreditCardParams{
+		Owner:           req.Owner,
+		Name:            req.Name,
+		Number:          req.Number,
+		Cvv:             req.Cvv,
+		ExpirationYear:  req.ExpirationYear,
+		ExpirationMonth: req.ExpirationMonth,
 	}
-	fmt.Printf("req: %+v \n", req)
-	fmt.Printf("payload %+v \n", payload)
-	if req.Owner != payload.Owner || req.Username != payload.Name {
-		fmt.Println("OK")
-		return nil, errors.New("invalid token")
-	}
-
-	_, err = c.data.db.CreateCreditCard(ctx, models.CreateCreditCardParams{
-		Owner:                     payload.Owner,
-		Username:                  payload.Name,
-		CreditCardNumber:          req.CreditCardNumber,
-		CreditCardCvv:             req.CreditCardCvv,
-		CreditCardExpirationYear:  req.CreditCardExpirationYear,
-		CreditCardExpirationMonth: req.CreditCardExpirationMonth,
-	})
+	fmt.Printf("params:%+v\n", params)
+	_, err := c.data.db.CreateCreditCard(ctx, params)
 	if err != nil {
 		return nil, err
 	}
@@ -80,70 +99,58 @@ func (c *creditCardsRepo) CreateCreditCard(ctx context.Context, req *biz.CreditC
 }
 
 func (c *creditCardsRepo) UpdateCreditCard(ctx context.Context, req *biz.CreditCards) (*biz.CreditCardsReply, error) {
-	payload, err := token.ExtractPayload(ctx)
+	result, err := c.data.db.UpdateCreditCard(ctx, models.UpdateCreditCardParams{
+		Number:          &req.Number,
+		Cvv:             &req.Cvv,
+		ExpirationYear:  &req.ExpirationYear,
+		ExpirationMonth: &req.ExpirationMonth,
+		Owner:           req.Owner,
+		Name:            req.Name,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	if req.Owner != payload.Owner || req.Username != payload.Name {
-		return nil, errors.New("invalid token")
-	}
-
-	_, err = c.data.db.UpdateCreditCard(ctx, models.UpdateCreditCardParams{
-		CreditCardNumber:          &req.CreditCardNumber,
-		CreditCardCvv:             &req.CreditCardCvv,
-		CreditCardExpirationYear:  &req.CreditCardExpirationYear,
-		CreditCardExpirationMonth: &req.CreditCardExpirationMonth,
-		Username:                  payload.Name,
-	})
-
 	return &biz.CreditCardsReply{
-		Message: "OK",
+		Message: string(result.ID),
 		Code:    http.StatusOK,
 	}, nil
 }
 
-func (c *creditCardsRepo) DeleteCreditCard(ctx context.Context, id int32) (*biz.CreditCardsReply, error) {
-	payload, err := token.ExtractPayload(ctx)
+func (c *creditCardsRepo) DeleteCreditCard(ctx context.Context, req *biz.DeleteCreditCardsRequest) (*biz.CreditCardsReply, error) {
+	result, err := c.data.db.DeleteCreditCard(ctx, models.DeleteCreditCardParams{
+		Owner: req.Owner,
+		Name:  req.Name,
+		ID:    int32(req.Id),
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = c.data.db.DeleteCreditCard(ctx, models.DeleteCreditCardParams{
-		Username: payload.Name,
-		ID:       id,
-	})
-
 	return &biz.CreditCardsReply{
-		Message: "OK",
+		Message: string(result.ID),
 		Code:    http.StatusOK,
 	}, nil
 }
 
-func (c *creditCardsRepo) ListCreditCards(ctx context.Context, req *biz.ListCreditCardsRequest) ([]*biz.CreditCards, error) {
-	payload, err := token.ExtractPayload(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if req.Owner != payload.Owner || req.Username != payload.Name {
-		return nil, errors.New("invalid token")
-	}
-	cards, err := c.data.db.ListCreditCards(ctx, models.ListCreditCardsParams{
-		Owner:    payload.Owner,
-		Username: payload.Name,
+func (c *creditCardsRepo) ListCreditCards(ctx context.Context, req *biz.CreditCardsRequest) ([]*biz.CreditCards, error) {
+	cards, lErr := c.data.db.ListCreditCards(ctx, models.ListCreditCardsParams{
+		Owner: req.Owner,
+		Name:  req.Name,
 	})
-	if err != nil {
-		return nil, err
+	if lErr != nil {
+		return nil, lErr
 	}
 	cardList := make([]*biz.CreditCards, len(cards))
 	for i, card := range cards {
 		cardList[i] = &biz.CreditCards{
-			Owner:                     card.Owner,
-			Username:                  card.Username,
-			CreditCardNumber:          card.CreditCardNumber,
-			CreditCardCvv:             card.CreditCardCvv,
-			CreditCardExpirationYear:  card.CreditCardExpirationYear,
-			CreditCardExpirationMonth: card.CreditCardExpirationMonth,
+			Id:              uint32(card.ID),
+			Owner:           card.Owner,
+			Name:            card.Name,
+			Number:          card.Number,
+			Cvv:             card.Cvv,
+			ExpirationYear:  card.ExpirationYear,
+			ExpirationMonth: card.ExpirationMonth,
 		}
 	}
 	return cardList, nil

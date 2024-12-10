@@ -5,11 +5,11 @@
 package models
 
 type CreditCardsCreditCards struct {
-	ID                        int32  `json:"id"`
-	Owner                     string `json:"owner"`
-	Username                  string `json:"username"`
-	CreditCardNumber          string `json:"creditCardNumber"`
-	CreditCardCvv             int32  `json:"creditCardCvv"`
-	CreditCardExpirationYear  int32  `json:"creditCardExpirationYear"`
-	CreditCardExpirationMonth int32  `json:"creditCardExpirationMonth"`
+	ID              int32  `json:"id"`
+	Owner           string `json:"owner"`
+	Name            string `json:"name"`
+	Number          string `json:"number"`
+	Cvv             string `json:"cvv"`
+	ExpirationYear  string `json:"expiration_year"`
+	ExpirationMonth string `json:"expiration_month"`
 }

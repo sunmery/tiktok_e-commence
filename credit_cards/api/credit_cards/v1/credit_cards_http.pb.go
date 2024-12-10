@@ -21,16 +21,16 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationCreditCardsServiceCreateCreditCard = "/api.credit_cards.v1.CreditCardsService/CreateCreditCard"
 const OperationCreditCardsServiceDeleteCreditCard = "/api.credit_cards.v1.CreditCardsService/DeleteCreditCard"
-const OperationCreditCardsServiceGetCreditCards = "/api.credit_cards.v1.CreditCardsService/GetCreditCards"
+const OperationCreditCardsServiceGetCreditCard = "/api.credit_cards.v1.CreditCardsService/GetCreditCard"
 const OperationCreditCardsServiceListCreditCards = "/api.credit_cards.v1.CreditCardsService/ListCreditCards"
 const OperationCreditCardsServiceUpdateCreditCard = "/api.credit_cards.v1.CreditCardsService/UpdateCreditCard"
 
 type CreditCardsServiceHTTPServer interface {
 	CreateCreditCard(context.Context, *CreditCards) (*CardsReply, error)
 	DeleteCreditCard(context.Context, *DeleteCreditCardsRequest) (*CardsReply, error)
-	GetCreditCards(context.Context, *GetCreditCardsRequest) (*GetCreditCardsReply, error)
+	GetCreditCard(context.Context, *GetCreditCardsRequest) (*GetCreditCardsReply, error)
 	ListCreditCards(context.Context, *ListCreditCardsRequest) (*ListCreditCardsReply, error)
-	UpdateCreditCard(context.Context, *UpdateCreditCardsRequest) (*CardsReply, error)
+	UpdateCreditCard(context.Context, *CreditCards) (*CardsReply, error)
 }
 
 func RegisterCreditCardsServiceHTTPServer(s *http.Server, srv CreditCardsServiceHTTPServer) {
@@ -38,8 +38,8 @@ func RegisterCreditCardsServiceHTTPServer(s *http.Server, srv CreditCardsService
 	r.POST("/v1/credit_cards", _CreditCardsService_CreateCreditCard0_HTTP_Handler(srv))
 	r.PATCH("/v1/credit_cards", _CreditCardsService_UpdateCreditCard0_HTTP_Handler(srv))
 	r.DELETE("/v1/credit_cards/{id}", _CreditCardsService_DeleteCreditCard0_HTTP_Handler(srv))
-	r.GET("/v1/credit_cards/search", _CreditCardsService_GetCreditCards0_HTTP_Handler(srv))
-	r.GET("/v1/credit_cards/list", _CreditCardsService_ListCreditCards0_HTTP_Handler(srv))
+	r.GET("/v1/credit_cards/{number}", _CreditCardsService_GetCreditCard0_HTTP_Handler(srv))
+	r.GET("/v1/credit_cards/all", _CreditCardsService_ListCreditCards0_HTTP_Handler(srv))
 }
 
 func _CreditCardsService_CreateCreditCard0_HTTP_Handler(srv CreditCardsServiceHTTPServer) func(ctx http.Context) error {
@@ -66,7 +66,7 @@ func _CreditCardsService_CreateCreditCard0_HTTP_Handler(srv CreditCardsServiceHT
 
 func _CreditCardsService_UpdateCreditCard0_HTTP_Handler(srv CreditCardsServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UpdateCreditCardsRequest
+		var in CreditCards
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -75,7 +75,7 @@ func _CreditCardsService_UpdateCreditCard0_HTTP_Handler(srv CreditCardsServiceHT
 		}
 		http.SetOperation(ctx, OperationCreditCardsServiceUpdateCreditCard)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateCreditCard(ctx, req.(*UpdateCreditCardsRequest))
+			return srv.UpdateCreditCard(ctx, req.(*CreditCards))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -108,15 +108,18 @@ func _CreditCardsService_DeleteCreditCard0_HTTP_Handler(srv CreditCardsServiceHT
 	}
 }
 
-func _CreditCardsService_GetCreditCards0_HTTP_Handler(srv CreditCardsServiceHTTPServer) func(ctx http.Context) error {
+func _CreditCardsService_GetCreditCard0_HTTP_Handler(srv CreditCardsServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetCreditCardsRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationCreditCardsServiceGetCreditCards)
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCreditCardsServiceGetCreditCard)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetCreditCards(ctx, req.(*GetCreditCardsRequest))
+			return srv.GetCreditCard(ctx, req.(*GetCreditCardsRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -149,9 +152,9 @@ func _CreditCardsService_ListCreditCards0_HTTP_Handler(srv CreditCardsServiceHTT
 type CreditCardsServiceHTTPClient interface {
 	CreateCreditCard(ctx context.Context, req *CreditCards, opts ...http.CallOption) (rsp *CardsReply, err error)
 	DeleteCreditCard(ctx context.Context, req *DeleteCreditCardsRequest, opts ...http.CallOption) (rsp *CardsReply, err error)
-	GetCreditCards(ctx context.Context, req *GetCreditCardsRequest, opts ...http.CallOption) (rsp *GetCreditCardsReply, err error)
+	GetCreditCard(ctx context.Context, req *GetCreditCardsRequest, opts ...http.CallOption) (rsp *GetCreditCardsReply, err error)
 	ListCreditCards(ctx context.Context, req *ListCreditCardsRequest, opts ...http.CallOption) (rsp *ListCreditCardsReply, err error)
-	UpdateCreditCard(ctx context.Context, req *UpdateCreditCardsRequest, opts ...http.CallOption) (rsp *CardsReply, err error)
+	UpdateCreditCard(ctx context.Context, req *CreditCards, opts ...http.CallOption) (rsp *CardsReply, err error)
 }
 
 type CreditCardsServiceHTTPClientImpl struct {
@@ -188,11 +191,11 @@ func (c *CreditCardsServiceHTTPClientImpl) DeleteCreditCard(ctx context.Context,
 	return &out, nil
 }
 
-func (c *CreditCardsServiceHTTPClientImpl) GetCreditCards(ctx context.Context, in *GetCreditCardsRequest, opts ...http.CallOption) (*GetCreditCardsReply, error) {
+func (c *CreditCardsServiceHTTPClientImpl) GetCreditCard(ctx context.Context, in *GetCreditCardsRequest, opts ...http.CallOption) (*GetCreditCardsReply, error) {
 	var out GetCreditCardsReply
-	pattern := "/v1/credit_cards/search"
+	pattern := "/v1/credit_cards/{number}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationCreditCardsServiceGetCreditCards))
+	opts = append(opts, http.Operation(OperationCreditCardsServiceGetCreditCard))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -203,7 +206,7 @@ func (c *CreditCardsServiceHTTPClientImpl) GetCreditCards(ctx context.Context, i
 
 func (c *CreditCardsServiceHTTPClientImpl) ListCreditCards(ctx context.Context, in *ListCreditCardsRequest, opts ...http.CallOption) (*ListCreditCardsReply, error) {
 	var out ListCreditCardsReply
-	pattern := "/v1/credit_cards/list"
+	pattern := "/v1/credit_cards/all"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCreditCardsServiceListCreditCards))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -214,7 +217,7 @@ func (c *CreditCardsServiceHTTPClientImpl) ListCreditCards(ctx context.Context, 
 	return &out, nil
 }
 
-func (c *CreditCardsServiceHTTPClientImpl) UpdateCreditCard(ctx context.Context, in *UpdateCreditCardsRequest, opts ...http.CallOption) (*CardsReply, error) {
+func (c *CreditCardsServiceHTTPClientImpl) UpdateCreditCard(ctx context.Context, in *CreditCards, opts ...http.CallOption) (*CardsReply, error) {
 	var out CardsReply
 	pattern := "/v1/credit_cards"
 	path := binding.EncodeURL(pattern, in, false)

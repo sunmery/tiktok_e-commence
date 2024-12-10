@@ -12,46 +12,56 @@ type Querier interface {
 	//CreateCreditCard
 	//
 	//  INSERT INTO credit_cards.credit_cards(owner,
-	//                                        username,
-	//                                        credit_card_number,
-	//                                        credit_card_cvv,
-	//                                        credit_card_expiration_year,
-	//                                        credit_card_expiration_month)
+	//                                        name,
+	//                                        number,
+	//                                        cvv,
+	//                                        expiration_year,
+	//                                        expiration_month)
 	//  VALUES ($1, $2, $3, $4, $5, $6)
-	//  RETURNING id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+	//  RETURNING id, owner, name, number, cvv, expiration_year, expiration_month
 	CreateCreditCard(ctx context.Context, arg CreateCreditCardParams) (CreditCardsCreditCards, error)
 	//DeleteCreditCard
 	//
 	//  DELETE
 	//  FROM credit_cards.credit_cards
-	//  WHERE username = $1
-	//    AND id = $2
-	//  RETURNING id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+	//  WHERE owner = $1
+	//    AND name = $2
+	//    AND id = $3
+	//  RETURNING id, owner, name, number, cvv, expiration_year, expiration_month
 	DeleteCreditCard(ctx context.Context, arg DeleteCreditCardParams) (CreditCardsCreditCards, error)
 	//GetCreditCards
 	//
-	//  SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+	//  SELECT id, owner, name, number, cvv, expiration_year, expiration_month
 	//  FROM credit_cards.credit_cards
 	//  WHERE owner = $1
-	//    AND username = $2
-	//    AND credit_card_number ILIKE '%' || $3 || '%'
-	GetCreditCards(ctx context.Context, arg GetCreditCardsParams) ([]CreditCardsCreditCards, error)
+	//    AND name = $2
+	//    AND number = $3
+	GetCreditCards(ctx context.Context, arg GetCreditCardsParams) (CreditCardsCreditCards, error)
 	//ListCreditCards
 	//
-	//  SELECT id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+	//  SELECT id, owner, name, number, cvv, expiration_year, expiration_month
 	//  FROM credit_cards.credit_cards
 	//  WHERE owner = $1
-	//    AND username = $2
+	//    AND name = $2
 	ListCreditCards(ctx context.Context, arg ListCreditCardsParams) ([]CreditCardsCreditCards, error)
+	//SearchCreditCards
+	//
+	//  SELECT id, owner, name, number, cvv, expiration_year, expiration_month
+	//  FROM credit_cards.credit_cards
+	//  WHERE owner = $1
+	//    AND name = $2
+	//    AND number ILIKE '%' || $3
+	SearchCreditCards(ctx context.Context, arg SearchCreditCardsParams) ([]CreditCardsCreditCards, error)
 	//UpdateCreditCard
 	//
 	//  UPDATE credit_cards.credit_cards
-	//  SET credit_card_number           = coalesce($1, credit_card_number),
-	//      credit_card_cvv              = coalesce($2, credit_card_cvv),
-	//      credit_card_expiration_year  = coalesce($3, credit_card_expiration_year),
-	//      credit_card_expiration_month = coalesce($4, credit_card_expiration_month)
-	//  WHERE username = $5
-	//  RETURNING id, owner, username, credit_card_number, credit_card_cvv, credit_card_expiration_year, credit_card_expiration_month
+	//  SET number           = coalesce($1, number),
+	//      cvv              = coalesce($2, cvv),
+	//      expiration_year  = coalesce($3, expiration_year),
+	//      expiration_month = coalesce($4, expiration_month)
+	//  WHERE owner = $5
+	//    AND name = $6
+	//  RETURNING id, owner, name, number, cvv, expiration_year, expiration_month
 	UpdateCreditCard(ctx context.Context, arg UpdateCreditCardParams) (CreditCardsCreditCards, error)
 }
 

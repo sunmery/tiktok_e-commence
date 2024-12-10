@@ -27,23 +27,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, regi
 	registrar := server.NewRegistrar(registry)
 	pool := data.NewDB(confData)
 	client := data.NewCache(confData)
-	discovery, err := data.NewDiscovery(registry)
-	if err != nil {
-		return nil, nil, err
-	}
-	addressesServiceClient, err := data.NewAddressesServiceClient(discovery, logger)
-	if err != nil {
-		return nil, nil, err
-	}
-	productCatalogServiceClient, err := data.NewProductServiceClient(discovery, logger)
-	if err != nil {
-		return nil, nil, err
-	}
-	cartServiceClient, err := data.NewCartServiceClient(discovery, logger)
-	if err != nil {
-		return nil, nil, err
-	}
-	dataData, cleanup, err := data.NewData(logger, pool, client, addressesServiceClient, productCatalogServiceClient, cartServiceClient)
+	dataData, cleanup, err := data.NewData(logger, pool, client)
 	if err != nil {
 		return nil, nil, err
 	}

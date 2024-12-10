@@ -27,15 +27,14 @@ message Address {
 }
 
 message CheckoutReq {
-	string user_id = 1;
-	string firstname = 2;
-	string lastname = 3;
+	string owner = 1;
+	string name = 2;
 	string email = 4;
 	int32 address_id = 5;
 	int32 credit_card_id = 6;
 }
 
 message CheckoutResp {
-	string order_id = 1;
-	string transaction_id = 2;
+	uint32 order_id = 1;
+	uint32 transaction_id = 2;
 }

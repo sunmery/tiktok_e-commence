@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 	"credit_cards/internal/conf"
-	"credit_cards/internal/data/modules"
+	"credit_cards/internal/data/models"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 

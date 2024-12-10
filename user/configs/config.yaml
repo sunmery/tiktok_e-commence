@@ -47,7 +47,7 @@ casdoor:
   server:
     # casdoor url
     # endpoint: "http://localhost:8000"
-    endpoint: "http://node13.apikv.com:30251"
+    endpoint: "http://node9.apikv.com:30251"
     client_id: "58ae47eed5903ca1c3ce"
     client_secret: "d092bd2b51a075fe7a790e01e8a2b1a8176a2d40"
     organization: "tiktok"

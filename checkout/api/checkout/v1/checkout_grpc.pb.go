@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.28.3
-// source: checkout/v1/service.proto
+// source: checkout/v1/checkout.proto
 
 package v1
 
@@ -117,5 +117,5 @@ var CheckoutService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "checkout/v1/service.proto",
+	Metadata: "checkout/v1/checkout.proto",
 }

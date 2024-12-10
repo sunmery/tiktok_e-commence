@@ -1,7 +1,10 @@
 package service
 
 import (
+	"checkout/internal/pkg/token"
 	"context"
+	"errors"
+	"fmt"
 
 	v1 "checkout/api/checkout/v1"
 	"checkout/internal/biz"
@@ -19,10 +22,19 @@ func NewCheckoutService(cc *biz.CheckoutUsecase) *CheckoutService {
 }
 
 func (s *CheckoutService) Checkout(ctx context.Context, req *v1.CheckoutReq) (*v1.CheckoutResp, error) {
+	payload, err := token.ExtractPayload(ctx)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("payload:", payload)
+	fmt.Println("req:", req)
+	if req.Owner != payload.Owner || req.Name != payload.Name {
+		return nil, errors.New("invalid token")
+	}
+
 	resp, err := s.cc.CreateCheckout(ctx, &biz.CheckoutReq{
-		UserId:       req.UserId,
-		Firstname:    req.Firstname,
-		Lastname:     req.Lastname,
+		Owner:        payload.Owner,
+		Name:         payload.Name,
 		Email:        req.Email,
 		AddressId:    req.AddressId,
 		CreditCardId: req.CreditCardId,
