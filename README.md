@@ -1,51 +1,52 @@
-# Kratos Project Template
+# 字节青训营Tiktok电商项目
 
-## Install Kratos
-```
-go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
-```
-## Create a service
-```
-# Create a template project
-kratos new server
+## 架构设计
+1. 重网关: 使用云原生网关Higress, 外部流量进入到应用的第一道关, 负责CORS, 限流,熔断, 降级, 校验, 重试, 负载, 重定向等作用
+2. 职责: 前端注重交互, 后端注重功能, 把复杂的数据逻辑交给后端. 提高交付速度
+3. 安全性: 外网强调信息安全, 外网的安全使用认证和授权, 内网的服务使用身份认证和授权
+4. 拆分服务: 项目服务明确, 直接使用微服务架构, 单独编写各个微服务, 外部使用HTTP请求, 内部使用RPC
+5. 可观测: 监测跟踪程序的日志/指标/链路
+6. 监控: 监控各个应用,数据库状态,操作系统,第三方应用的各个指标/日志
 
-cd server
-# Add a proto template
-kratos proto add api/server/server.proto
-# Generate the proto code
-kratos proto client api/server/server.proto
-# Generate the source code of service by proto file
-kratos proto server api/server/server.proto -t internal/service
+### 整体设计
+![未命名绘图.drawio.svg](未命名绘图.drawio.svg)
 
-go generate ./...
-go build -o ./bin/ ./...
-./bin/server -conf ./configs
-```
-## Generate other auxiliary files by Makefile
-```
-# Download and update dependencies
-make init
-# Generate API files (include: pb.go, http, grpc, validate, swagger) by proto file
-make api
-# Generate all files
-make all
-```
-## Automated Initialization (wire)
-```
-# install wire
-go get github.com/google/wire/cmd/wire
+### 选型
+#### Backend
+- 语言: Golang
+- 数据库: Postgres
+- 缓存: Redis/CDN
 
-# generate wire
-cd cmd/server
-wire
-```
+关键工具库:
+- redis/go-redis
+- sqlc
+- jwt
 
-## Docker
-```bash
-# build
-docker build -t <your-docker-image-name> .
+#### Frontend
+- 语言: TypeScript
+- 框架: React
 
-# run
-docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf <your-docker-image-name>
-```
+#### Ops
+- 环境: Kubernetes
+- 打包: Docker buildx
+- CI: Github Actions
+- CD: argocd
+- 网关: Higress
 
+## 设计
+### 后端设计
+
+### 数据库设计:
+1. 动静分离: 区分经常更新的字段与不经常更新的字段进行分表设计, 对这个高频更新的表进行缓存, 减少穿透和雪崩, 当频繁更新这些热点表时, 数据库就会缓存这些表的行
+2. 约束设计: 数据库不负责业务约束, 由应用设计并限制
+3. ID设计: 每个表都有一个id字段和雪花id字段, id字段不能在任何的业务中使用, 只负责插入, 提供插入性能. 使用雪花id字段来定位
+
+## Ops
+### 追踪
+![img_1.png](img_1.png)
+
+### 指标
+TODO
+
+### 日志
+![img.png](img.png)

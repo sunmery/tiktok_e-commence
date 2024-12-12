@@ -3,7 +3,10 @@ jaeger:
   service_name: tiktok-e_commence-credit_cards
   grpc:
     # endpoint: localhost:4317
-    endpoint: node10.apikv.com:32163
+    # endpoint: node10.apikv.com:32163
+    endpoint: tracing-analysis-dc-sz.aliyuncs.com
+    token: "edh3wb2jsw@93a445ba72ea081_edh3wb2jsw@53df7ad2afe8301"
+    deployEnvironment: prdo
   http:
     # endpoint: localhost:4318
     endpoint: node10.apikv.com:31619
