@@ -29,12 +29,20 @@
 #### Ops
 - 环境: Kubernetes
 - 打包: Docker buildx
+- 镜像存储: TCR
+- 静态文件存储: Minio
+- 应用数据库存储: Postgres
+- 分布式存储: longhorn
+- 时序数据库存储: VictoriaMetrics
 - CI: Github Actions
-- CD: argocd
-- 网关: Higress
+- CD: ArgoCD
+- API/微服务/安全网关: Higress
+- 鉴权/认证: Casdoor
+- 注册/发现/配置中心: Consul
 
 ## 设计
 ### 后端设计
+TODO
 
 ### 数据库设计:
 1. 动静分离: 区分经常更新的字段与不经常更新的字段进行分表设计, 对这个高频更新的表进行缓存, 减少穿透和雪崩, 当频繁更新这些热点表时, 数据库就会缓存这些表的行
