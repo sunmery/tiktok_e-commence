@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1 # 指定 Argo CD API 版本
 kind: Application # 定义资源类型为 Application
 metadata: # 元数据部分
   name: tiktok_e-commence # 指定 Application 的名称
-  namespace: tiktok_e-commence # 指定 Application 所属的命名空间
+  namespace: argocd # argocd所在的命名空间
   # # 定义资源的 finalizers
   # https://argo-cd.readthedocs.io/en/stable/user-guide/app_deletion/#about-the-deletion-finalizer
   finalizers:
@@ -12,11 +12,13 @@ spec: # 规范部分
   project: tiktok-e-commence # 应用程序将被配置的项目名称，这是在 Argo CD 中应用程序的一种组织方式
   source: # 指定源
     # Kubernetes 资源清单在仓库中的路径
-    path: .
+    path: deployment
+    # 从 Helm 存储库创建应用程序时，必须指定 chart 属性，而不是 spec.source 中的 path 属性
+    # chart: argo
     # 指定 Git 仓库的 URL
     repoURL: https://github.com/sunmery/tiktok_e-commence.git
     # targetRevision：想要使用的 git 分支
-    targetRevision: HEAD
+    targetRevision: pre
   # Kubernetes 集群中的目标
   destination:
     namespace: tiktok # 指定目标命名空间
