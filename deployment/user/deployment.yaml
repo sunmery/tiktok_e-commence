@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: e-commence-user
-          image: example
+          image: ccr.ccs.tencentyun.com/e-commence/user:v1.0.0
           imagePullPolicy: Always
           ports:
             - containerPort: 30001
