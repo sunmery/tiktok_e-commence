@@ -105,17 +105,18 @@ CMD ["/bin/user", "-conf", "/data/conf"]
 # HTTP_PORT=30001
 # GRPC_PORT=30002
 # PLATFORM_1=linux/amd64
+# PLATFORM_2=linux/arm64
 # docker buildx build . \
 #   --progress=plain \
 #   -t $REPOSITORY:$VERSION \
 #   --build-arg CGOENABLED=0 \
 #   --build-arg GOIMAGE=golang:1.23.3-alpine3.20 \
 #   --build-arg VERSION=$VERSION \
-#   --build-arg HTTP_PORT=$PORT \
-#   --build-arg GRPC_PORT=$PORT \
+#   --build-arg HTTP_PORT=$HTTP_PORT \
+#   --build-arg GRPC_PORT=$GRPC_PORT \
 #   --build-arg GOOS=$GOOS \
 #   --build-arg GOARCH=$GOARCH \
-#   --platform $PLATFORM_1 \
+#   --platform $PLATFORM_1,$PLATFORM_2 \
 #   --load
 
 # 推送
@@ -135,4 +136,4 @@ CMD ["/bin/user", "-conf", "/data/conf"]
 # -p 30002:30002 \
 # -e GIN_MODE=release \
 # -e DB_SOURCE="postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable" \
-# $REPOSITORY:$VERSION
+# $REPOSITORY:$VERSION /bin/user -conf /bin/configs

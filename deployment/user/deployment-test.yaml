@@ -17,8 +17,13 @@ spec:
     spec:
       containers:
         - name: e-commence-user
+          # TODO: 替换成动态修改与获取
           image: ccr.ccs.tencentyun.com/e-commence/user:v1.0.0
           imagePullPolicy: Always
+          args:
+            - /bin/user
+            - -conf
+            - /bin/configs
           ports:
             - containerPort: 30001
               protocol: TCP
