@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-commence-user
+  labels:
+    app: e-commence-user
+spec:
+  template:
+    spec:
+      containers:
+        - name: e-commence-user
+          resources:
+            limits:
+              memory: "200Mi"
+              cpu: "200m"
+

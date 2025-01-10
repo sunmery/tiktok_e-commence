@@ -1,0 +1,34 @@
+# https://higress.cn/docs/latest/user/annotation-use-case/
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: e-commence-user-http-ingress
+  annotations:
+    # 重定向至HTTPS
+    higress.io/force-ssl-redirect: "true"
+    #  round_robin：基于轮询的负载均衡。
+    # least_conn：基于最小请求数的负载均衡。
+    # random：基于随机的负载均衡。
+    higress.io/load-balance: "least_conn"
+    # 跨域设置
+    ## 开启或关闭跨域
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    ## 允许的第三方站点，支持泛域名，逗号分隔；支持通配符*。默认值为*，即允许所有第三方站点
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://web.api-r.com"
+    ## 允许的请求方法，如GET、POST，逗号分隔；支持通配符*。默认值为GET, PUT, POST, DELETE, PATCH, OPTIONS
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
+    ## 允许的请求头部，逗号分隔；支持通配符*。默认值为DNT,X-CustomHeader,Keep-Alive,User-Agent,X-
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization"
+    ## 允许的响应头部，逗号分隔。
+    nginx.ingress.kubernetes.io/cors-expose-headers: "Content-Length, X-Kuma-Revision"
+    ## 是否允许携带凭证信息。默认允许
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    ## 预检结果的最大缓存时间，单位为秒；默认值为1728000。
+    nginx.ingress.kubernetes.io/cors-max-age: "86400"
+    # 重试
+    ## 请求的最大重试次数
+    higress.io/proxy-next-upstream-tries: "3"
+    ## 重试超时时间为5s
+    higress.io/proxy-next-upstream-timeout: "4"
+    ## 请求重试条件: 只有在响应状态码为502才重试，并且开启非幂等重试
+    higress.io/proxy-next-upstream: "http_502,non_idempotent"

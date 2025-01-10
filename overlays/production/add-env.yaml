@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-commence-user
+spec:
+  template:
+    spec:
+      containers:
+        - name: e-commence-user
+          env:
+            - name: DB_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  key: DB_SOURCE
+                  name: db-source-secret
+            - name: REDIS_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  key: REDIS_ADDRESS
+                  name: redis-address-secret
+            - name: REDIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: REDIS_USERNAME
+                  name: redis-username-secret
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: REDIS_PASSWORD
+                  name: redis-password-secret
