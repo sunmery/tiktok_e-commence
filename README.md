@@ -11,11 +11,21 @@
 ## 如何开始?
 ### 开发角色
 1. 克隆项目到本地
-2. 配置基础后端(go, protobuf)与前端环境(node)
+```shell
+git clone https://github.com/sunmery/tiktok_e-commence.git
+```
+2. 配置基础后端(go, protobuf)与前端(如果你要运行前端的话)环境(node)
+```shell
+go version
+protoc --version
+```
 3. 使用docker或kubernetes部署最基本的环境:
    1. casdoor
    2. consul
    3. postgres
+```shell
+TODO
+```
 如果想体验完整的流程, 还需要部署以下工具, 不然会报异常, 但不影响项目:
 1. otel collector
 2. jaeger
