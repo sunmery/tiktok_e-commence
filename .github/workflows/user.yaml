@@ -243,6 +243,7 @@ jobs:
           ./kubectl delete secret db-source-secret --ignore-not-found
           ./kubectl delete secret redis-address-secret --ignore-not-found
           ./kubectl delete secret redis-username-secret --ignore-not-found
+          ./kubectl delete secret redis-password-secret --ignore-not-found
           
           ./kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}'
           ./kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}'
