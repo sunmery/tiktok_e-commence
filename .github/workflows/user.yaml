@@ -250,7 +250,7 @@ jobs:
           ./kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}'
           ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
           
-          # ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           # ./kustomize build . | kubectl apply -f -
           
           ./argocd account get-user-info
@@ -260,7 +260,7 @@ jobs:
           ./argocd app list
           
           # 替换镜像
-          ./argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          # ./argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           ./argocd app list
 
           # ./kubectl rollout status deploy || ./kubectl rollout undo deploy
