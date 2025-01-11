@@ -230,13 +230,12 @@ jobs:
           ./kubectl config set-context --current --namespace $BACKEND_NAMESPACE
           
           ./kubectl delete secret db-source-secret --ignore-not-found
-          ./kubectl delete secret redis-address-secret --ignore-not-found
-          ./kubectl delete secret redis-username-secret --ignore-not-found
-          ./kubectl delete secret redis-password-secret --ignore-not-found
-
           ./kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}'
+          ./kubectl delete secret redis-address-secret --ignore-not-found
           ./kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}'
+          ./kubectl delete secret redis-username-secret --ignore-not-found
           ./kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}'
+          ./kubectl delete secret redis-password-secret --ignore-not-found
           ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
 
           ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
