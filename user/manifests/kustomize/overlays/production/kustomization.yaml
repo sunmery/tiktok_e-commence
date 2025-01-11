@@ -17,3 +17,9 @@ patches:
 - path: replica_count.yaml
 - path: limits.yaml
 - path: add-env.yaml
+
+# https://argo-cd.readthedocs.io/en/stable/user-guide/compare-options/
+# Kustomize 具有允许您生成配置映射的功能。您可以设置generatorOptions来添加此注释，以便您的应用程序保持同步
+generatorOptions:
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
