@@ -258,12 +258,8 @@ jobs:
           
           # 替换镜像
           # ./argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
-
-          # 同步
-          ./argocd app sync argocd/${REGISTER_NAMESPACE}-${{ matrix.service }}
-          
           ./argocd app list
-          
+
           # ./kubectl rollout status deploy || ./kubectl rollout undo deploy
           ./kubectl get deploy -owide
           ./kubectl get po -owide
