@@ -29,9 +29,9 @@ spec:
             - -conf
             - /bin/configs
           ports:
-            - containerPort: 30001
+            - containerPort: 30013
               protocol: TCP
               name: http-server
-            - containerPort: 30002
+            - containerPort: 30014
               protocol: TCP
               name: grpc-server

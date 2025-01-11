@@ -7,14 +7,14 @@ spec:
     app: e-commence-product
   ports:
     - name: http
-      port: 30001
+      port: 30013
       protocol: TCP
-      targetPort: 30001
-      nodePort: 30001
+      targetPort: 30013
+      nodePort: 30013
     - name: grpc
-      port: 30002
+      port: 30014
       protocol: TCP
-      targetPort: 30002
-      nodePort: 30002
+      targetPort: 30014
+      nodePort: 30014
   type: NodePort
 
