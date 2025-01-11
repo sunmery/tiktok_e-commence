@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1 # 指定 Argo CD API 版本
 kind: Application # 定义资源类型为 Application
 metadata: # 元数据部分
-  name: e-commence # 指定 Application 的名称
+  name: e-commence-user # 指定 Application 的名称
   namespace: argocd # argocd所在的命名空间
   # # 定义资源的 finalizers
   # https://argo-cd.readthedocs.io/en/stable/user-guide/app_deletion/#about-the-deletion-finalizer
