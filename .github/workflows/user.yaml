@@ -16,7 +16,7 @@ env:
   # 微服务所在目录
   SERVICE_DIR: user
   # 仓库
-  REGISTER_NAMESPACE: ${REGISTER_NAMESPACE}
+  REGISTER_NAMESPACE: e-commence
   # 版本号, git tag的标签名
   # https://docs.github.com/zh/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
   #VERSION: ${{ github.ref_name }}
@@ -232,17 +232,18 @@ jobs:
           --insecure
           argocd version
 
-      # Deploy the Docker image to the TKE cluster
-      - name: Deploy
+      - name: Set Context
         run: |
           if kubectl get ns $BACKEND_NAMESPACE; then
             echo "namespaces $BACKEND_NAMESPACE already exists, skip create"
           else
             kubectl create ns $BACKEND_NAMESPACE
           fi
-          
+
           kubectl config set-context --current --namespace $BACKEND_NAMESPACE
 
+      - name: Create secret
+        run: |
           kubectl delete secret db-source-secret --ignore-not-found
           kubectl delete secret redis-address-secret --ignore-not-found
           kubectl delete secret redis-username-secret --ignore-not-found
@@ -252,7 +253,9 @@ jobs:
           kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}'
           kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}'
           kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
-          
+
+      - name: Deploy app to kubernetes
+        run: |
           # kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           # kustomize build . | kubectl apply -f -
           
@@ -263,9 +266,14 @@ jobs:
           argocd app list
           
           # 替换镜像
-          argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          echo "app: argocd/${REGISTER_NAMESPACE}-${{ matrix.service }}"
+          echo "img: ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION"
+          #argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          argocd app set argocd/e-commence-user --kustomize-image example=registry.cn-guangzhou.aliyuncs.com/mandala/user:v1.0.0
           argocd app list
 
+      - name: Watch app info
+        run: |
           # kubectl rollout status deploy || kubectl rollout undo deploy
           kubectl get deploy -owide
           kubectl get po -owide
