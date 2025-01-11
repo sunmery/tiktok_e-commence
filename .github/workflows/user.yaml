@@ -200,6 +200,7 @@ jobs:
           curl -Lo kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v5.5.0/kustomize_v5.5.0_linux_amd64.tar.gz
           tar -zxvf ./kustomize.tar.gz
           chmod +x ./kustomize
+          cp ./kustomize /usr/local/bin
           ./kustomize version
 
       - name: Install kubectl
@@ -250,7 +251,7 @@ jobs:
           ./kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}'
           ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
           
-          cd overlays/production; ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          cd overlays/production; kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           # ./kustomize build . | kubectl apply -f -
           
           ./argocd account get-user-info
