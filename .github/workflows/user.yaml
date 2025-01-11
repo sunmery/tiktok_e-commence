@@ -189,7 +189,7 @@ jobs:
           chmod +x ./kubectl
           cp ./kubectl /usr/local/bin
 
-      - name: Copy Kubernetes config file
+      - name: Write Kubernetes config file
         run: |
           mkdir -pv ~/.kube/
           echo "${{secrets.KUBE_CONF}}" > ~/.kube/config
@@ -326,10 +326,13 @@ jobs:
           retry_on: error
           command: |
             # 部署argo app资源清单
+            echo "ls ${{ matrix.service }}/manifests/kustomize/overlays/production"
+            ls ${{ matrix.service }}/manifests/kustomize/overlays/production
+            ehco "pwd"
             pwd
+            ehco "ls"
             ls
-            cat application.yaml
-            kubectl apply -f ./application.yaml
+            kubectl apply -f application.yaml
             # 替换镜像
             argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
       
