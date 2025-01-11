@@ -17,7 +17,7 @@ spec:
     # Git仓库的URL
     repoURL: https://github.com/sunmery/tiktok_e-commence.git
     # 部署清单文件路径. 相对路径, 基于git仓库根目录的路径. kustomize的overlays目录或kubernetes清单文件路径
-    path: user/manifests/application/overlays/production
+    path: user/manifests/kustomize/overlays/production
     # 使用的 git 分支
     targetRevision: pre
   destination:

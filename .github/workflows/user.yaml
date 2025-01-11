@@ -189,7 +189,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ${{ matrix.service }}
+        working-directory: ${{ matrix.service }}/manifests/kustomize
     steps:
       - # 检出仓库中的代码，确保脚本可以访问仓库中的所有文件
         name: Checkout repository
@@ -268,14 +268,15 @@ jobs:
             ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
           fi
           
-          ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          # ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           # ./kustomize build . | kubectl apply -f -
           
           # 部署argo app资源清单
-          ./kubectl apply -f ./argocd.yaml
+          ./kubectl apply -f ./application.yaml
           
           # 替换镜像
           ./argocd app set argocd/e-commence --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          
           # 同步
           ./argocd app sync argocd/e-commence
           
