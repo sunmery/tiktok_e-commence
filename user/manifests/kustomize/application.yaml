@@ -6,8 +6,8 @@ metadata: # 元数据部分
   # # 定义资源的 finalizers
   # https://argo-cd.readthedocs.io/en/stable/user-guide/app_deletion/#about-the-deletion-finalizer
   finalizers:
-    # - resources-finalizer.argocd.argoproj.io # 删除时行级联删除
     - resources-finalizer.argocd.argoproj.io/background  # 删除时后台行级联删除
+    # - resources-finalizer.argocd.argoproj.io # 删除时行级联删除
   labels:
     name: e-commence-user
 spec:
@@ -25,21 +25,34 @@ spec:
     namespace: tiktok
     # Kubernetes集群URL
     # server: https://kubernetes.default.svc
+    # 集群名称
     name: in-cluster
   # 指定同步策略
   syncPolicy:
     # 自动同步
     automated:
-      # 指定在自动同步期间是否应修剪资源（默认为 false）。
+      # 是否在同步后进行修剪
       prune: true
-      selfHeal: true # 启用自愈功能
-      allowEmpty: false # 禁止空资源
-    syncOptions: # 同步选项
-      - Validate=true # 验证
-      - ApplyOutOfSyncOnly=true # 仅同步不同步的资源，而不是应用 Application 中的每个对象。
-    retry: # 重试策略
-      limit: 5 # 重试次数上限
-      backoff: # 重试间隔
-        duration: 5s # 初始重试间隔
-        factor: 2 # 重试间隔
-        maxDuration: 3m # 最大重试间隔
+      # 是否启用自愈功能, 强制以GitRepo状态为准，手动在环境修改不会生效
+      selfHeal: true
+      # 禁止空资源
+      allowEmpty: false
+    # 同步选项
+    syncOptions:
+      - CreateNamespace=false # 是否让argocd创建namespace
+      - Validate=true # 是否启用Kubectl验证
+      - RespectIgnoreDifferences=true # 支持忽略差异配置(ignoreDifferences:)
+      - ApplyOutOfSyncOnly=true # 是否仅同步不同步的资源，而不是应用 Application 中的每个对象。
+      - PrunePropagationPolicy=background #级联删除策略(background, foreground and orphan.)ApplyOutOfSyncOnly=true：仅同步不同步状态的资源。避免大量对象时资源API消耗
+    # 重试策略
+    retry:
+      # 重试次数上限
+      limit: 5
+      # 重试间隔
+      backoff:
+        # 初始重试间隔
+        duration: 5s
+        # 重试间隔
+        factor: 2
+        # 最大重试间隔
+        maxDuration: 3m

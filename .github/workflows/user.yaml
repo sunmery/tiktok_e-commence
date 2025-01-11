@@ -255,9 +255,10 @@ jobs:
           
           # 部署argo app资源清单
           ./kubectl apply -f ./application.yaml
+          ./argocd app list
           
           # 替换镜像
-          # ./argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          ./argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           ./argocd app list
 
           # ./kubectl rollout status deploy || ./kubectl rollout undo deploy
