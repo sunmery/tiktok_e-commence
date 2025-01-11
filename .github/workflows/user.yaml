@@ -184,11 +184,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [ user, product ]  # 定义要并行执行的服务
+        # service: [ user, product ]  # 定义要并行执行的服务
+        service: [ user ]  # 定义要并行执行的服务
     defaults:
       run:
         shell: bash
-        working-directory: ${{ matrix.service }}/manifests/application/overlays/production
+        working-directory: ${{ matrix.service }}
     steps:
       - # 检出仓库中的代码，确保脚本可以访问仓库中的所有文件
         name: Checkout repository
@@ -271,7 +272,7 @@ jobs:
           # ./kustomize build . | kubectl apply -f -
           
           # 部署argo app资源清单
-          ./kubectl apply -f argocd.yaml
+          ./kubectl apply -f ./argocd.yaml
           
           # 替换镜像
           ./argocd app set argocd/e-commence --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION

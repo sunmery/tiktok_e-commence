@@ -15,6 +15,7 @@ spec:
       labels:
         app: e-commence-user
     spec:
+      restartPolicy: Always
       containers:
         - name: e-commence-user
           image: example
@@ -30,23 +31,3 @@ spec:
             - containerPort: 30002
               protocol: TCP
               name: grpc-server
-          #livenessProbe:
-          #  httpGet:
-          #    path: /healthz
-          #    port: 8080
-          #  initialDelaySeconds: 10
-          #  periodSeconds: 10
-          #  timeoutSeconds: 5
-          #  failureThreshold: 3
-          #  successThreshold: 1
-          #readinessProbe:
-          #  httpGet:
-          #    path: /readyz
-          #    port: 8080
-          #  initialDelaySeconds: 5
-          #  periodSeconds: 5
-          #  timeoutSeconds: 3
-          #  failureThreshold: 3
-          #  successThreshold: 1
-      restartPolicy: Always
-
