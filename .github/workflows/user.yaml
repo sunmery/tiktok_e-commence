@@ -218,7 +218,7 @@ jobs:
           kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
 
   backend-deploy:
-    # needs: backend-build
+    needs: backend-build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -241,6 +241,7 @@ jobs:
           chmod +x ./argocd
           cp ./argocd /usr/local/bin
 
+      # https://github.com/marketplace/actions/retry-step
       - name: Connect ArgoCD Server
         uses: nick-fields/retry@v3
         with:
@@ -303,6 +304,9 @@ jobs:
           retry_on: error
           command: |
             # 部署argo app资源清单
+            pwd
+            ls
+            cat application.yaml
             kubectl apply -f ./application.yaml
             # 替换镜像
             argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
