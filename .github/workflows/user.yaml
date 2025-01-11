@@ -258,7 +258,8 @@ jobs:
           
           # 替换镜像
           echo "matrix: argocd/e-commence-${{ matrix.service }}"
-          ./argocd app set argocd/e-commence-user --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          # ./argocd app set argocd/e-commence-user --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+          ./argocd app set argocd/e-commence-user --kustomize-image example=registry.cn-guangzhou.aliyuncs.com/mandala/user:v1.0.0
           
           # 同步
           ./argocd app sync argocd/e-commence
