@@ -48,7 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [ user, product ]  # 定义要并行执行的服务
+        # service: [ user, product ]  # 定义要并行执行的服务
+        service: [ user ]  # 定义要并行执行的服务
     defaults:
       run:
         shell: bash
@@ -211,12 +212,21 @@ jobs:
           curl -LO https://github.com/argoproj/argo-cd/releases/download/v2.13.3/argocd-linux-amd64
           mv argocd-linux-amd64 argocd
           chmod +x ./argocd
+          ./argocd version
 
       - name: Connect Kubernetes Cluster
         run: |
           mkdir -pv ~/.kube/
           echo "${{secrets.KUBE_CONF}}" > ~/.kube/config
           chmod 600 ~/.kube/config
+
+      - name: Connect ArgoCD Server
+        run: |
+          argocd login \
+          ${{ secrets.ARGOCD_SERVER_ADDR }} \
+          --username ${{ secrets.ARGOCD_SERVER_USER }} \
+          --password ${{ secrets.ARGOCD_SERVER_PASS }} \
+          --insecure
 
       # Deploy the Docker image to the TKE cluster
       - name: Deploy
@@ -258,9 +268,16 @@ jobs:
           fi
           
           ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
-          ./kustomize build . | kubectl apply -f -
+          # ./kustomize build . | kubectl apply -f -
+          
+          # 部署argo app资源清单
+          ./kubectl apply -f argocd.yaml
+          # 替换镜像
+          ./argocd app set argocd/e-commence --kustomize-image example=ccr.ccs.tencentyun.com/e-commence/user:v1.0.0
+          # 同步
+          ./argocd app sync argocd/e-commence
           
           # ./kubectl rollout status deploy || ./kubectl rollout undo deploy
+          ./kubectl get deploy -owide
           ./kubectl get po -owide
           ./kubectl get svc
- 

@@ -10,6 +10,12 @@ resources:
 # 命名空间
 namespace: tiktok
 
+vars:
+  - name:
+    objref:
+      kind:
+      name:
+
 # 标签
 #commonLabels:
 #  app: bingo
