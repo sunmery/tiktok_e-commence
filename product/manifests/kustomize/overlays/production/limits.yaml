@@ -2,11 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: e-commence-product
+  labels:
+    app: e-commence-product
 spec:
   template:
     spec:
       containers:
         - name: e-commence-product
-          env:
-            - name: DB_SOURCE
-              value: "DB_SOURCE=postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable"
+          resources:
+            limits:
+              memory: "50Mi"
+              cpu: "50m"

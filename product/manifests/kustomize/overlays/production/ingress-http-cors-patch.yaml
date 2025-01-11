@@ -1,8 +1,8 @@
-# https://higress.cn/docs/latest/user/annotation-use-case/
+# https://higress.cn/docs/latest/product/annotation-use-case/
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: e-commence-product-grpc-ingress
+  name: e-commence-product-http-ingress
   annotations:
     # 重定向至HTTPS
     higress.io/force-ssl-redirect: "true"

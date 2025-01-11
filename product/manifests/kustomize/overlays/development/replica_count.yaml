@@ -1,6 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: e-commence-product
+  name: e-commence-user
 spec:
-  replicas: 2
+  replicas: 1
