@@ -263,3 +263,4 @@ jobs:
           # ./kubectl rollout status deploy || ./kubectl rollout undo deploy
           ./kubectl get po -owide
           ./kubectl get svc
+ 
