@@ -233,14 +233,6 @@ jobs:
         name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Kustomize
-        run: |
-          curl -Lo kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v5.5.0/kustomize_v5.5.0_linux_amd64.tar.gz
-          tar -zxvf kustomize.tar.gz
-          chmod +x kustomize
-          cp ./kustomize /usr/local/bin
-          ./kustomize version
-
       - name: Install Argocd CLI
         run: |
           curl -LO https://github.com/argoproj/argo-cd/releases/download/v2.13.3/argocd-linux-amd64
@@ -256,6 +248,22 @@ jobs:
           --password ${{ secrets.ARGOCD_SERVER_PASS }} \
           --insecure
           argocd version
+
+      - name: Connect Kubernetes Cluster
+        run: |
+          mkdir -pv ~/.kube/
+          echo "${{secrets.KUBE_CONF}}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Set Context
+        run: |
+          if kubectl get ns $BACKEND_NAMESPACE; then
+            echo "namespaces $BACKEND_NAMESPACE already exists, skip create"
+          else
+            kubectl create ns $BACKEND_NAMESPACE
+          fi
+
+          kubectl config set-context --current --namespace $BACKEND_NAMESPACE
 
       - name: Deploy app to kubernetes
         run: |
