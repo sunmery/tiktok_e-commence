@@ -271,7 +271,7 @@ jobs:
           # ./kustomize build . | kubectl apply -f -
           
           # 部署argo app资源清单
-          ./kubectl apply -f ./argocd.yaml
+          ./kubectl apply -f argocd.yaml
           
           # 替换镜像
           ./argocd app set argocd/e-commence --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
