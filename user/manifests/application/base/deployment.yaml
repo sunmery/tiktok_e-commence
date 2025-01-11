@@ -19,6 +19,10 @@ spec:
         - name: e-commence-user
           image: example
           imagePullPolicy: Always
+          args:
+            - /bin/user
+            - -conf
+            - /bin/configs
           ports:
             - containerPort: 30001
               protocol: TCP

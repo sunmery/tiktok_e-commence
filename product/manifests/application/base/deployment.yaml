@@ -19,6 +19,10 @@ spec:
         - name: e-commence-product
           image: example
           imagePullPolicy: Always
+          args:
+            - /bin/product
+            - -conf
+            - /bin/configs
           ports:
             - containerPort: 30013
               protocol: TCP

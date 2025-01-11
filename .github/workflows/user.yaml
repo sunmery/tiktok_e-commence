@@ -123,7 +123,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [ user, product ]  # 定义要并行执行的服务
+        service: [ user ]  # 定义要并行执行的服务
     defaults:
       run:
         shell: bash
@@ -230,18 +230,28 @@ jobs:
           ./kubectl config set-context --current --namespace $BACKEND_NAMESPACE
           
           ./kubectl delete secret db-source-secret --ignore-not-found
-          ./kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}' || true
+          if ! ./kubectl get secret db-source-secret; then
+            ./kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}' 
+          fi
+          
           ./kubectl delete secret redis-address-secret --ignore-not-found
-          ./kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}' || true
+          if ! ./kubectl get secret redis-address-secret; then
+            ./kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}' 
+          fi
+          
           ./kubectl delete secret redis-username-secret --ignore-not-found
-          ./kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}' || true
+          if ! ./kubectl get secret redis-username-secret; then
+            ./kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}' 
+          fi
+          
           ./kubectl delete secret redis-password-secret --ignore-not-found
-          ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}' || true
-
+          if ! ./kubectl get secret redis-password-secret; then
+            ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}' 
+          fi
+          
           ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           ./kustomize build . | kubectl apply -f -
           
           # ./kubectl rollout status deploy || ./kubectl rollout undo deploy
           ./kubectl get po -owide
           ./kubectl get svc
-
