@@ -248,8 +248,6 @@ jobs:
           chmod +x ./argocd
           cp ./argocd /usr/local/bin
 
-      
-
       - name: Connect ArgoCD Server
         run: |
           argocd login \
@@ -258,16 +256,6 @@ jobs:
           --password ${{ secrets.ARGOCD_SERVER_PASS }} \
           --insecure
           argocd version
-
-      - name: Set Context
-        run: |
-          if kubectl get ns $BACKEND_NAMESPACE; then
-            echo "namespaces $BACKEND_NAMESPACE already exists, skip create"
-          else
-            kubectl create ns $BACKEND_NAMESPACE
-          fi
-
-          kubectl config set-context --current --namespace $BACKEND_NAMESPACE
 
       - name: Deploy app to kubernetes
         run: |
