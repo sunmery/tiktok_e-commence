@@ -231,22 +231,30 @@ jobs:
           
           ./kubectl delete secret db-source-secret --ignore-not-found
           if ! ./kubectl get secret db-source-secret; then
-            ./kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}' 
+            echo "secret alread, skip create"
+          else
+            ./kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}'
           fi
           
           ./kubectl delete secret redis-address-secret --ignore-not-found
           if ! ./kubectl get secret redis-address-secret; then
-            ./kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}' 
+            echo "secret alread, skip create"
+          else
+            ./kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}'
           fi
           
           ./kubectl delete secret redis-username-secret --ignore-not-found
           if ! ./kubectl get secret redis-username-secret; then
-            ./kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}' 
+            echo "secret alread, skip create"
+          else
+            ./kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}'
           fi
           
           ./kubectl delete secret redis-password-secret --ignore-not-found
           if ! ./kubectl get secret redis-password-secret; then
-            ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}' 
+            echo "secret alread, skip create"
+          else
+            ./kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
           fi
           
           ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION

@@ -6,11 +6,8 @@ resources:
   - deployment.yaml
   - service.yaml
   # - issuer.yaml
-  - ingress-http.yaml
-  - ingress-grpc.yaml
-
-# 命名空间
-namespace: tiktok
+  # - ingress-http.yaml
+  # - ingress-grpc.yaml
 
 # 标签
 #commonLabels:

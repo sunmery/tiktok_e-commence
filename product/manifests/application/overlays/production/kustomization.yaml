@@ -15,5 +15,5 @@ patches:
 - path: replica_count.yaml
 - path: limits.yaml
 - path: add-env.yaml
-- path: ingress-http-cors-patch.yaml
-- path: ingress-grpc-cors-patch.yaml
+# - path: ingress-http-cors-patch.yaml
+# - path: ingress-grpc-cors-patch.yaml
