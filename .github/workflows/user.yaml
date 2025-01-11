@@ -253,6 +253,8 @@ jobs:
           # ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           # ./kustomize build . | kubectl apply -f -
           
+          ./argocd account get-user-info
+          
           # 部署argo app资源清单
           ./kubectl apply -f ./application.yaml
           ./argocd app list
