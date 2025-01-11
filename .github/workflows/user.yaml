@@ -193,9 +193,9 @@ jobs:
         name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Kustomize
+      - name: Install Kustomize
         run: |
-          curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+          curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.5.0/kustomize_v5.5.0_linux_amd64.tar.gz
           chmod u+x ./kustomize
           ./kustomize version
 
@@ -204,6 +204,13 @@ jobs:
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl{,.sha256}"
           echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
           chmod +x ./kubectl
+          ./kubectl version
+
+      - name: Install Argocd CLI
+        run: |
+          curl -LO https://github.com/argoproj/argo-cd/releases/download/v2.13.3/argocd-linux-amd64
+          mv argocd-linux-amd64 argocd
+          chmod +x ./argocd
 
       - name: Connect Kubernetes Cluster
         run: |
@@ -237,7 +244,7 @@ jobs:
           ./kustomize edit set image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           ./kustomize build . | kubectl apply -f -
           
-          ./kubectl rollout status deploy || ./kubectl rollout undo deploy
+          # ./kubectl rollout status deploy || ./kubectl rollout undo deploy
           ./kubectl get po -owide
           ./kubectl get svc
 

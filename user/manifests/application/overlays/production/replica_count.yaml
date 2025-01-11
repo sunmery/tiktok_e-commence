@@ -3,4 +3,4 @@ kind: Deployment
 metadata:
   name: e-commence-user
 spec:
-  replicas: 2
+  replicas: 1

@@ -18,36 +18,36 @@ casdoor:
   certificate: |
     -----BEGIN CERTIFICATE-----
     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
-    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
+    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
     -----END CERTIFICATE-----
   server:
     # casdoor url
     # endpoint: "http://localhost:8000"
-    endpoint: "http://node9.apikv.com:30251"
+    endpoint: "http://node1.apikv.com:8000"
     client_id: "58ae47eed5903ca1c3ce"
     client_secret: "d092bd2b51a075fe7a790e01e8a2b1a8176a2d40"
     organization: "tiktok"

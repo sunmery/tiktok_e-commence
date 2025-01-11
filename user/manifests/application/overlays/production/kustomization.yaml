@@ -10,6 +10,8 @@ namePrefix: prod-
 # 文件后缀
 #nameSuffix: "-001"
 
+namespace: tiktok
+
 # 修改或添加的配置
 patches:
 - path: replica_count.yaml

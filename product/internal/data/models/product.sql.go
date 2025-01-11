@@ -107,7 +107,7 @@ func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]P
 		return nil, err
 	}
 	defer rows.Close()
-	items := []ProductsProducts{}
+	var items []ProductsProducts
 	for rows.Next() {
 		var i ProductsProducts
 		if err := rows.Scan(
@@ -147,7 +147,7 @@ func (q *Queries) SearchProducts(ctx context.Context, name *string) ([]ProductsP
 		return nil, err
 	}
 	defer rows.Close()
-	items := []ProductsProducts{}
+	var items []ProductsProducts
 	for rows.Next() {
 		var i ProductsProducts
 		if err := rows.Scan(
