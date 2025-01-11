@@ -189,6 +189,12 @@ jobs:
           chmod +x ./kubectl
           cp ./kubectl /usr/local/bin
 
+      - name: Connect Kubernetes Cluster
+        run: |
+          mkdir -pv ~/.kube/
+          echo "${{secrets.KUBE_CONF}}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
       - name: Set Context
         run: |
           if kubectl get ns $BACKEND_NAMESPACE; then
@@ -235,8 +241,6 @@ jobs:
           cp ./kustomize /usr/local/bin
           ./kustomize version
 
-      
-
       - name: Install Argocd CLI
         run: |
           curl -LO https://github.com/argoproj/argo-cd/releases/download/v2.13.3/argocd-linux-amd64
@@ -244,11 +248,7 @@ jobs:
           chmod +x ./argocd
           cp ./argocd /usr/local/bin
 
-      - name: Connect Kubernetes Cluster
-        run: |
-          mkdir -pv ~/.kube/
-          echo "${{secrets.KUBE_CONF}}" > ~/.kube/config
-          chmod 600 ~/.kube/config
+      
 
       - name: Connect ArgoCD Server
         run: |
