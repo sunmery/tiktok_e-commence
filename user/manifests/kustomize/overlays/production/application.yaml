@@ -32,7 +32,7 @@ spec:
     # 自动同步
     automated:
       # 是否在同步后进行修剪
-      prune: true
+      prune: false
       # 是否启用自愈功能, 强制以GitRepo状态为准，手动在环境修改不会生效
       selfHeal: true
       # 禁止空资源

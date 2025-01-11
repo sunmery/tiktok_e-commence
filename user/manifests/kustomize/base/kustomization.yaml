@@ -10,8 +10,6 @@ resources:
 # 命名空间
 namespace: tiktok
 
-# 标签
-#commonLabels:
-#  app: bingo
-#commonAnnotations:
-#  oncallPager: 800-555-1212
+generatorOptions:
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
