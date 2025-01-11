@@ -16,7 +16,7 @@ env:
   # 微服务所在目录
   SERVICE_DIR: user
   # 仓库
-  REGISTER_NAMESPACE: e-commence
+  REGISTER_NAMESPACE: ${REGISTER_NAMESPACE}
   # 版本号, git tag的标签名
   # https://docs.github.com/zh/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
   #VERSION: ${{ github.ref_name }}
@@ -257,12 +257,12 @@ jobs:
           ./kubectl apply -f ./application.yaml
           
           # 替换镜像
-          echo "matrix: argocd/e-commence-${{ matrix.service }}"
-          # ./argocd app set argocd/e-commence-user --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
-          ./argocd app set argocd/e-commence-user --kustomize-image example=registry.cn-guangzhou.aliyuncs.com/mandala/user:v1.0.0
-          
+          # ./argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service }} --kustomize-image example=${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
+
           # 同步
-          ./argocd app sync argocd/e-commence
+          ./argocd app sync argocd/${REGISTER_NAMESPACE}-${{ matrix.service }}
+          
+          ./argocd app list
           
           # ./kubectl rollout status deploy || ./kubectl rollout undo deploy
           ./kubectl get deploy -owide
