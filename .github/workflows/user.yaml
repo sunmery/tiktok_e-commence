@@ -189,33 +189,55 @@ jobs:
           chmod +x ./kubectl
           cp ./kubectl /usr/local/bin
 
-      - name: Connect Kubernetes Cluster
+      - name: Copy Kubernetes config file
         run: |
           mkdir -pv ~/.kube/
           echo "${{secrets.KUBE_CONF}}" > ~/.kube/config
           chmod 600 ~/.kube/config
 
       - name: Set Context
-        run: |
-          if kubectl get ns $BACKEND_NAMESPACE; then
+        uses: nick-fields/retry@v3
+        with:
+          timeout_seconds: 15
+          max_attempts: 3
+          retry_on: error
+          command: |
+            if kubectl get ns $BACKEND_NAMESPACE; then
             echo "namespaces $BACKEND_NAMESPACE already exists, skip create"
-          else
+            else
             kubectl create ns $BACKEND_NAMESPACE
-          fi
+            fi
 
-          kubectl config set-context --current --namespace $BACKEND_NAMESPACE
+            kubectl config set-context --current --namespace $BACKEND_NAMESPACE
 
       - name: Create secret
-        run: |
-          kubectl delete secret db-source-secret --ignore-not-found
-          kubectl delete secret redis-address-secret --ignore-not-found
-          kubectl delete secret redis-username-secret --ignore-not-found
-          kubectl delete secret redis-password-secret --ignore-not-found
-    
-          kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}'
-          kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}'
-          kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}'
-          kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
+        uses: nick-fields/retry@v3
+        with:
+          timeout_seconds: 15
+          max_attempts: 3
+          retry_on: error
+          command: |
+            kubectl delete secret db-source-secret --ignore-not-found
+            kubectl delete secret redis-address-secret --ignore-not-found
+            kubectl delete secret redis-username-secret --ignore-not-found
+            kubectl delete secret redis-password-secret --ignore-not-found
+
+            kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}'
+            kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}'
+            kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}'
+            kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
+
+      # - name: Create secret
+      #   run: |
+      #     kubectl delete secret db-source-secret --ignore-not-found
+      #     kubectl delete secret redis-address-secret --ignore-not-found
+      #     kubectl delete secret redis-username-secret --ignore-not-found
+      #     kubectl delete secret redis-password-secret --ignore-not-found
+      #
+      #     kubectl create secret generic db-source-secret --from-literal='DB_SOURCE=${{ secrets.DB_SOURCE }}'
+      #     kubectl create secret generic redis-address-secret --from-literal='REDIS_ADDRESS=${{ secrets.REDIS_ADDRESS }}'
+      #     kubectl create secret generic redis-username-secret --from-literal='REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}'
+      #     kubectl create secret generic redis-password-secret --from-literal='REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}'
 
   backend-deploy:
     needs: backend-build
