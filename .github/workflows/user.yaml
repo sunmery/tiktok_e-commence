@@ -45,7 +45,7 @@ env:
 jobs:
 
   backend-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         service: [ user, product ]  # 定义要并行执行的服务
@@ -121,7 +121,7 @@ jobs:
   backend-build:
     needs: backend-test
     name: Build image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         service: [ user, product ]  # 定义要并行执行的服务
@@ -180,7 +180,7 @@ jobs:
           # docker push ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$GITHUB_SHA
 
   create-secrets:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Install kubectl
         run: |
@@ -241,7 +241,7 @@ jobs:
 
   backend-deploy:
     needs: backend-build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         service: [ user, product ]  # 定义要并行执行的服务
