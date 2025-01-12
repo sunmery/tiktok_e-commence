@@ -21,8 +21,8 @@ spec:
             - name: REDIS_productNAME
               valueFrom:
                 secretKeyRef:
-                  key: REDIS_productNAME
-                  name: redis-productname-secret
+                  key: REDIS_USERNAME
+                  name: redis-username-secret
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
