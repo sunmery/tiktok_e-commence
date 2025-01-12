@@ -40,7 +40,12 @@ func parseRSAPublicKeyFromPEM(pemBytes []byte) (*rsa.PublicKey, error) {
 }
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(ac *conf.Auth, c *conf.Server, greeter *service.BalanceService, logger log.Logger) *http.Server {
+func NewHTTPServer(
+	ac *conf.Auth,
+	c *conf.Server,
+	balance *service.BalanceService,
+	logger log.Logger,
+) *http.Server {
 	publicKey, err := parseRSAPublicKeyFromPEM([]byte(ac.Jwt.ApiKey))
 	if err != nil {
 		panic("failed to parse public key")
@@ -65,7 +70,7 @@ func NewHTTPServer(ac *conf.Auth, c *conf.Server, greeter *service.BalanceServic
 		),
 		http.Filter(handlers.CORS( // 浏览器跨域
 			handlers.AllowedOrigins([]string{"http://localhost:3000", "http://127.0.0.1:3000", "http://127.0.0.1:443", "https://node1.apikv.com"}),
-			handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}),
+			handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"}),
 			handlers.AllowedHeaders([]string{"Authorization", "Content-Type"}),
 			handlers.AllowCredentials(),
 		)),
@@ -80,6 +85,28 @@ func NewHTTPServer(ac *conf.Auth, c *conf.Server, greeter *service.BalanceServic
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	v1.RegisterBalanceHTTPServer(srv, greeter)
+	v1.RegisterBalanceHTTPServer(srv, balance)
 	return srv
+}
+
+func MultipartFormDataDecoder(r *http.Request, v interface{}) error {
+	// 从Request Header的Content-Type中提取出对应的解码器
+	_, ok := http.CodecForRequest(r, "Content-Type")
+	// 如果找不到对应的解码器此时会报错
+	if !ok {
+		r.Header.Set("Content-Type", "application/json")
+		// return errors.BadRequest("CODEC", r.Header.Get("Content-Type"))
+	}
+	// fmt.Printf("method:%s\n", r.Method)
+	// if r.Method == "POST" {
+	// 	data, err := ioutil.ReadAll(r.Body)
+	// 	if err != nil {
+	// 		return errors.BadRequest("CODEC", err.Error())
+	// 	}
+	// 	if err = codec.Unmarshal(data, v); err != nil {
+	// 		return errors.BadRequest("CODEC", err.Error())
+	// 	}
+	// }
+
+	return nil
 }
