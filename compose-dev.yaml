@@ -17,7 +17,7 @@ services:
     networks:
       - app-network
     environment:
-      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/simple_bank?sslmode=disable
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/tiktok?sslmode=disable
       - REDIS_ADDRESS=redis7:6379
     command:
       - "/bin/user"
@@ -41,7 +41,7 @@ services:
     networks:
       - app-network
     environment:
-      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/simple_bank?sslmode=disable
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/tiktok?sslmode=disable
       - REDIS_ADDRESS=redis7:6379
     command:
       - "/bin/cart"
@@ -65,7 +65,7 @@ services:
     networks:
       - app-network
     environment:
-      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/simple_bank?sslmode=disable
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/tiktok?sslmode=disable
       - REDIS_ADDRESS=redis7:6379
     command:
       - "/bin/checkout"
@@ -89,7 +89,7 @@ services:
     networks:
       - app-network
     environment:
-      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/simple_bank?sslmode=disable
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/tiktok?sslmode=disable
       - REDIS_ADDRESS=redis7:6379
     command:
       - "/bin/credit_cards"
@@ -113,7 +113,7 @@ services:
     networks:
       - app-network
     environment:
-      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/simple_bank?sslmode=disable
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/tiktok?sslmode=disable
       - REDIS_ADDRESS=redis7:6379
     command:
       - "/bin/order"
@@ -137,7 +137,7 @@ services:
     networks:
       - app-network
     environment:
-      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/simple_bank?sslmode=disable
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/tiktok?sslmode=disable
       - REDIS_ADDRESS=redis7:6379
     command:
       - "/bin/payment"
@@ -161,10 +161,58 @@ services:
     networks:
       - app-network
     environment:
-      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/simple_bank?sslmode=disable
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/tiktok?sslmode=disable
       - REDIS_ADDRESS=redis7:6379
     command:
       - "/bin/product"
+      - "-conf"
+      - "/bin/configs"
+
+  address:
+    build:
+      context: address
+      dockerfile: Dockerfile
+      args:
+        HTTP_PORT: 30015
+        GRPC_PORT: 30016
+        VERSION: v1.0.0
+    platform: linux/amd64
+    ports:
+      - "30015:30015"
+      - "30016:30016"
+    container_name: address
+    restart: always
+    networks:
+      - app-network
+    environment:
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/tiktok?sslmode=disable
+      - REDIS_ADDRESS=redis7:6379
+    command:
+      - "/bin/address"
+      - "-conf"
+      - "/bin/configs"
+
+  balance:
+    build:
+      context: balance
+      dockerfile: Dockerfile
+      args:
+        HTTP_PORT: 30017
+        GRPC_PORT: 30018
+        VERSION: v1.0.0
+    platform: linux/amd64
+    ports:
+      - "30017:30017"
+      - "30018:30018"
+    container_name: balance
+    restart: always
+    networks:
+      - app-network
+    environment:
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/tiktok?sslmode=disable
+      - REDIS_ADDRESS=redis7:6379
+    command:
+      - "/bin/balance"
       - "-conf"
       - "/bin/configs"
 

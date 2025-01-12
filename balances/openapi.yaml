@@ -1,0 +1,92 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: Balance API
+    version: 0.0.1
+paths:
+    /v1/balance:
+        get:
+            tags:
+                - Balance
+            operationId: Balance_GetBalance
+            parameters:
+                - name: owner
+                  in: query
+                  schema:
+                    type: string
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.balance.v1.BalanceReply'
+        post:
+            tags:
+                - Balance
+            operationId: Balance_CreateBalance
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.balance.v1.BalanceRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.balance.v1.BalanceReply'
+        patch:
+            tags:
+                - Balance
+            operationId: Balance_UpdateBalance
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.balance.v1.BalanceRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.balance.v1.BalanceReply'
+components:
+    schemas:
+        api.balance.v1.BalanceReply:
+            type: object
+            properties:
+                message:
+                    type: string
+                code:
+                    type: integer
+                    format: uint32
+                owner:
+                    type: string
+                name:
+                    type: string
+                balance:
+                    type: number
+                    format: double
+        api.balance.v1.BalanceRequest:
+            type: object
+            properties:
+                owner:
+                    type: string
+                name:
+                    type: string
+                balance:
+                    type: number
+                    format: double
+tags:
+    - name: Balance

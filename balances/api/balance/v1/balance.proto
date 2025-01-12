@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package api.balance.v1;
+
+option go_package = "balances/api/balance/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.balance.v1";
+
+import "google/api/annotations.proto";
+
+service Balance {
+	rpc CreateBalance (BalanceRequest) returns (BalanceReply) {
+		option (google.api.http) ={
+			post: "/v1/balance",
+			body: "*"
+		};
+	};
+	rpc UpdateBalance (BalanceRequest) returns (BalanceReply) {
+		option (google.api.http) ={
+			patch: "/v1/balance",
+			body: "*"
+		};
+	};
+	rpc GetBalance (GetBalanceRequest) returns (BalanceReply) {
+		option (google.api.http) ={
+			get: "/v1/balance"
+		};
+	};
+}
+
+message BalanceRequest {
+	string owner = 1;
+	string name = 2;
+	double balance = 3;
+}
+
+message BalanceReply {
+	string message = 1;
+	uint32 code = 2;
+	string owner = 3;
+	string name = 4;
+	double balance = 5;
+}
+
+message GetBalanceRequest {
+	string owner = 1;
+	string name = 2;
+}

@@ -7,9 +7,6 @@ resources:
   # - ingress-http.yaml
   # - ingress-grpc.yaml
 
-# 命名空间
-namespace: tiktok
-
 generatorOptions:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
