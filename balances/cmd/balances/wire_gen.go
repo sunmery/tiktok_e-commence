@@ -34,7 +34,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, regi
 	balanceUsecase := biz.NewBalanceUsecase(balanceRepo, logger)
 	balanceService := service.NewBalanceService(balanceUsecase)
 	grpcServer := server.NewGRPCServer(confServer, balanceService, logger)
-	httpServer := server.NewHTTPServer(confServer, balanceService, logger)
+	httpServer := server.NewHTTPServer(auth, confServer, balanceService, logger)
 	registrar := server.NewRegistrar(registry)
 	app := newApp(logger, grpcServer, httpServer, registrar)
 	return app, func() {

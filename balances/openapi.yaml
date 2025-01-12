@@ -6,7 +6,7 @@ info:
     title: Balance API
     version: 0.0.1
 paths:
-    /v1/balance:
+    /v1/balances:
         get:
             tags:
                 - Balance

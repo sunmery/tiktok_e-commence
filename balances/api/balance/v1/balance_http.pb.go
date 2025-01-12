@@ -31,9 +31,9 @@ type BalanceHTTPServer interface {
 
 func RegisterBalanceHTTPServer(s *http.Server, srv BalanceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/balance", _Balance_CreateBalance0_HTTP_Handler(srv))
-	r.PATCH("/v1/balance", _Balance_UpdateBalance0_HTTP_Handler(srv))
-	r.GET("/v1/balance", _Balance_GetBalance0_HTTP_Handler(srv))
+	r.POST("/v1/balances", _Balance_CreateBalance0_HTTP_Handler(srv))
+	r.PATCH("/v1/balances", _Balance_UpdateBalance0_HTTP_Handler(srv))
+	r.GET("/v1/balances", _Balance_GetBalance0_HTTP_Handler(srv))
 }
 
 func _Balance_CreateBalance0_HTTP_Handler(srv BalanceHTTPServer) func(ctx http.Context) error {
@@ -115,7 +115,7 @@ func NewBalanceHTTPClient(client *http.Client) BalanceHTTPClient {
 
 func (c *BalanceHTTPClientImpl) CreateBalance(ctx context.Context, in *BalanceRequest, opts ...http.CallOption) (*BalanceReply, error) {
 	var out BalanceReply
-	pattern := "/v1/balance"
+	pattern := "/v1/balances"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBalanceCreateBalance))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -128,7 +128,7 @@ func (c *BalanceHTTPClientImpl) CreateBalance(ctx context.Context, in *BalanceRe
 
 func (c *BalanceHTTPClientImpl) GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...http.CallOption) (*BalanceReply, error) {
 	var out BalanceReply
-	pattern := "/v1/balance"
+	pattern := "/v1/balances"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationBalanceGetBalance))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -141,7 +141,7 @@ func (c *BalanceHTTPClientImpl) GetBalance(ctx context.Context, in *GetBalanceRe
 
 func (c *BalanceHTTPClientImpl) UpdateBalance(ctx context.Context, in *BalanceRequest, opts ...http.CallOption) (*BalanceReply, error) {
 	var out BalanceReply
-	pattern := "/v1/balance"
+	pattern := "/v1/balances"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBalanceUpdateBalance))
 	opts = append(opts, http.PathTemplate(pattern))

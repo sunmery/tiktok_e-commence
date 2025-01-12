@@ -2,7 +2,9 @@ package service
 
 import (
 	"balances/internal/biz"
+	"balances/internal/pkg/token"
 	"context"
+	"errors"
 
 	pb "balances/api/balance/v1"
 )
@@ -17,9 +19,18 @@ func NewBalanceService(bc *biz.BalanceUsecase) *BalanceService {
 }
 
 func (s *BalanceService) CreateBalance(ctx context.Context, req *pb.BalanceRequest) (*pb.BalanceReply, error) {
+	payload, err := token.ExtractPayload(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if payload.Owner != req.Owner || payload.Name != req.Name {
+		return nil, errors.New("invalid token")
+	}
+
 	reply, err := s.bc.CreateBalance(ctx, &biz.BalanceRequest{
-		Owner:   req.Owner,
-		Name:    req.Name,
+		Owner:   payload.Owner,
+		Name:    payload.Name,
 		Balance: req.Balance,
 	})
 	if err != nil {
@@ -34,9 +45,18 @@ func (s *BalanceService) CreateBalance(ctx context.Context, req *pb.BalanceReque
 	}, nil
 }
 func (s *BalanceService) UpdateBalance(ctx context.Context, req *pb.BalanceRequest) (*pb.BalanceReply, error) {
+	payload, err := token.ExtractPayload(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if payload.Owner != req.Owner || payload.Name != req.Name {
+		return nil, errors.New("invalid token")
+	}
+
 	reply, err := s.bc.UpdateBalance(ctx, &biz.BalanceRequest{
-		Owner:   req.Owner,
-		Name:    req.Name,
+		Owner:   payload.Owner,
+		Name:    payload.Name,
 		Balance: req.Balance,
 	})
 	if err != nil {
@@ -52,9 +72,18 @@ func (s *BalanceService) UpdateBalance(ctx context.Context, req *pb.BalanceReque
 }
 
 func (s *BalanceService) GetBalance(ctx context.Context, req *pb.GetBalanceRequest) (*pb.BalanceReply, error) {
+	payload, err := token.ExtractPayload(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if payload.Owner != req.Owner || payload.Name != req.Name {
+		return nil, errors.New("invalid token")
+	}
+
 	reply, err := s.bc.GetBalance(ctx, &biz.BalanceRequest{
-		Owner: req.Owner,
-		Name:  req.Name,
+		Owner: payload.Owner,
+		Name:  payload.Name,
 	})
 	if err != nil {
 		return nil, err

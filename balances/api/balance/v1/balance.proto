@@ -11,19 +11,19 @@ import "google/api/annotations.proto";
 service Balance {
 	rpc CreateBalance (BalanceRequest) returns (BalanceReply) {
 		option (google.api.http) ={
-			post: "/v1/balance",
+			post: "/v1/balances",
 			body: "*"
 		};
 	};
 	rpc UpdateBalance (BalanceRequest) returns (BalanceReply) {
 		option (google.api.http) ={
-			patch: "/v1/balance",
+			patch: "/v1/balances",
 			body: "*"
 		};
 	};
 	rpc GetBalance (GetBalanceRequest) returns (BalanceReply) {
 		option (google.api.http) ={
-			get: "/v1/balance"
+			get: "/v1/balances"
 		};
 	};
 }
