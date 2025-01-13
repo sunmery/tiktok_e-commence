@@ -48,8 +48,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        service: [ user, product ]  # 定义要并行执行的服务
-        # service: [ user ]  # 定义要并行执行的服务
+        service: [ addresses, balance, cart, checkout, credit_cards, order, payment, product, user ]  # 定义要并行执行的服务
     defaults:
       run:
         shell: bash
@@ -124,7 +123,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        service: [ user, product ]  # 定义要并行执行的服务
+        service: [ addresses, balance, cart, checkout, credit_cards, order, payment, product, user ]  # 定义要并行执行的服务
     defaults:
       run:
         shell: bash
@@ -244,8 +243,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        service: [ user, product ]  # 定义要并行执行的服务
-        # service: [ user ]  # 定义要并行执行的服务
+        service: [ addresses, balance, cart, checkout, credit_cards, order, payment, product, user ]  # 定义要并行执行的服务
     defaults:
       run:
         shell: bash
