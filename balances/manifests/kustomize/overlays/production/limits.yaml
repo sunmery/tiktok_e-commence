@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-commence-balance
+  labels:
+    app: e-commence-balance
+spec:
+  template:
+    spec:
+      containers:
+        - name: e-commence-balance
+          resources:
+            limits:
+              memory: "50Mi"
+              cpu: "50m"

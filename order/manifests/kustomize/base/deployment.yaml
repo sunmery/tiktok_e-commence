@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # https://argo-cd.readthedocs.io/en/stable/user-guide/compare-options/
+  # 在某些情况下，您可能希望从应用程序的整体同步状态中排除资源。例如，如果它们是由工具生成的。这可以通过在您想要排除的资源上添加此注释来完成
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+  name: e-commence-order
+  labels:
+    app: e-commence-order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: e-commence-order
+  template:
+    metadata:
+      name: e-commence-order
+      labels:
+        app: e-commence-order
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: e-commence-order
+          image: example
+          imagePullPolicy: Always
+          args:
+            - /bin/order
+            - -conf
+            - /bin/configs
+          ports:
+            - containerPort: 30009
+              protocol: TCP
+              name: http-server
+            - containerPort: 30010
+              protocol: TCP
+              name: grpc-server

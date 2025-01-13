@@ -9,18 +9,18 @@ option go_package = "order/api/cart/v1;v1";
 service CartService {
 	rpc AddItem(AddItemReq) returns (AddItemResp) {
 		option (google.api.http) = {
-			post: "/v1/cart",
+			post: "/v1/carts",
 			body: "*"
 		};
 	}
 	rpc GetCart(GetCartReq) returns (GetCartResp) {
 		option (google.api.http) = {
-			get: "/v1/cart/{name}"
+			get: "/v1/carts/{name}"
 		};
 	}
 	rpc EmptyCart(EmptyCartReq) returns (EmptyCartResp) {
 		option (google.api.http) = {
-			delete: "/v1/cart/{name}"
+			delete: "/v1/carts/{name}"
 		};
 	}
 }

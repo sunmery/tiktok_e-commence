@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: e-commence-credit-service
+spec:
+  selector:
+    app: e-commence-credit
+  ports:
+    - name: http
+      port: 30011
+      protocol: TCP
+      targetPort: 30011
+      nodePort: 30011
+    - name: grpc
+      port: 30012
+      protocol: TCP
+      targetPort: 30012
+      nodePort: 30012
+  type: NodePort
+

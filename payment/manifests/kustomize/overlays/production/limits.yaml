@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-commence-payment
+  labels:
+    app: e-commence-payment
+spec:
+  template:
+    spec:
+      containers:
+        - name: e-commence-payment
+          resources:
+            limits:
+              memory: "50Mi"
+              cpu: "50m"

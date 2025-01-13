@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-commence-credit_cards
+  labels:
+    app: e-commence-credit
+spec:
+  template:
+    spec:
+      containers:
+        - name: e-commence-credit
+          resources:
+            limits:
+              memory: "50Mi"
+              cpu: "50m"

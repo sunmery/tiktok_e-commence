@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: e-commence-balance-service
+spec:
+  selector:
+    app: e-commence-balance
+  ports:
+    - name: http
+      port: 30017
+      protocol: TCP
+      targetPort: 30017
+      nodePort: 30017
+    - name: grpc
+      port: 30018
+      protocol: TCP
+      targetPort: 30018
+      nodePort: 30018
+  type: NodePort
+

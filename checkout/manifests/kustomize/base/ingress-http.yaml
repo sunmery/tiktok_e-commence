@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: e-commence-user-http-ingress
+  name: e-commence-checkout-http-ingress
   # namespace: tiktok
   # annotations:
     # cert-manager.io/cluster-issuer: letsencrypt
@@ -9,16 +9,16 @@ metadata:
 spec:
   ingressClassName: higress
   rules:
-    - host: "user.apikv.com"
+    - host: "checkout.apikv.com"
     - http:
         paths:
-          - path: /v1/users
+          - path: /v1/checkout
             pathType: Prefix
             backend:
               service:
-                name: prod-e-commence-user-service
+                name: prod-e-commence-checkout-service
                 port:
-                  number: 30001
+                  number: 30005
 
   # tls:
   #   - hosts:

@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-commence-checkout
+  labels:
+    app: e-commence-checkout
+spec:
+  template:
+    spec:
+      containers:
+        - name: e-commence-checkout
+          resources:
+            limits:
+              memory: "50Mi"
+              cpu: "50m"

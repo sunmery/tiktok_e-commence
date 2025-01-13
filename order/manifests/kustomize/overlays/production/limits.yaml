@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-commence-order
+  labels:
+    app: e-commence-order
+spec:
+  template:
+    spec:
+      containers:
+        - name: e-commence-order
+          resources:
+            limits:
+              memory: "50Mi"
+              cpu: "50m"
