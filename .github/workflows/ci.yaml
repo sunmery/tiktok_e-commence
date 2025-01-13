@@ -188,6 +188,7 @@ jobs:
 
   backend-deploy:
     needs: backend-build
+    if: always()  # 即使 backend-build跳过，也继续执行
     runs-on: ubuntu-24.04
     strategy:
       matrix:
