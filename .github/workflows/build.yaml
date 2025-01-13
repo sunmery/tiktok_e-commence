@@ -1,0 +1,79 @@
+name: Build Microservices
+
+on:
+  workflow_run:
+    workflows: ["Test Microservices"]
+    types:
+      - completed
+
+env:
+  # 微服务所在目录
+  SERVICE_DIR: user
+  # 仓库
+  REGISTER_NAMESPACE: e-commence
+  # 版本号, git tag的标签名
+  # https://docs.github.com/zh/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
+  #VERSION: ${{ github.ref_name }}
+  VERSION: v1.0.0
+  # 目标的操作系统
+  GOOS: linux
+  # 目标的架构
+  GOARCH: amd64
+  # golang的镜像
+  GO_IMAGE: golang:1.23.3-alpine3.20
+  # 代理
+  GO_PROXY: https://proxy.golang.org
+  # golang环境变量
+  CGO_ENABLED: 0
+
+jobs:
+  backend-build:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        service_config:
+          - { service: addresses, http_port: 30015, grpc_port: 30016 }
+          - { service: balances, http_port: 30017, grpc_port: 30018 }
+          - { service: cart, http_port: 30003, grpc_port: 30004 }
+          - { service: checkout, http_port: 30005, grpc_port: 30006 }
+          - { service: credit_cards, http_port: 30007, grpc_port: 30008 }
+          - { service: order, http_port: 30009, grpc_port: 30010 }
+          - { service: payment, http_port: 30011, grpc_port: 30012 }
+          - { service: product, http_port: 30013, grpc_port: 30014 }
+          - { service: user, http_port: 30001, grpc_port: 30002 }
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ matrix.service_config.service }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU for cross-platform builds
+        uses: docker/setup-qemu-action@v3
+
+      - name: Cache Go dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-modules-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-modules-
+
+      - name: Login to Docker Registry
+        run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login ${{ secrets.REGISTRY }} --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+
+      - name: Build, Tag, and Push Docker Image
+        run: |
+          docker build . \
+            -t actions/${{ matrix.service_config.service }} \
+            --build-arg GO_PROXY=$GO_PROXY \
+            --build-arg GOIMAGE=$GO_IMAGE \
+            --build-arg CGOENABLED=$CGO_ENABLED \
+            --build-arg VERSION=$VERSION \
+            --build-arg HTTP_PORT=${{ matrix.service_config.http_port }} \
+            --build-arg GRPC_PORT=${{ matrix.service_config.grpc_port }} \
+            --build-arg GOOS=$GOOS \
+            --build-arg GOARCH=$GOARCH
+
+          docker tag actions/${{ matrix.service_config.service }} ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service_config.service }}:$VERSION
+          docker push ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service_config.service }}:$VERSION
