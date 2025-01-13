@@ -12,6 +12,8 @@ env:
   SERVICE_DIR: user
   # 仓库
   REGISTER_NAMESPACE: e-commence
+  # 微服务的命名空间
+  SERVICE_NAMESPACE: tiktok
   # 版本号, git tag的标签名
   # https://docs.github.com/zh/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
   #VERSION: ${{ github.ref_name }}
@@ -161,13 +163,13 @@ jobs:
           max_attempts: 3
           retry_on: error
           command: |
-            if kubectl get ns $BACKEND_NAMESPACE; then
-            echo "namespaces $BACKEND_NAMESPACE already exists, skip create"
+            if kubectl get ns ${SERVICE_NAMESPACE}; then
+            echo "namespaces ${SERVICE_NAMESPACE} already exists, skip create"
             else
-            kubectl create ns $BACKEND_NAMESPACE
+            kubectl create ns ${SERVICE_NAMESPACE}
             fi
 
-            kubectl config set-context --current --namespace $BACKEND_NAMESPACE
+            kubectl config set-context --current --namespace ${SERVICE_NAMESPACE}
 
       - name: Create secret
         uses: nick-fields/retry@v3
@@ -223,12 +225,12 @@ jobs:
 
       - name: Set Kubernetes Context
         run: |
-          if kubectl get ns $BACKEND_NAMESPACE; then
-            echo "Namespace $BACKEND_NAMESPACE already exists, skipping creation."
+          if kubectl get ns ${SERVICE_NAMESPACE}; then
+            echo "Namespace ${SERVICE_NAMESPACE} already exists, skipping creation."
           else
-            kubectl create ns $BACKEND_NAMESPACE
+            kubectl create ns ${SERVICE_NAMESPACE}
           fi
-          kubectl config set-context --current --namespace $BACKEND_NAMESPACE
+          kubectl config set-context --current --namespace ${SERVICE_NAMESPACE}
 
       - name: Deploy to Kubernetes
         run: |
