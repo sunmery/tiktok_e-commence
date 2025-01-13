@@ -125,6 +125,8 @@ jobs:
     strategy:
       matrix:
         service: [ addresses, balances, cart, checkout, credit_cards, order, payment, product, user ]  # 定义要并行执行的服务
+        http_port: [30015, 30017,  30003, 30005 ,30007, 30009, 30011, 30013, 30001]
+        grpc_port: [30016, 30018,  30004, 30006 ,30008, 30010, 30012, 30014, 30002]
     defaults:
       run:
         shell: bash
@@ -158,18 +160,16 @@ jobs:
       - # 构建, 标记, 推送镜像到容器注册表
         name: Build tag and push image to Cloud Registry
         run: |
-          ls ./
-          docker buildx build . \
+          docker build . \
             -t actions/${{ matrix.service }} \
             --build-arg GO_PROXY=$GO_PROXY \
             --build-arg GOIMAGE=$GO_IMAGE \
             --build-arg CGOENABLED=$CGO_ENABLED \
             --build-arg VERSION=$VERSION \
-            --build-arg HTTP_PORT=$BACKEND_HTTP_PORT \
-            --build-arg GRPC_PORT=$BACKEND_GRPC_PORT \
+            --build-arg HTTP_PORT=${{ matrix.http_port }} \
+            --build-arg GRPC_PORT=${{ matrix.grpc_port }} \
             --build-arg GOOS=$GOOS \
-            --build-arg GOARCH=$GOARCH \
-            --platform linux/amd64
+            --build-arg GOARCH=$GOARCH
 
           docker tag actions/${{ matrix.service }} ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:$VERSION
           # docker tag actions/backend ${{ secrets.REGISTRY }}/${REGISTER_NAMESPACE}/${{ matrix.service }}:latest
