@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: e-commence-address
+  name: e-commence-addresses
   labels:
-    app: e-commence-address
+    app: e-commence-addresses
 spec:
   template:
     spec:
       containers:
-        - name: e-commence-address
+        - name: e-commence-addresses
           resources:
             limits:
               memory: "50Mi"

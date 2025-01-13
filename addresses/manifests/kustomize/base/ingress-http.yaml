@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: e-commence-address-http-ingress
+  name: e-commence-addresses-http-ingress
   # namespace: tiktok
   # annotations:
     # cert-manager.io/cluster-issuer: letsencrypt
@@ -9,14 +9,14 @@ metadata:
 spec:
   ingressClassName: higress
   rules:
-    - host: "address.apikv.com"
+    - host: "addresses.apikv.com"
     - http:
         paths:
           - path: /v1/addresses
             pathType: Prefix
             backend:
               service:
-                name: prod-e-commence-address-service
+                name: prod-e-commence-addresses-service
                 port:
                   number: 30015
 

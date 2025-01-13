@@ -5,27 +5,27 @@ metadata:
   # 在某些情况下，您可能希望从应用程序的整体同步状态中排除资源。例如，如果它们是由工具生成的。这可以通过在您想要排除的资源上添加此注释来完成
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
-  name: e-commence-address
+  name: e-commence-addresses
   labels:
-    app: e-commence-address
+    app: e-commence-addresses
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: e-commence-address
+      app: e-commence-addresses
   template:
     metadata:
-      name: e-commence-address
+      name: e-commence-addresses
       labels:
-        app: e-commence-address
+        app: e-commence-addresses
     spec:
       restartPolicy: Always
       containers:
-        - name: e-commence-address
+        - name: e-commence-addresses
           image: example
           imagePullPolicy: Always
           args:
-            - /bin/address
+            - /bin/addresses
             - -conf
             - /bin/configs
           ports:

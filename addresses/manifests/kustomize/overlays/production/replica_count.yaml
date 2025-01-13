@@ -1,6 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: e-commence-address
+  name: e-commence-addresses
 spec:
   replicas: 1

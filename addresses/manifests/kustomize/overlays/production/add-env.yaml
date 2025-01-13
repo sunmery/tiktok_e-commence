@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: e-commence-address
+  name: e-commence-addresses
 spec:
   template:
     spec:
       containers:
-        - name: e-commence-address
+        - name: e-commence-addresses
           env:
             - name: DB_SOURCE
               valueFrom:
@@ -17,7 +17,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: REDIS_ADDRESS
-                  name: redis-address-secret
+                  name: redis-addresses-secret
             - name: REDIS_USERNAME
               valueFrom:
                 secretKeyRef:
