@@ -1,9 +1,9 @@
 # 可观测性
 jaeger:
-  service_name: tiktok_e-commence_credit_cards
+  service_name: tiktok_e-commence_checkout
   grpc:
     # endpoint: localhost:4317
-    endpoint: node10.apikv.com:32163
+    endpoint: node7.apikv.com:30163
   http:
     # endpoint: localhost:4318
-    endpoint: node10.apikv.com:32163
+    endpoint: node7.apikv.com:30410

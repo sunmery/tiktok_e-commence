@@ -63,10 +63,10 @@ func (c *checkoutRepo) Checkout(ctx context.Context, req *biz.CheckoutReq) (*biz
 	payment, err := c.data.paymentClient.Charge(ctx, &paymentV1.ChargeReq{
 		Amount: 0,
 		CreditCard: &paymentV1.CreditCardInfo{
-			Number:          cards.CreditCards.CreditCardNumber,
-			Cvv:             cards.CreditCards.CreditCardCvv,
-			ExpirationYear:  cards.CreditCards.CreditCardExpirationYear,
-			ExpirationMonth: cards.CreditCards.CreditCardExpirationMonth,
+			Number:          cards.CreditCards.Number,
+			Cvv:             cards.CreditCards.Cvv,
+			ExpirationYear:  cards.CreditCards.ExpirationYear,
+			ExpirationMonth: cards.CreditCards.ExpirationMonth,
 		},
 		OrderId: order.Order.OrderId,
 		Owner:   req.Owner,
