@@ -41,10 +41,10 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
    # 带版本的形式: go build -ldflags="-X main.Version=${VERSION}" -o /bin/main .
    # 多个服务的形式: go build -o /bin/ ./...
 COPY ./configs /bin/configs
+
 FROM alpine:latest AS final
 # 从构建阶段复制编译好的 Go 应用程序到运行阶段
-COPY --from=build /bin/payment /bin/
-COPY --from=build /bin/configs /bin/configs
+COPY --from=build /bin /bin/
 
 # 用户进程ID
 ARG UID=10001
@@ -71,12 +71,13 @@ RUN echo 'Asia/Shanghai' >/etc/timezone
 # USER appuser
 
 # 指定容器对外暴露的端口号
-EXPOSE $HTTP_PORT $GRPC_PORT
+EXPOSE $HTTP_PORT
+EXPOSE $GRPC_PORT
 
-VOLUME /data/conf
+RUN mkdir -p /data/conf
 
 # 设置容器启动时执行的命令
-CMD ["/bin/payment", "-conf", "/data/conf"]
+CMD ["/bin/addresses", "-conf", "/data/conf"]
 
 # 构建Docker所属的当前平台与架构的二进制文件, 进到当前的backend目录
 # VERSION=dev
@@ -98,23 +99,24 @@ CMD ["/bin/payment", "-conf", "/data/conf"]
 # 构建多架构的二进制文件, 需要在Docker Desktop 启用 containerd 映像存储
 # https://docs.docker.com/desktop/containerd/#enable-the-containerd-image-store
 # VERSION=v1.0.0
-# REPOSITORY="tiktok/payment"
+# REPOSITORY="tiktok/users"
 # GOOS=linux
 # GOARCH=amd64
 # HTTP_PORT=30001
 # GRPC_PORT=30002
 # PLATFORM_1=linux/amd64
+# PLATFORM_2=linux/arm64
 # docker buildx build . \
 #   --progress=plain \
 #   -t $REPOSITORY:$VERSION \
 #   --build-arg CGOENABLED=0 \
 #   --build-arg GOIMAGE=golang:1.23.3-alpine3.20 \
 #   --build-arg VERSION=$VERSION \
-#   --build-arg HTTP_PORT=$PORT \
-#   --build-arg GRPC_PORT=$PORT \
+#   --build-arg HTTP_PORT=$HTTP_PORT \
+#   --build-arg GRPC_PORT=$GRPC_PORT \
 #   --build-arg GOOS=$GOOS \
 #   --build-arg GOARCH=$GOARCH \
-#   --platform $PLATFORM_1 \
+#   --platform $PLATFORM_1,$PLATFORM_2 \
 #   --load
 
 # 推送
@@ -134,4 +136,4 @@ CMD ["/bin/payment", "-conf", "/data/conf"]
 # -p 30002:30002 \
 # -e GIN_MODE=release \
 # -e DB_SOURCE="postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable" \
-# $REPOSITORY:$VERSION
+# $REPOSITORY:$VERSION /bin/user -conf /bin/configs

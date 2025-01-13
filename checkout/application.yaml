@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1 # 指定 Argo CD API 版本
 kind: Application # 定义资源类型为 Application
 metadata: # 元数据部分
-  name: e-commence-product # 指定 Application 的名称
+  name: e-commence-addresses # 指定 Application 的名称
   namespace: argocd # argocd所在的命名空间
   # # 定义资源的 finalizers
   # https://argo-cd.readthedocs.io/en/stable/user-guide/app_deletion/#about-the-deletion-finalizer
@@ -9,7 +9,7 @@ metadata: # 元数据部分
     - resources-finalizer.argocd.argoproj.io/background  # 删除时后台行级联删除
     # - resources-finalizer.argocd.argoproj.io # 删除时行级联删除
   labels:
-    name: e-commence-product
+    name: e-commence-addresses
 spec:
   # 应用程序所属的项目。
   project: tiktok-e-commence
@@ -17,7 +17,7 @@ spec:
     # Git仓库的URL
     repoURL: https://github.com/sunmery/tiktok_e-commence.git
     # 部署清单文件路径. 相对路径, 基于git仓库根目录的路径. kustomize的overlays目录或kubernetes清单文件路径
-    path: product/manifests/kustomize/overlays/production
+    path: addresses/manifests/kustomize/overlays/production
     # 使用的 git 分支
     targetRevision: main
   destination:

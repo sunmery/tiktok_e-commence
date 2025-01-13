@@ -1,0 +1,23 @@
+services:
+
+  balance:
+    image: tiktok/balance:prod
+    platform: linux/amd64
+    ports:
+      - "30015:30015"
+      - "30016:30016"
+    container_name: balance
+    restart: always
+    networks:
+      - app-network
+    environment:
+      - DB_SOURCE=postgresql://postgres:postgres@postgres17:5432/simple_bank?sslmode=disable
+      - REDIS_ADDRESS=redis7:6379
+    command:
+      - "/bin/balance"
+      - "-conf"
+      - "/bin/configs"
+
+networks:
+  app-network:
+    external: true
