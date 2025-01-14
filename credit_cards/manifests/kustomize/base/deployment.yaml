@@ -25,7 +25,7 @@ spec:
           image: example
           imagePullPolicy: Always
           args:
-            - /bin/credit
+            - /bin/credit_cards
             - -conf
             - /bin/configs
           ports:

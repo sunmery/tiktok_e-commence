@@ -234,6 +234,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
+          echo "service: ${{ matrix.service_config.service }}"
           kubectl apply -f ${{ matrix.service_config.service }}/application.yaml
           
           argocd app set argocd/${REGISTER_NAMESPACE}-${{ matrix.service_config.service }} \
